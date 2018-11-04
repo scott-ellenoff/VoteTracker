@@ -67,7 +67,8 @@ class TestStringMethods(unittest.TestCase):
     #tests with accurate bill json object
     #tests with no information
     def test_addBill(self):
-        self.asser
+        self.asserTrue(addBill(billJSON))
+        self.assertFalse(addBill(''))
 
     #tests ChangeBillStatus
     #tests with accurate BID and status
