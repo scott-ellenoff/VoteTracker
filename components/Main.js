@@ -1,8 +1,7 @@
-'use strict'
+'use strict';
 
 import React, {Component} from 'react';
-import {Platform,
-        Text,
+import {Text,
         View,
         StyleSheet,
         Button} from 'react-native';
@@ -10,10 +9,10 @@ import {Platform,
 export default class Main extends Component {
     static navigationOptions = {
         title: 'Main',
-    }
+    };
 
     render() {
-        const {navigate} = this.props.navigation
+        const {navigate} = this.props.navigation;
         return(
             <View style={styles.container}>
                 <Text> Main Page </Text>
