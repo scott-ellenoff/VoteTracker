@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'votetrackr_api',
 ]
 
-AUTH_USER_MODEL = 'votetrackr_api.CustomUser'
+AUTH_USER_MODEL = 'votetrackr_api.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,6 +83,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'aws': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'votetrackr',
+        'USER': 'VoteTrackrMaster',
+        'PASSWORD': 'VotePass',
+        'HOST': 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'traditional',
+        }
     }
 }
 

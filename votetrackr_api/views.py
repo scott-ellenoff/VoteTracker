@@ -1,9 +1,16 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Bill, Legislator, Vote
-from .serializers import BillSerializer, LegislatorSerializer, VoteSerializer
+from .models import User, Bill, Legislator, Vote
+from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer
 
 # Create your views here.
+class ListUserView(generics.ListAPIView):
+    """
+    Provides a get method handler.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
 class ListBillView(generics.ListAPIView):
     """
     Provides a get method handler.
