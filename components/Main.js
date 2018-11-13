@@ -1,11 +1,15 @@
 'use strict'
 
 import React, {Component} from 'react';
-import {Platform, Text, View, StyleSheet, Button} from 'react-native';
+import {Platform,
+        Text,
+        View,
+        StyleSheet,
+        Button} from 'react-native';
 
 export default class Main extends Component {
     static navigationOptions = {
-        title: 'Main Screen',
+        title: 'Main',
     }
 
     render() {
