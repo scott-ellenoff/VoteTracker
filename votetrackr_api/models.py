@@ -30,3 +30,29 @@ class Bill(models.Model):
     def __str__(self):
         return "{} - {}".format(self.BID, self.name)
 
+class Legislator(models.Model):
+  AFFILIATION = (
+        ('D', 'Democrat'),
+        ('R', 'Republican'),
+        ('I', 'Independent'),
+        ('O', 'Other')
+  )
+  LID = models.IntegerField()
+  name = models.CharField(max_length=255, blank=True)
+  senator = models.BooleanField(null=True)
+  affiliation = models.CharField(max_length=1, choices=AFFILIATION, blank=True)
+  district = models.IntegerField()
+  URL = models.URLField(blank=True)
+
+
+class Vote(models.Model):
+  VOTES = (
+        ('Y', 'Yea'),
+        ('N', 'Nay'),
+        ('A', 'Abstain')
+  )
+  LID = models.IntegerField()
+  UID = models.IntegerField()
+  BID = models.IntegerField()
+  vote = models.CharField(max_length=1, choices=VOTES, blank=True)
+
