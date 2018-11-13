@@ -1,13 +1,23 @@
 'use strict'
 
 import React, {Component} from 'react';
-import {Platform, Text, View, StyleSheet} from 'react-native';
+import {Platform, Text, View, StyleSheet, Button} from 'react-native';
 
 export default class Home extends Component {
+    static navigationOptions = {
+        title: 'Home Screen',
+    }
 
     render() {
+        const {navigate} = this.props.navigation
         return(
-            <Text style={styles.container}> Home Page </Text>
+            <View style={styles.container}>
+                <Text> Home Page </Text>
+                <Button
+                    title="Go to Main Screen"
+                    onPress={() => navigate('Main')}
+                />
+            </View>
         );
     }
 
@@ -15,7 +25,8 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 100,
+    alignItems: 'center',
+    paddingTop: 200,
     paddingRight: 50,
     paddingLeft: 50
   },

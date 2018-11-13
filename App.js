@@ -4,13 +4,19 @@ import React, {Component} from 'react';
 import {Platform, Text, View} from 'react-native';
 
 import Home from './components/Home.js'
+import Main from './components/Main.js'
+import Profile from './components/Profile.js'
 
-export default class App extends Component {
+import {
+    createStackNavigator,
+} from 'react-navigation'
 
-    render() {
-        return(
-            <Home />
-        );
+const App = createStackNavigator(
+    {
+        Home: {screen: Home},
+        Main: {screen: Main},
+        Profile: {screen: Profile}
     }
+);
 
-}
+export default App;
