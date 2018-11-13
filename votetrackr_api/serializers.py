@@ -4,20 +4,20 @@ from .models import User, Bill, Legislator, Vote
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'UID', 'district')
+        fields = ('username', 'email', 'UID', 'district', 'matched', 'followed')
 
 class BillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bill
-        fields = ('BID', 'short-descr', 'category', 'date_intr', 'status', 'voted_on', 'chamber', 'session', 'roll_call_ID','date_voted', 'url')
+        fields = ('BID', 'description', 'category', 'date_introduced', 'status', 'voted_on', 'chamber', 'session', 'date_voted', 'roll_call_ID', 'url')
 
 
 class LegislatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Legislator
-        fields = ('LID', 'name', 'senator', 'affiliation', 'district', 'URL')
+        fields = ('LID', 'name', 'senator', 'affiliation', 'dwnominate', 'url')
 
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
-        fields = ('LID', 'UID', 'BID', 'vote')
+        fields = ('VID', 'bill', 'legislator', 'user', 'vote')

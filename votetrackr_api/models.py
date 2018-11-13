@@ -8,7 +8,10 @@ class User(AbstractUser):
         db_table = 'Users'
 
     UID = models.UUIDField(db_column='UID', default=uuid.uuid4, editable=False)
-    district = models.CharField(max_length=30, blank=True)
+    name = models.TextField(db_column='Name', blank=True, null=True)
+    district = models.IntegerField(db_column='District', blank=True)
+    matched = models.ManyToManyField('Legislator', related_name='matched')
+    followed = models.ManyToManyField('Legislator', related_name='followed')
 
 class Bill(models.Model):
     class Meta:
@@ -40,9 +43,6 @@ class Bill(models.Model):
     roll_call_ID = models.IntegerField(db_column='RollCallID', blank=True, null=True)
     url = models.URLField(blank=True)
 
-    def __str__(self):
-        return "{} - {}".format(self.BID, self.name)
-
 class Legislator(models.Model):
     class Meta:
         db_table = 'Legislators'
@@ -70,8 +70,18 @@ class Vote(models.Model):
         ('N', 'Nay'),
         ('A', 'Abstain')
     )
-    VID = models.IntegerField(db_column='ID', primary_key=True)
-    LID = models.IntegerField(db_column='LorU', blank=True, null=True)
-    UID = models.IntegerField(db_column='UID', unique=True, max_length=20)
-    BID = models.IntegerField()
+    # VID = models.IntegerField(db_column='ID', primary_key=True)
+    # LID = models.IntegerField(db_column='LorU', blank=True, null=True)
+    # UID = models.IntegerField(db_column='UID', unique=True, max_length=20)
+    # BID = models.IntegerField()
+    VID = models.UUIDField(db_column='ID', default=uuid.uuid4, primary_key=True, editable=False)
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, blank=True, null=True)
+    legislator = models.ForeignKey(Legislator, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     vote = models.CharField(max_length=1, choices=VOTES, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.user and self.legislator or not self.user and not self.legislator:
+            raise ValueError('Exactly one of [Vote.user, Vote.legislator] must be set')
+
+        super(Vote, self).save(*args, **kwargs)
