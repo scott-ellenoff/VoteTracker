@@ -1,0 +1,4 @@
+*.pyc
+# Ignore database migrations
+votetrackr_api/migrations/*
+db.sqlite3
