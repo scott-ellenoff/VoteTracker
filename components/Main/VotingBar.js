@@ -7,10 +7,14 @@ import {Text,
         Button} from 'react-native';
 
 export default class VotingBar extends Component {
+    constructor(props) {
+        super(props)
+    }
+
     render() {
         return(
             <View style={styles.align}>
-                <Text> Abortion, 20-Week Ban </Text>
+                <Text> {this.props.title} </Text>
                 <View style={styles.votebuttons}>
                     <Button
                         title="INFO"
@@ -27,8 +31,8 @@ export default class VotingBar extends Component {
                     <Button
                         title="NEXT"
                     />
-
                 </View>
+                <Text> Progress: {this.props.progress}/{this.props.total} </Text>
             </View>
         );
     }

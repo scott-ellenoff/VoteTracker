@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 
 import Home from './components/Home.js'
-import Main from './components/Main.js'
+import Main from './components/Main/Main.js'
 import Profile from './components/Profile/Profile.js'
 import SelectLegislators from './components/Profile/selectLegislators';
 import {

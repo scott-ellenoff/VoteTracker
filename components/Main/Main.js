@@ -18,10 +18,13 @@ export default class Main extends Component {
         return(
             <View style={styles.container}>
 
+                <VotingBar
+                    title="20-Day Abortion Ban"
+                    progress={1}
+                    total={10}
+                />
 
-                <VotingBar />
 
-                <Text> Progress: 0/__ </Text>
                 <View style={{paddingTop: 200}}></View>
                 <Button
                     title="Go to Profile Screen"
