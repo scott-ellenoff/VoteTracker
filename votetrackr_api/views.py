@@ -17,12 +17,15 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
-    def get_queryset(self):
-      legislator = self.request.legislator
-      return Legislator.objects.filter(legislator=legislator)
+    # def get_queryset(self):
+    #     try:
+    #         legislator = self.request.legislator
+    #         return Legislator.objects.filter(legislator=legislator)
+    #     except:
+    #         return None
 
-    filter_backends = (filters.SearchFilter)
-    search_fields = ('legislator', 'name', 'affiliation')
+    # filter_backends = (filters.SearchFilter)
+    # search_fields = ('legislator', 'name', 'affiliation')
 
 class BillViewSet(viewsets.ModelViewSet):
     """
@@ -31,8 +34,8 @@ class BillViewSet(viewsets.ModelViewSet):
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
 
-    filter_backends = (filters.SearchFilter)
-    search_fields = ('description', 'status', 'voted-on', 'congress-num', 'chamber', 'session', 'date-voted', 'date-introduced')
+    # filter_backends = (filters.SearchFilter)
+    # search_fields = ('description', 'status', 'voted-on', 'congress-num', 'chamber', 'session', 'date-voted', 'date-introduced')
 
 class VoteViewSet(viewsets.ModelViewSet):
     """

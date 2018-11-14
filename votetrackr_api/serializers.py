@@ -9,13 +9,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class BillSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Bill
-        fields = ('BID', 'description', 'category', 'date_introduced', 'status', 'voted_on', 'chamber', 'session', 'date_voted', 'roll_call_ID', 'url')
+        fields = ('BID', 'description', 'date_introduced', 'status', 'voted_on', 'chamber', 'session', 'date_voted', 'url')
 
 
 class LegislatorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Legislator
-        fields = ('LID', 'name', 'senator', 'affiliation', 'dwnominate', 'url')
+        fields = ('LID', 'fullname', 'senator', 'affiliation', 'dwnominate', 'url')
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
