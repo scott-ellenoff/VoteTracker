@@ -15,9 +15,9 @@ https://github.com/scott-ellenoff/VoteTracker/tree/front-end
 3. Navigate to the folder at which you’ve downloaded the front-end project
 4. Run the following commands:
 
-brew install node
-npm install
-react-native run-ios
+brew install node <br />
+npm install <br />
+react-native run-ios <br />
 
 This will take a bit of time so hang on. Also, if you get a CFBundleIdentifier error, please contact me at 
 yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
