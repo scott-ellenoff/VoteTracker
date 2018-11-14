@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, filters
 from .models import User, Bill, Legislator, Vote
 from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer
 
@@ -17,12 +17,22 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
+    def get_queryset(self):
+      legislator = self.request.legislator
+      return Legislator.objects.filter(legislator=legislator)
+
+    filter_backends = (filters.SearchFilter)
+    search_fields = ('legislator', 'name', 'affiliation')
+
 class BillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
+
+    filter_backends = (filters.SearchFilter)
+    search_fields = ('description', 'status', 'voted-on', 'congress-num', 'chamber', 'session', 'date-voted', 'date-introduced')
 
 class VoteViewSet(viewsets.ModelViewSet):
     """
