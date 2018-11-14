@@ -6,20 +6,16 @@ import {Text,
         StyleSheet,
         Button} from 'react-native';
 
-export default class Main extends Component {
+export default class BillInfo extends Component {
     static navigationOptions = {
-        title: 'Main',
+        title: 'BillInfo',
     };
 
     render() {
         const {navigate} = this.props.navigation;
         return(
             <View style={styles.container}>
-                <Text> Main Page </Text>
-                <Button
-                    title="Go to Profile Screen"
-                    onPress={() => navigate('Profile')}
-                />
+                <Text> Bill Info Here </Text>
             </View>
         );
     }
@@ -27,10 +23,14 @@ export default class Main extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    paddingTop: 200,
-    paddingRight: 50,
-    paddingLeft: 50
-  },
+    container: {
+        alignItems: 'center',
+        paddingTop: 100,
+        paddingRight: 50,
+        paddingLeft: 50
+    },
+
+    votebuttons: {
+        flexDirection: "row"
+    },
 });
