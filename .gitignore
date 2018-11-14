@@ -1,6 +1,6 @@
 *.pyc
 # Ignore database migrations
-votetrackr_api/migrations/*
+*/migrations/*
 db.sqlite3
 # OSX
 #

@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import errorcode
 import pandas as pd
 import json
+import os
 
 # Constants
 DB_USER = 'VoteTrackrMaster'
@@ -10,6 +11,7 @@ DB_HOST = 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com'
 DB_PORT = '3306'
 DB_NAME = 'test_db'
 
+DICT_DIR = 'Dictionaries'
 
 # Opens the database connection using given arguments
 def open_db_conn(user, password, host, port, db):
@@ -94,7 +96,7 @@ def add_table_entry(conn, cursor, table_name, args):
 # Populate the legislators table from the clean_legislators.json
 def populate_legislators(conn, cursor):
     # Populate legislators table
-    new_legislators = json.loads(open('Data Scraping/Dictionaries/Clean/clean_legislators.json').read())
+    new_legislators = json.loads(open(os.path.join(DICT_DIR, 'Clean/clean_legislators.json')).read())
     for leg in new_legislators:
         print(leg)
         try:
@@ -110,8 +112,8 @@ def populate_legislators(conn, cursor):
 # Populate the bills table from the clean_house_bills.json and clean senate_bills.json
 def populate_bills(conn, cursor):
     # Populate legislators table
-    new_house_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_house_bills.json').read())
-    new_senate_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_senate_bills.json').read())
+    new_house_bills = json.loads(open(os.path.join(DICT_DIR, 'Clean/clean_house_bills.json')).read())
+    new_senate_bills = json.loads(open(os.path.join(DICT_DIR, 'Clean/clean_senate_bills.json')).read())
 
     new_bills = new_house_bills + new_senate_bills
     for bill in new_bills:
