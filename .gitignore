@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 *.pyc
 # Ignore database migrations
 votetrackr_api/migrations/*
 db.sqlite3
-=======
 # OSX
 #
 .DS_Store
@@ -60,4 +58,3 @@ buck-out/
 
 # Bundle artifact
 *.jsbundle
->>>>>>> front-end
