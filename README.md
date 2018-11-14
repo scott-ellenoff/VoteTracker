@@ -26,7 +26,13 @@ yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Na
 
 # How to Compile Back-End #
 
+There is no need to compile as it is a python/Django back-end.
+
 # How to Run Unit Cases (Acceptance Test Examples) #
+
+In the back-end directory from a terminal enviorement run:
+pip install -r requirements.txt
+python manage.py
 
 # What Has Been Implemented #
 
@@ -35,7 +41,8 @@ compatible with iOS and Android. We have laid out the framework for our three vi
 The Home Page will be linked with Django/Firebath Auth or Facebook Auth by the next iteration. The Main Page will have a 
 view that updates asynchronously with calls to our fully functional Django REST API. The Profile Page will similarly update 
 asynchronously. The INFO, and + buttons will take you to an auxiliary screen where you can learn more about a bill or your 
-legislators.
+legislators. On the back-end, we have built the entire database, scrapped all of the votes, built the post, put, and get
+methods for the api, and  
 
 # Who Did What? #
 
