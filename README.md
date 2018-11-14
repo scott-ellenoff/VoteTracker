@@ -41,14 +41,14 @@ legislators.
 
 Front-End:
 
-Yasoob Rasheed - Worked on React Framework (Home, Main, Segues)
-Zach Kamran - Worked on React Framework (Profile, Segues)
-Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well
+Yasoob Rasheed - Worked on React Framework (Home, Main, Segues) <br />
+Zach Kamran - Worked on React Framework (Profile, Segues) <br />
+Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well <br />
 
 # Have We Made Any Changes? #
 
 # Anything You'd Like the TA to Know #
 
-We wanted to implement more of the front-rnd but believe that there is no use for overly flowery design without all pieces 
+We wanted to implement more of the front-end but believe that there is no use for overly flowery design without all pieces 
 coming together and functioning first. We have built a really solid framework and are excited to go from there once the 
 database is fully operational.
