@@ -4,7 +4,7 @@ from .models import User, Bill, Legislator, Vote
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'UID', 'district', 'matched', 'followed')
+        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'matched', 'followed')
 
 class BillSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -1,7 +1,12 @@
 import datetime
+import random
+import string
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+def create_random_id():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
 class User(AbstractUser):
     class Meta:
@@ -10,8 +15,8 @@ class User(AbstractUser):
     UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
-    matched = models.ManyToManyField('Legislator', related_name='matched')
-    followed = models.ManyToManyField('Legislator', related_name='followed')
+    matched = models.ManyToManyField('Legislator', related_name='matched', blank=True)
+    followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
 
 class Bill(models.Model):
     class Meta:
@@ -30,7 +35,7 @@ class Bill(models.Model):
     )
 
 
-    BID = models.CharField(db_column='BID', max_length=12, default='', primary_key=True, editable=False)
+    BID = models.CharField(db_column='BID', max_length=12, default=create_random_id, primary_key=True, editable=False)
     description = models.TextField(db_column='Description', blank=True)
     date_introduced = models.DateField(db_column='DateIntroduced', default=datetime.date.today)
     status = models.TextField(db_column='Status', choices=BILL_STATUS, blank=True)
@@ -51,7 +56,7 @@ class Legislator(models.Model):
             ('I', 'Independent'),
             ('O', 'Other')
     )
-    LID = models.CharField(db_column='LID', max_length=12, default='', primary_key=True, editable=False)
+    LID = models.CharField(db_column='LID', max_length=12, default=create_random_id, primary_key=True, editable=False)
     fullname = models.CharField(db_column='FullName', max_length=255, blank=True)
     senator = models.BooleanField(db_column='isSenator', blank=True, null=True)
     affiliation = models.TextField(db_column='Affiliation', choices=AFFILIATION, blank=True, null=True)
