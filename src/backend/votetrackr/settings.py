@@ -80,21 +80,21 @@ WSGI_APPLICATION = 'votetrackr.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
     # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'test_db',
-    #     'USER': 'VoteTrackrMaster',
-    #     'PASSWORD': 'VotePass',
-    #     'HOST': 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'sql_mode': 'traditional',
-    #     }
-    # }
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'test_db',
+        'USER': 'VoteTrackrMaster',
+        'PASSWORD': 'VotePass',
+        'HOST': 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'traditional',
+        }
+    }
 }
 
 

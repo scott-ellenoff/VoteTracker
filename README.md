@@ -15,29 +15,39 @@ https://github.com/scott-ellenoff/VoteTracker/tree/front-end
 3. Navigate to the folder at which you’ve downloaded the front-end project
 4. Run the following commands:
 
+
 ```python
 brew install node
 npm install 
 react-native run-ios
 ```
-This will take a bit of time, so hang on. Also, if you get a CFBundleIdentifier error, please contact me at 
-yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
+This will take a bit of time, so hang on. Also, if you get a CFBundleIdentifier error, please contact me at yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
 
 5. You’re all set! The react-native front-end framework is ready to be viewed.
 
-# How to Compile Back-End #
+# How to Run Back-End #
 
-There is no need to compile as it is a Python/Django back-end.
+Before running the python/django server, make sure python 3.7 is installed. To install the necessary packages, run
+
+```
+pip install -r requirements.txt
+```
+
+To run the server locally run
+```
+python manage.py runserver
+```
+
+Then, navigate to http://localhost:8000 to access the root endpoint. From there, click on the urls to see the users, bills, legislators, and votes in our database. You use the django-rest-framework ui to make http requests (GET, POST, PUT, DELETE) that will query or make changes to the database.
 
 # How to Run Unit Cases (Acceptance Test Examples) #
 
-In the back-end directory from a terminal environment run:
-```python
-pip install -r requirements.txt
+To run the unit tests for the backend api run:
+```
+cd src/backend
 python manage.py test
 ```
-
-Unfortunately, there aren’t any possible acceptance test examples as our front-end is not yet linked to the Django server framework.<br />
+This will create a test database and run our unit tests.
 
 # What Has Been Implemented #
 **Front-End:** <br />
@@ -55,6 +65,7 @@ For the Django API, we created the endpoints and the models that the front-end w
 # Who Did What? #
 
 **Front-End:** <br />
+
 Yasoob Rasheed - Worked on React Framework (Home, Main, Segues) <br />
 Zach Kamran - Worked on React Framework (Profile, Segues) <br />
 Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well <br />

@@ -1,0 +1,4 @@
+django==2.1.3
+djangorestframework=3.9.0
+django-rest-auth=0.9.3
+mysqlclient=1.3.13
