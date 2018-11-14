@@ -24,15 +24,29 @@ yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Na
 
 5. You’re all set! The react-native front-end framework is ready to be viewed.
 
-# How to Compile Back-End #
+# How to Run Back-End #
 
-There is no need to compile as it is a python/Django back-end.
+Before running the python/django server, make sure python 3.7 is installed. To install the necessary packages, run
+
+```
+pip install -r requirements.txt
+```
+
+To run the server locally run
+```
+python manage.py runserver
+```
+
+Then, navigate to http://localhost:8000 to access the root endpoint. From there, click on the urls to see the users, bills, legislators, and votes in our database. You use the django-rest-framework ui to make http requests (GET, POST, PUT, DELETE) that will query or make changes to the database.
 
 # How to Run Unit Cases (Acceptance Test Examples) #
 
-In the back-end directory from a terminal enviorement run:
-pip install -r requirements.txt
-python manage.py
+To run the unit tests for the backend api run:
+```
+cd src/backend
+python manage.py test
+```
+This will create a test database and run our unit tests.
 
 # What Has Been Implemented #
 
