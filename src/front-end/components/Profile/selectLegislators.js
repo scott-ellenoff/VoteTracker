@@ -1,68 +1,45 @@
-import React, { Component } from 'react';
-import { Alert, AppRegistry, Platform,
-  StyleSheet, Text, TouchableHighlight,
-  TouchableOpacity, TouchableNativeFeedback,
-  TouchableWithoutFeedback, View ,TextInput} from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, Picker, StyleSheet, Button} from 'react-native'
 
 export default class SelectLegislators extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstname: 'First Name',
-      lastname: 'Last Name'
-    };
-  }
+  state = {
+    pickerSelected: 'Steve',
+    availableLegislators: [{label: "Steve", value: "steve"}, {label: "Ellen", value: "ellen"}, {
+      label: "Maria",
+      value: "maria"
+    }]
+  };
+  updateSelected = (val) => {
+    console.log(val);
+    this.setState({pickerSelected: val})
+  };
 
-  _onPressButton() {
-    Alert.alert('You tapped the button!')
-  }
+  handleConfirmClick = () =>  {
+    console.log(this.state.pickerSelected, 'jklfad');
+    this.props.updateLegislators(this.state.pickerSelected);
 
-  _onLongPressButton() {
-    Alert.alert('You long-pressed the button!')
+    this.setState((prevState) => {
+      return {availableLegislators: [...prevState.availableLegislators]}
+    });
   }
-
 
   render() {
+    const {availableLegislators} = this.state;
     return (
-      <View style={styles.container}>
-        <View>
-        <TextInput
-          style={styles.textBox}
-          onChangeText={(text) => this.setState({firstname: text})}
-          value={this.state.firstname}
-        />
-        <TextInput
-          style={styles.textBox}
-          onChangeText={(text) => this.setState({lastname: text})}
-          value={this.state.lastname}
-        />
-        </View>
-
+      <View>
+        <Picker selectedValue={this.state.pickerSelected} onValueChange={this.updateSelected}>
+          {availableLegislators.map((val, i) => <Picker.Item label={val.label} value={val.label} key={i}/>)}
+        </Picker>
+        <Button onPress={this.handleConfirmClick} title={"Add"}/>
       </View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 60,
-    alignItems: 'center'
-  },
-  button: {
-    marginBottom: 30,
-    width: 260,
-    alignItems: 'center',
-    backgroundColor: '#2196F3'
-  },
-  buttonText: {
-    padding: 20,
-    color: 'white'
-  },
-  textBox: {
-    height: 40,
-    width: 150,
-    backgroundColor: 'white',
-    borderColor: 'black',
-    borderWidth: 1
+  text: {
+    fontSize: 30,
+    alignSelf: 'center',
+    color: 'red'
   }
-});
+})

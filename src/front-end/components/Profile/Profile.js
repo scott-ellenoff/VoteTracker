@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import {FlatList, StyleSheet, View, Image, Text, TouchableHighlight} from 'react-native';
 import ListItem from './Row';
 import listData from './data';
+import SelectLegislators from './selectLegislators';
 
 export default class Profile extends Component {
   static navigationOptions = {};
@@ -17,6 +18,7 @@ export default class Profile extends Component {
     this.state = {
       enable: true,
       data: listData,
+      addMode: false
     };
   }
 
@@ -51,29 +53,62 @@ export default class Profile extends Component {
     );
   }
 
+  updateLegislators = (val) => {
+    console.log(val, 'here');
+    this.setState((prevState) => {
+      return {
+        data: [...prevState.data, {key: val}],
+        addMode: false
+      }
+    })
+  };
+
   render() {
     const {navigate} = this.props.navigation;
-    return (
-      <View>
-        <Image source={require('../../assets/topbanner_page4.png')}/>
+    let {addMode} = this.state;
+    if (!addMode) {
+      return (
         <View>
-        <FlatList
-          style={this.props.style}
-          data={this.state.data}
-          ItemSeparatorComponent={this.renderSeparator}
-          renderItem={({item}) => this.renderItem(item)}
-          scrollEnabled={this.state.enable}
-        />
-        </View>
-        <View style={styles.titleText}>
-        <Text style={styles.titleText}> Select politicians to Follow</Text>
-          <TouchableHighlight onPress={(e) =>  navigate('SelectLegislators')}>
-            <Image source={require('../../assets/page4_empty_politician.png')}/>
+          <Image source={require('../../assets/topbanner_page4.png')}/>
+          <View>
+            <FlatList
+              style={this.props.style}
+              data={this.state.data}
+              ItemSeparatorComponent={this.renderSeparator}
+              renderItem={({item}) => this.renderItem(item)}
+              scrollEnabled={this.state.enable}
+            />
+          </View>
+          <View style={styles.titleText}>
+            <Text style={styles.titleText}> Select politicians to Follow</Text>
+            <TouchableHighlight onPress={this.setState({addMode: true})}>
+              <Image source={require('../../assets/page4_empty_politician.png')}/>
 
-          </TouchableHighlight>
+            </TouchableHighlight>
+          </View>
         </View>
-      </View>
-    );
+      )
+    } else {
+      return (
+        <View>
+          <Image source={require('../../assets/topbanner_page4.png')}/>
+          <View>
+            <FlatList
+              style={this.props.style}
+              data={this.state.data}
+              ItemSeparatorComponent={this.renderSeparator}
+              renderItem={({item}) => this.renderItem(item)}
+              scrollEnabled={this.state.enable}
+            />
+          </View>
+          <View>
+            <SelectLegislators updateLegislators={this.updateLegislators}/>
+          </View>
+        </View>
+
+      )
+    }
+    ;
   }
 }
 
