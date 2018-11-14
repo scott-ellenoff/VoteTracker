@@ -7,7 +7,7 @@ class User(AbstractUser):
     class Meta:
         db_table = 'Users'
 
-    UID = models.UUIDField(db_column='UID', default=uuid.uuid4, editable=False)
+    UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
     matched = models.ManyToManyField('Legislator', related_name='matched')
@@ -30,7 +30,7 @@ class Bill(models.Model):
     )
 
 
-    BID = models.UUIDField(db_column='BID', default=uuid.uuid4, primary_key=True, editable=False)
+    BID = models.CharField(db_column='BID', max_length=12, default='', primary_key=True, editable=False)
     description = models.TextField(db_column='Description', blank=True)
     category = models.CharField(db_column='Category', max_length=50, blank=True)
     date_introduced = models.DateField(db_column='DateIntroduced', default=datetime.date.today)
@@ -53,9 +53,9 @@ class Legislator(models.Model):
             ('I', 'Independent'),
             ('O', 'Other')
     )
-    LID = models.UUIDField(db_column='LID', default=uuid.uuid4, primary_key=True, editable=False)
-    name = models.CharField(db_column='Name', max_length=255, blank=True)
-    senator = models.BooleanField(db_column='Senator?', blank=True, null=True)
+    LID = models.CharField(db_column='LID', max_length=12, default='', primary_key=True, editable=False)
+    name = models.CharField(db_column='FullName', max_length=255, blank=True)
+    senator = models.BooleanField(db_column='isSenator', blank=True, null=True)
     affiliation = models.TextField(db_column='Affiliation', choices=AFFILIATION, blank=True, null=True)
     dwnominate = models.FloatField(db_column='DWNominate', blank=True, null=True)
     url = models.URLField(db_column='URL', blank=True, null=True)
