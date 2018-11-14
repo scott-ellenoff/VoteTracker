@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import React, {Component} from 'react';
 import {Platform,
@@ -19,10 +19,10 @@ export default class Home extends Component {
 
     static navigationOptions = {
         title: 'Home',
-    }
+    };
 
     render() {
-        const {navigate} = this.props.navigation
+        const {navigate} = this.props.navigation;
         return(
             <View style={styles.container}>
                 <Text> VoteTracker </Text>
