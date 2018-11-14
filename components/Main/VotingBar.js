@@ -17,9 +17,6 @@ export default class VotingBar extends Component {
                 <Text> {this.props.title} </Text>
                 <View style={styles.votebuttons}>
                     <Button
-                        title="INFO"
-                    />
-                    <Button
                         title="Nay"
                     />
                     <Button

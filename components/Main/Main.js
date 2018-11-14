@@ -20,16 +20,19 @@ export default class Main extends Component {
 
                 <VotingBar
                     title="20-Day Abortion Ban"
-                    progress={1}
-                    total={10}
+                    progress="1"
+                    total="10"
                 />
-
-
-                <View style={{paddingTop: 200}}></View>
                 <Button
-                    title="Go to Profile Screen"
-                    onPress={() => navigate('Profile')}
+                    title="INFO"
+                    onPress={() => navigate('BillInfo')}
                 />
+                <View style={{paddingTop: 200}}>
+                    <Button
+                        title="Go to Profile Screen"
+                        onPress={() => navigate('Profile')}
+                    />
+                </View>
             </View>
         );
     }
@@ -42,9 +45,5 @@ const styles = StyleSheet.create({
         paddingTop: 100,
         paddingRight: 50,
         paddingLeft: 50
-    },
-
-    votebuttons: {
-        flexDirection: "row"
     },
 });
