@@ -1,2 +1,0 @@
-The Demos.ipynb is a jupyter notebook with some demos for accessing the db. The Demos.pdf is a pdf of the same file. 
-VoteTrackrKeyPair.pem is a file you'll need if you're planning on connecting MySQL Workbench to RDS. 
