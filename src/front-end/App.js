@@ -6,7 +6,6 @@ import Home from './components/Home.js';
 import Main from './components/Main/Main.js';
 import BillInfo from './components/Main/BillInfo';
 import Profile from './components/Profile/Profile.js';
-import SelectLegislators from './components/Profile/SelectLegislators';
 
 import {
   createStackNavigator,
@@ -17,7 +16,6 @@ const App = createStackNavigator(
     Home: {screen: Home},
     Main: {screen: Main},
     Profile: {screen: Profile},
-    SelectLegislators: {screen: SelectLegislators},
     BillInfo: {screen: BillInfo}
   }
 );
