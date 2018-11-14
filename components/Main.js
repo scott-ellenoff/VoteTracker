@@ -6,6 +6,8 @@ import {Text,
         StyleSheet,
         Button} from 'react-native';
 
+import VotingBar from "./VotingBar.js";
+
 export default class Main extends Component {
     static navigationOptions = {
         title: 'Main',
@@ -15,7 +17,12 @@ export default class Main extends Component {
         const {navigate} = this.props.navigation;
         return(
             <View style={styles.container}>
-                <Text> Main Page </Text>
+
+
+                <VotingBar />
+
+                <Text> Progress: 0/__ </Text>
+                <View style={{paddingTop: 200}}></View>
                 <Button
                     title="Go to Profile Screen"
                     onPress={() => navigate('Profile')}
@@ -27,10 +34,14 @@ export default class Main extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    paddingTop: 200,
-    paddingRight: 50,
-    paddingLeft: 50
-  },
+    container: {
+        alignItems: 'center',
+        paddingTop: 100,
+        paddingRight: 50,
+        paddingLeft: 50
+    },
+
+    votebuttons: {
+        flexDirection: "row"
+    },
 });
