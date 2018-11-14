@@ -39,7 +39,7 @@ class Bill(models.Model):
     chamber = models.CharField(db_column='Chamber', max_length=10, choices=CHAMBERS, blank=True)
     session = models.IntegerField(db_column='Session', blank=True, null=True)
     date_voted = models.DateField(db_column='DateVoted', default=datetime.date.today, blank=True)
-    url = models.URLField(blank=True)
+    url = models.URLField(db_column='URL', blank=True, null=True)
 
 class Legislator(models.Model):
     class Meta:
