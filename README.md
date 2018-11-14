@@ -68,7 +68,7 @@ Stepan Severov - Data scraping and cleaning. Populating the database with the cl
 
 # Have We Made Any Changes? #
 
-We have made some design changes from our proposal. The main one is that now there is a table of Votes which stores voting records for both Users and Legislators, recornig their ID, the Bill ID that was voted, and the vote result. Due to that design change, we do not need to store the dictionary of votes in the Person class - we can get the voting records for them by querying the database with their ID. <br />
+We have made some design changes from our proposal. The main one is that now there is a table of Votes which stores voting records for both Users and Legislators, recording their ID, the Bill ID that was voted, and the vote result. Due to that design change, we do not need to store the dictionary of votes in the Person class - we can get the voting records for them by querying the database with their ID. <br />
 
 PullLegislatorVotes() functionality that was planned to be implemented inside the Bill class, now will be running as a cron process on the server side due to that being easier, considering we are using an external ProPublica API to pull records on any new votes which were made public. After obtaining those votes, we update the Votes table described above, recording the legislators’ voting decisions. <br />
 
