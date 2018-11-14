@@ -9,7 +9,7 @@ class User(AbstractUser):
 
     UID = models.UUIDField(db_column='UID', default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
-    district = models.IntegerField(db_column='District', blank=True)
+    district = models.IntegerField(db_column='District', blank=True, null=True)
     matched = models.ManyToManyField('Legislator', related_name='matched')
     followed = models.ManyToManyField('Legislator', related_name='followed')
 
@@ -70,10 +70,7 @@ class Vote(models.Model):
         ('N', 'Nay'),
         ('A', 'Abstain')
     )
-    # VID = models.IntegerField(db_column='ID', primary_key=True)
-    # LID = models.IntegerField(db_column='LorU', blank=True, null=True)
-    # UID = models.IntegerField(db_column='UID', unique=True, max_length=20)
-    # BID = models.IntegerField()
+
     VID = models.UUIDField(db_column='ID', default=uuid.uuid4, primary_key=True, editable=False)
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE, blank=True, null=True)
     legislator = models.ForeignKey(Legislator, on_delete=models.CASCADE, blank=True, null=True)
