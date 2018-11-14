@@ -8,7 +8,7 @@ import unittest
 class UserTests(APITestCase):
     def test_user(self):
         #testing adding user
-        data = {"name" : "Comps Cience", "disctict": "10128"}
+        data = {"username" : "CompsCience", "name":"Scott Ellenoff", "disctict": "10128"}
         response = self.client.post('/users/', data, format="json")
         realUID = response.UID
         self.assertEqual(response.status_code, status.HTTP_201_Created)
@@ -18,7 +18,7 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         #setting info
-        data = {"name": "L. Ron Hubbard", "district":"60615"}
+        data = {"username":"BlahBlah","name": "L. Ron Hubbard", "district":"60615"}
         response = self.client.put('/users/'+realUID, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
