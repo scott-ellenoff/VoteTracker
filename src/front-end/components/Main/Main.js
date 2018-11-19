@@ -4,7 +4,8 @@ import React, {Component} from 'react';
 import {Text,
         View,
         StyleSheet,
-        Button} from 'react-native';
+        Button,
+        ScrollView} from 'react-native';
 
 import VotingBar from "./VotingBar.js";
 
@@ -18,15 +19,22 @@ export default class Main extends Component {
         return(
             <View style={styles.container}>
 
-                <VotingBar
-                    title="20-Day Abortion Ban"
-                    progress="1"
-                    total="10"
-                />
-                <Button
-                    title="INFO"
-                    onPress={() => navigate('BillInfo')}
-                />
+                <View>
+                    <VotingBar
+                        title="[TITLE]"
+                        progress="[X]"
+                        total="[Y]"
+                    />
+                    <Button
+                        color="green"
+                        title="Learn More"
+                        onPress={() => navigate('BillInfo')}
+                    />
+                </View>
+
+                
+
+
                 <View style={{paddingTop: 200}}>
                     <Button
                         title="Go to Profile Screen"
@@ -44,6 +52,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 100,
         paddingRight: 50,
-        paddingLeft: 50
+        paddingLeft: 50,
     },
+    scrollview: {
+        height: 400,
+        flex: 1
+    }
+
 });

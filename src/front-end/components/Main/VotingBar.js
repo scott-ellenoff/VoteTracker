@@ -20,13 +20,13 @@ export default class VotingBar extends Component {
                         title="Nay"
                     />
                     <Button
-                        title="IDC"
+                        title="No Opinion"
                     />
                     <Button
                         title="Yay"
                     />
                     <Button
-                        title="NEXT"
+                        title=">"
                     />
                 </View>
                 <Text> Progress: {this.props.progress}/{this.props.total} </Text>
@@ -38,9 +38,10 @@ export default class VotingBar extends Component {
 
 const styles = StyleSheet.create({
     votebuttons: {
-        flexDirection: "row"
+        flexDirection: 'row'
     },
     align: {
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: 'lightgray',
     }
 });
