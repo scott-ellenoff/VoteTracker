@@ -21,11 +21,20 @@ class UserTests(APITestCase):
         response_body = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'username': ['A user with that username already exists.']})
-        
+
         #testing getting user
         response = self.client.get('http://testserver/users/'+realUID+'/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        #adding user with special character Name
+        data = {"username": "cc","name" : "Robert'); DROP TABLE Students;--", "disctict": "10128"}
+        response = self.client.post('http://testserver/users/', data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        #adding a user with no District
+        data = {"username": "cc","name" : "Comps Cience", "disctict": ""}
+        response = self.client.post('http://testserver/users/', data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         #setting info
         data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615"}
@@ -119,4 +128,3 @@ class UserTests(APITestCase):
         response_body = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
-
