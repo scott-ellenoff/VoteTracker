@@ -15,13 +15,23 @@ class UserTests(APITestCase):
         realUID = str(response_body['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        #adding user with special character Name
+        data = {"username": "cc","name" : "Robert'); DROP TABLE Students;--", "disctict": "10128"}
+        response = self.client.post('http://testserver/users/', data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        #adding a user with no District
+        data = {"username": "cc","name" : "Comps Cience", "disctict": ""}
+        response = self.client.post('http://testserver/users/', data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
         #attempting to add a duplicate user
         data = {"username": "cc","name" : "Comps Cience", "disctict": "10128"}
         response = self.client.post('http://testserver/users/', data, format="json")
         response_body = json.loads(response.content)
         realUID = str(response_body['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
+
         #testing getting user
         response = self.client.get('http://testserver/users/'+realUID+'/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -87,6 +97,7 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_vote(self):
+        #add bill
         data = {"Description": "this is a description", "status":"p","voted_on":"True","chambers":"S","session":"2","url":"http://www.google.com"}
         response = self.client.post('http://testserver/bills/')
         response_body = json.loads(response.content)
@@ -105,4 +116,45 @@ class UserTests(APITestCase):
         #testing adding duplicate votes
         data = data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realUID+'/', "vote":"Y"}
         response = self.client.post("/votes/", data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_match(self):
+        #add a legislator
+        data = {"fullname" : "Comps Cience", "senator":"False","affiliation":"D","url":"http://www.google.com"}
+        response = self.client.post('http://testserver/legislators/', data, format="json")
+        response_body = json.loads(response.content)
+        realLID = response_body['LID']
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        #add a user
+        data = {"username": "cc","name" : "Scott Ellenoff", "disctict": "10128", "followed" : "Comps Cience"}
+        response = self.client.post('http://testserver/users/', data, format="json")
+        response_body = json.loads(response.content)
+        realUID = str(response_body['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        #add bill
+        data = {"Description": "this is a description", "status":"p","voted_on":"True","chambers":"S","session":"2","url":"http://www.google.com"}
+        response = self.client.post('http://testserver/bills/')
+        response_body = json.loads(response.content)
+        realBID = response_body['BID']
+
+        #add votes
+        data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realUID+'/', "vote":"Y"}
+        response = self.client.post('http://testserver/votes/', data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realLID+'/', "vote":"Y"}
+        response = self.client.post('http://testserver/votes/', data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        #test matching
+        response = self.client.get('http://testserver/users/'+realUID+'/')
+        response_body = json.loads(response.content)
+        matched = response_body['matched']
+        self.assertEqual(matched, {realLID:"1.00"}})
+
+        #attempting to follow a fake legislators
+        data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615", "followed":"Json Bourne"}
+        response = self.client.put('http://testserver/users/'+realUID+'/', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
