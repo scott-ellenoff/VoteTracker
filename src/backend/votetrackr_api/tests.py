@@ -2,6 +2,8 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
 from votetrackr_api.models import User, Bill, Legislator, Vote
+from push_notifications.models import APNSDevice, GCMDevice
+from votetrackr_api.db_updater import db_updater
 # Create your tests here.
 import unittest
 import json
@@ -119,4 +121,73 @@ class UserTests(APITestCase):
         response_body = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
+
+
+class PushNotificationsTests(unittest.TestCase):
+    def test_push_android(self):
+        # Android push notifications
+
+        gcm_reg_id = "0"
+        the_user = "user"
+        device = GCMDevice.objects.create(registration_id=gcm_reg_id, cloud_message_type="FCM", user=the_user)
+
+        # simple text message
+        response = device.send_message("New Bill")
+        self.assertEqual(response[0].getcode(), 200)
+
+        # extra payload message
+        response = device.send_message("Extra message", extra={"title": "New Bill", "icon": "icon"})
+        self.assertEqual(response[0].getcode(), 200)
+
+        # extra data message
+        response = device.send_message("Message with data", extra={"other": "Bill Content", "misc": "Bill Data"})
+        self.assertEqual(response[0].getcode(), 200)
+
+        # limited life message
+        response = device.send_message("This is a message", time_to_live=3600)
+        self.assertEqual(response[0].getcode(), 200)
+
+        # fail to create device with bad userID
+        gcm_reg_id = "-1"
+        the_user = "baduser"
+        device = GCMDevice.objects.create(registration_id=gcm_reg_id, cloud_message_type="FCM", user=the_user)
+        self.assertEqual(device, None)
+
+
+    def test_push_IOS(self):
+        # iOS push notifications
+
+        apns_token = 1
+        device = APNSDevice.objects.get(registration_id=apns_token)
+
+        # simple text message
+        response = device.send_message("New Bill")
+        self.assertEqual(response[0].getcode(), 200)
+
+        # just badge, no alert
+        response = device.send_message(None, badge=5)
+        self.assertEqual(response[0].getcode(), 200)
+
+        # notification with title and body
+        response = device.send_message(message={"title" : "New Bill", "body" : "Bill 101: This is a Bill Title"})
+        self.assertEqual(response[0].getcode(), 200)
+
+        # fail to create device with bad userID
+        apns_token = -1
+        device = APNSDevice.objects.get(registration_id=apns_token)
+        self.assertEqual(device, None)
+
+
+# Test suite for an automatic updater
+class UpdaterTests(APITestCase):
+    def test_updater(self):
+        newUpdater = db_updater()
+
+        # Testing whether the updater can successfully update database with new votes and bills
+        # Returns false if cannot connect to API: either key is old, or API changed the input format - cannot unit test
+        # that since the inputs are specified in the config
+        self.assertEqual(newUpdater.update_database(), True)
+
+        # Testing pushing notifications to users notifying them that there are new bills they can vote on
+        self.assertEqual(newUpdater.push_notifications(), True)
 
