@@ -123,7 +123,16 @@ class UserTests(APITestCase):
         self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
 
 
+
+
+
 class PushNotificationsTests(unittest.TestCase):
+
+    # Spoke with Yuxi on Monday --- these tests will fail due to the fact that we currently don't have
+    # Google Cloud Messaging or Apple Push Notification System tokens set up yet. Thus, it will throw an error
+    # when it tries to define the "device" variable since we don't have users that are GCM or APNS objects yet.
+    # In my conversation with Yuxi he concluded that this was acceptable for Iteration 4a. This will be set up 
+    # for iteration 4b.
     def test_push_android(self):
         # Android push notifications
 
