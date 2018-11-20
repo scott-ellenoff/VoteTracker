@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
 from votetrackr_api.models import User, Bill, Legislator, Vote
+from push_notifications.models import APNSDevice, GCMDevice
 # Create your tests here.
 import unittest
 import json
@@ -21,20 +22,11 @@ class UserTests(APITestCase):
         response_body = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'username': ['A user with that username already exists.']})
-
+        
         #testing getting user
         response = self.client.get('http://testserver/users/'+realUID+'/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        #adding user with special character Name
-        data = {"username": "cc","name" : "Robert'); DROP TABLE Students;--", "disctict": "10128"}
-        response = self.client.post('http://testserver/users/', data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        #adding a user with no District
-        data = {"username": "cc","name" : "Comps Cience", "disctict": ""}
-        response = self.client.post('http://testserver/users/', data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         #setting info
         data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615"}
@@ -129,43 +121,61 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
 
-    def test_match(self):
-        #add a legislator
-        data = {"fullname" : "Comps Cience", "senator":"False","affiliation":"D","url":"http://www.google.com"}
-        response = self.client.post('http://testserver/legislators/', data, format="json")
-        response_body = json.loads(response.content)
-        realLID = response_body['LID']
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        #add a user
-        data = {"username": "cc","name" : "Scott Ellenoff", "disctict": "10128", "followed" : "Comps Cience"}
-        response = self.client.post('http://testserver/users/', data, format="json")
-        response_body = json.loads(response.content)
-        realUID = str(response_body['id'])
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+class PushNotificationsTests(unittest.TestCase):
+    def test_push_android(self):
+        # Android push notifications
 
-        #add bill
-        data = {"Description": "this is a description", "status":"p","voted_on":"True","chambers":"S","session":"2","url":"http://www.google.com"}
-        response = self.client.post('http://testserver/bills/')
-        response_body = json.loads(response.content)
-        realBID = response_body['BID']
+        gcm_reg_id = "0"
+        the_user = "user"
+        device = GCMDevice.objects.create(registration_id=gcm_reg_id, cloud_message_type="FCM", user=the_user)
 
-        #add votes
-        data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realUID+'/', "vote":"Y"}
-        response = self.client.post('http://testserver/votes/', data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # simple text message
+        response = device.send_message("New Bill")
+        self.assertEqual(response[0].getcode(), 200)
 
-        data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realLID+'/', "vote":"Y"}
-        response = self.client.post('http://testserver/votes/', data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # extra payload message
+        response = device.send_message("Extra message", extra={"title": "New Bill", "icon": "icon"})
+        self.assertEqual(response[0].getcode(), 200)
 
-        #test matching
-        response = self.client.get('http://testserver/users/'+realUID+'/')
-        response_body = json.loads(response.content)
-        matched = response_body['matched']
-        self.assertEqual(matched, {realLID:"1.00"}})
+        # extra data message
+        response = device.send_message("Message with data", extra={"other": "Bill Content", "misc": "Bill Data"})
+        self.assertEqual(response[0].getcode(), 200)
 
-        #attempting to follow a fake legislators
-        data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615", "followed":"Json Bourne"}
-        response = self.client.put('http://testserver/users/'+realUID+'/', data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # limited life message
+        response = device.send_message("This is a message", time_to_live=3600)
+        self.assertEqual(response[0].getcode(), 200)
+
+        # fail to create device with bad userID
+        gcm_reg_id = "-1"
+        the_user = "baduser"
+        device = GCMDevice.objects.create(registration_id=gcm_reg_id, cloud_message_type="FCM", user=the_user)
+        self.assertEqual(device, None)
+
+
+    def test_push_IOS(self):
+        # iOS push notifications
+
+        apns_token = 1
+        device = APNSDevice.objects.get(registration_id=apns_token)
+
+        # simple text message
+        response = device.send_message("New Bill")
+        self.assertEqual(response[0].getcode(), 200)
+
+        # just badge, no alert
+        response = device.send_message(None, badge=5)
+        self.assertEqual(response[0].getcode(), 200)
+
+        # notification with title and body
+        response = device.send_message(message={"title" : "New Bill", "body" : "Bill 101: This is a Bill Title"})
+        self.assertEqual(response[0].getcode(), 200)
+
+        # fail to create device with bad userID
+        apns_token = -1
+        device = APNSDevice.objects.get(registration_id=apns_token)
+        self.assertEqual(device, None)
+
+
+
+
