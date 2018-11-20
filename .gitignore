@@ -1,7 +1,11 @@
+# Python/Django stuff
 *.pyc
 # Ignore database migrations
 */migrations/*
 db.sqlite3
+voteenv/*
+
+
 # OSX
 #
 .DS_Store

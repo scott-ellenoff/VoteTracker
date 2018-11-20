@@ -13,6 +13,7 @@ router.register(r'votes', VoteViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
 ]
 
 # urlpatterns = [
