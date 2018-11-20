@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from votetrackr_api.models import User, Bill, Legislator, Vote
 from push_notifications.models import APNSDevice, GCMDevice
+from votetrackr_api.db_updater import db_updater
 # Create your tests here.
 import unittest
 import json
@@ -177,5 +178,16 @@ class PushNotificationsTests(unittest.TestCase):
         self.assertEqual(device, None)
 
 
+# Test suite for an automatic updater
+class UpdaterTests(APITestCase):
+    def test_updater(self):
+        newUpdater = db_updater()
 
+        # Testing whether the updater can successfully update database with new votes and bills
+        # Returns false if cannot connect to API: either key is old, or API changed the input format - cannot unit test
+        # that since the inputs are specified in the config
+        self.assertEqual(newUpdater.update_database(), True)
+
+        # Testing pushing notifications to users notifying them that there are new bills they can vote on
+        self.assertEqual(newUpdater.push_notifications(), True)
 
