@@ -26,11 +26,11 @@ Updating bill/votes: updating bill and voting information on the client side fro
 * Yasoob: sending bill information to the Main page so that Users can vote and see their history
  
 Finish user login: authenticating users and fetching their data for client side loading
-* Larry
+* Larry: Setting up a registration form, login/logout endpoint, and adding permissions to certain endpoints so that only authenticated users can access their user information.
 * Scott W.
  
 Deploying the server: deploying the AWS Server for use by the front-end
-* Larry
+* Larry: Launching an Amazon EC2 instance and deploying the django backend server in production mode.
  
 3. Tests
 
@@ -51,7 +51,7 @@ This will create a test database and run our unit tests.
 We have written tests for:
 * Matching algorithm
 * Push notifications
-* Updating the bill/votes
+* Updating the bill/votes database
 * User login
 
 We have chosen to write tests for the above using python's unittest library. With regards to server deployment, that will happen as we are doing iteration 4b. Testing connection of frontend and backend also will be done through our existing tests that call the Django API.

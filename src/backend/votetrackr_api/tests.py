@@ -1,6 +1,7 @@
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
+from requests.auth import HTTPBasicAuth
 from votetrackr_api.models import User, Bill, Legislator, Vote
 from push_notifications.models import APNSDevice, GCMDevice
 from votetrackr_api.db_updater import db_updater
@@ -122,7 +123,45 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
 
+    def test_permissions(self):
+        # Registration
+        data = {"username": "user1","name" : "First Last", "password": "pa$$w0rd"}
+        response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
+        response_body = json.loads(response.content)
+        realUID = str(response_body['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        #testing getting user without authentication
+        response = self.client.get('http://testserver/users/'+realUID+'/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Login with incorrect password
+        data = {"username": "user1", "password": "password"}
+        response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Login with correct password
+        data["password"] = "pa$$w0rd"
+        response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
+        response_body = json.loads(response.content)
+        token = response_body['key']
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Getting user info after authenticated
+        self.client.auth = HTTPBasicAuth('user1', 'pa$$w0rd')
+        self.client.headers.update({'x-test': 'true'})
+        response = self.client.get('http://testserver/users/'+realUID+'/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Logging out
+        response = self.client.post('http://testserver/rest-auth/logout', {}, format="json")
+        response_body = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['detail'], 'Successfully logged out.')
+
+        # Testing getting user info after logout
+        response = self.client.get('http://testserver/users/'+realUID+'/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 
