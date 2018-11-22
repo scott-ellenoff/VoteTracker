@@ -1,3 +1,62 @@
+# Milestone 4a #
+
+1. What we are implementing for this iteration: 
+ 
+For the second iteration, we plan to connect the backend to the front-end and add new features. More specifically, we want to execute on the Django REST API and AWS server we’ve built and actually integrate response/requests into our front-end code. We are going to finish the user login portion, develop push notifications, update the bill and voting information, develop a matching algorithm, and finally develop the map. This seems like a lot, but we’ve split up the tasks well.
+ 
+2. How the work is divided:
+ 
+Map: visualizing how the United States has voted on a specific bill
+* Hasmik 
+ 
+Connect front and backend: passing data back and forth from the client and server
+Scott E
+* Yasoob: generalizing this data in component state, to pass it from View Controller to View Controller in the front-end application
+ 
+Matching algorithm: developing an algorithm to match users with Legislators
+* Scott E.
+ 
+Push notifications: sending a push notification every time that a bill is voted on
+* Emily: setting up push notifications with Firebase Cloud Messaging and Apple Push Notification System to work with Django
+* Yasoob: syncing data with React-Native ios push notifications
+ 
+Updating bill/votes: updating bill and voting information on the client side from the server
+* Stepan
+* Zach
+* Yasoob: sending bill information to the Main page so that Users can vote and see their history
+ 
+Finish user login: authenticating users and fetching their data for client side loading
+* Larry: Setting up a registration form, login/logout endpoint, and adding permissions to certain endpoints so that only authenticated users can access their user information.
+* Scott W.
+ 
+Deploying the server: deploying the AWS Server for use by the front-end
+* Larry: Launching an Amazon EC2 instance and deploying the django backend server in production mode.
+ 
+3. Tests
+
+Our tests are located in VoteTracker/backend/votetrackr_api/tests.py.
+
+First, install all necessary dependencies by running:
+
+```
+pip install -r requirements.txt
+```
+To run the unit tests for the backend API run:
+```
+cd src/backend
+python manage.py test
+```
+This will create a test database and run our unit tests.
+
+We have written tests for:
+* Matching algorithm
+* Push notifications
+* Updating the bill/votes database
+* User login
+
+We have chosen to write tests for the above using python's unittest library. With regards to server deployment, that will happen as we are doing iteration 4b. Testing connection of frontend and backend also will be done through our existing tests that call the Django API.
+
+
 # How To Compile Front-End #
 
 Requirements:
