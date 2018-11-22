@@ -25,7 +25,7 @@ SECRET_KEY = 'c464q_&s+$ef64($th_078bhi2#92oh=86w4^8z#8c^x!3zw8*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ec2-52-15-86-243.us-east-2.compute.amazonaws.com']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
