@@ -1,13 +1,18 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, filters
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.reverse import reverse, reverse_lazy
 from .models import User, Bill, Legislator, Vote
 from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer
+
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from rest_auth.registration.views import SocialLoginView
 
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+
     # permission_classes = (IsAuthenticated, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -53,6 +58,17 @@ class VoteViewSet(viewsets.ModelViewSet):
     """
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+
+class FacebookLogin(SocialLoginView):
+    adapter_class = FacebookOAuth2Adapter
+
+    def get_response(self):
+        r = super(FacebookLogin, self).get_response()
+        r.data['user'] = UserSerializer(self.user, context={'request': self.request}).data
+        # r.data['user'] = reverse('user-detail', args=[self.user.id], request=self.request)
+        return r
+
+# class CustomRegistration()
 
 # # Create your views here.
 # class ListUserView(generics.ListAPIView):

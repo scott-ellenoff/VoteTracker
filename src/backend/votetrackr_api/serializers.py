@@ -1,28 +1,33 @@
 from rest_framework import serializers
+from rest_framework.serializers import HyperlinkedIdentityField
 from rest_framework.validators import UniqueTogetherValidator
 
 from .models import User, Bill, Legislator, Vote
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    detail = HyperlinkedIdentityField(view_name='user-detail')
     class Meta:
         model = User
-        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'matched', 'followed')
+        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'matched', 'followed', 'detail')
 
 class BillSerializer(serializers.HyperlinkedModelSerializer):
+    detail = HyperlinkedIdentityField(view_name='bill-detail')
     class Meta:
         model = Bill
-        fields = ('BID', 'description', 'date_introduced', 'status', 'voted_on', 'chamber', 'session', 'date_voted', 'url')
+        fields = ('BID', 'description', 'date_introduced', 'status', 'voted_on', 'chamber', 'session', 'date_voted', 'url', 'detail')
 
 
 class LegislatorSerializer(serializers.HyperlinkedModelSerializer):
+    detail = HyperlinkedIdentityField(view_name='legislator-detail')
     class Meta:
         model = Legislator
-        fields = ('LID', 'fullname', 'senator', 'affiliation', 'dwnominate', 'url')
+        fields = ('LID', 'fullname', 'senator', 'affiliation', 'dwnominate', 'url', 'detail')
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
+    detail = HyperlinkedIdentityField(view_name='vote-detail')
     class Meta:
         model = Vote
-        fields = ('VID', 'bill', 'legislator', 'user', 'vote')
+        fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
 
     def validate(self, data):
         bill = data.get('bill')
