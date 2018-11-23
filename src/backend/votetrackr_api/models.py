@@ -8,6 +8,9 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from allauth.account.signals import user_signed_up, user_logged_in
+from allauth.socialaccount.models import SocialAccount
+from allauth.socialaccount.signals import pre_social_login
 
 def create_random_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
@@ -21,6 +24,40 @@ class User(AbstractUser):
     district = models.IntegerField(db_column='District', blank=True, null=True)
     matched = models.ManyToManyField('Legislator', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
+
+# @receiver(pre_social_login)
+# def save_user(sender, request, sociallogin, **kwargs):
+#     print(kwargs)
+#     print(vars(request))
+#     print(vars(sociallogin))
+#     print(sender)
+
+@receiver(user_signed_up)
+def on_user_signed_up(request, user, sociallogin=None, **kwargs):
+
+    if sociallogin:
+
+        if sociallogin.account.provider == 'facebook':
+            print(user)
+            print(sociallogin.serialize())
+            print(sociallogin.account.extra_data)
+            # user.email = sociallogin.account.extra_data['email']
+            try:
+                user.email = sociallogin.account.extra_data['email']
+            except KeyError:
+                user.email = 'no@email.com'
+            user.name = sociallogin.account.extra_data['first_name'] + \
+                ' ' + sociallogin.account.extra_data['last_name']
+            user.save()
+            # name = sociallogin.account.extra_data['name']
+            # user.email = sociallogin.account.extra_data['email']
+            # user.save()
+            # if sociallogin.account.extra_data['gender'] == 'male':
+            #     gender = 'M'
+            # elif sociallogin.account.extra_data['gender'] == 'female':
+            #     gender = 'F'
+            # user.create_profile(fullname=name, gender=gender)
+
 
 class Bill(models.Model):
     class Meta:
