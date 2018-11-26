@@ -7,15 +7,33 @@ import {Text,
         Button} from 'react-native';
 
 export default class BillInfo extends Component {
+    constructor(props) {
+        super(props)
+
+    }
+
     static navigationOptions = {
-        title: 'BillInfo',
+        title: 'Bill Info',
     };
 
     render() {
         const {navigate} = this.props.navigation;
+        var bill = this.props.navigation.state.params.bill
+        // NEED CONDITIONAL ON THE VOTED ON STUFF
         return(
             <View style={styles.container}>
-                <Text> Bill Info Here </Text>
+                <Text> Bill Id: {bill.BID} {"\n"} </Text>
+
+                <Text> Date Introduced: {bill.date_introduced} </Text>
+                <Text> Voted On: {String(bill.voted_on)} </Text>
+                <Text> Date Voted On: {bill.date_voted} {"\n"}</Text>
+
+                <Text> Short Summary: {bill.description} {"\n"}</Text>
+
+                <Text> Status: {bill.status} </Text>
+                <Text> Chamber: {bill.chamber} {"\n"}</Text>
+
+                <Text> Url: {bill.url} </Text>
             </View>
         );
     }

@@ -25,9 +25,6 @@ export default class VotingBar extends Component {
                     <Button
                         title="Yay"
                     />
-                    <Button
-                        title=">"
-                    />
                 </View>
                 <Text> Progress: {this.props.progress}/{this.props.total} </Text>
             </View>
