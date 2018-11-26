@@ -16,7 +16,6 @@ export default class Main extends Component {
         super(props)
 
         this.state = {
-            title: "[TITLE]",
             loading: "initial"
         }
     }
@@ -62,14 +61,10 @@ export default class Main extends Component {
 
                 <View>
                     <VotingBar
-                        title={this.state.bills[2].BID}
+                        bills={this.state.bills}
                         progress={this.state.progress}
                         total={this.state.total}
-                    />
-                    <Button
-                        color="green"
-                        title="Learn More"
-                        onPress={() => navigate('BillInfo', {bill: this.state.bills[2]})}
+                        mainNav={navigate}
                     />
                 </View>
 
@@ -79,10 +74,10 @@ export default class Main extends Component {
                         onPress={() => navigate('Profile')}
                     />
                 </View>
+
             </View>
         );
     }
-
 }
 
 const styles = StyleSheet.create({
@@ -98,5 +93,3 @@ const styles = StyleSheet.create({
     }
 
 });
-
-// onPress={() => navigate('Profile')}
