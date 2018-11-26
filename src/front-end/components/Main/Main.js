@@ -10,6 +10,7 @@ import {Text,
         ScrollView} from 'react-native';
 
 import VotingBar from "./VotingBar.js";
+import Boot from "./Boot.js"
 
 export default class Main extends Component {
     constructor(props) {
@@ -20,8 +21,17 @@ export default class Main extends Component {
         }
     }
 
-    static navigationOptions = {
-        title: 'Main',
+
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Main',
+            headerRight: (
+                <Button
+                    title="Profile"
+                    onPress={() => navigation.navigate('Profile')}
+                />
+            )
+        }
     };
 
     componentWillMount() {
@@ -47,31 +57,24 @@ export default class Main extends Component {
 
         // Initialize
         if (this.state.loading == 'initial') {
-            return <Text>Intializing...</Text>;
+            return <Boot text="Initializing..."/>
         }
 
         // Load
         if (this.state.loading) {
-            return <Text>Loading...</Text>;
+            return <Boot text="Loading..."/>
         }
 
         // Render
         return(
             <View style={styles.container}>
 
-                <View>
+                <View style={styles.votingbar}>
                     <VotingBar
                         bills={this.state.bills}
                         progress={this.state.progress}
                         total={this.state.total}
                         mainNav={navigate}
-                    />
-                </View>
-
-                <View style={{paddingTop: 200}}>
-                    <Button
-                        title="Go to Profile Screen"
-                        onPress={() => navigate('Profile')}
                     />
                 </View>
 
@@ -83,13 +86,14 @@ export default class Main extends Component {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        paddingTop: 100,
+        paddingTop: 5,
         paddingRight: 50,
         paddingLeft: 50,
     },
-    scrollview: {
-        height: 400,
-        flex: 1
+    votingbar: {
+        alignItems: "center",
+        width: 400,
+        height: 200,
+        backgroundColor: "white"
     }
-
 });

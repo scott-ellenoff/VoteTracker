@@ -4,7 +4,9 @@ import React, {Component} from 'react';
 import {Text,
         View,
         StyleSheet,
-        Button} from 'react-native';
+        Button,
+        TouchableOpacity,
+        Image} from 'react-native';
 
 export default class VotingBar extends Component {
     constructor(props) {
@@ -21,22 +23,41 @@ export default class VotingBar extends Component {
         return(
             <View>
 
-                {this.props.bills[billIndex] &&
+                {this.props.bills[billIndex]? (
                     <View style={styles.align}>
                         <Text> {this.props.bills[billIndex].BID} </Text>
                         <View style={styles.votebuttons}>
-                            <Button
-                                title="Nay"
-                                onPress={() => this.setState({billIndex: nextIndex})}
-                            />
-                            <Button
-                                title="No Opinion"
-                                onPress={() => this.setState({billIndex: nextIndex})}
-                            />
-                            <Button
-                                title="Yay"
-                                onPress={() => this.setState({billIndex: nextIndex})}
-                            />
+
+                            <TouchableOpacity
+                            title="Nay"
+                            style={styles.button}
+                            onPress={() => this.setState({billIndex: nextIndex})}
+                            >
+                                <Image source={require('../../assets/nay.png')}
+                                       style={styles.image}
+                                />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                            title="No Opinion"
+                            style={styles.button}
+                            onPress={() => this.setState({billIndex: nextIndex})}
+                            >
+                                <Image source={require('../../assets/idc.png')}
+                                       style={styles.image}
+                                />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                            title="Yay"
+                            style={styles.button}
+                            onPress={() => this.setState({billIndex: nextIndex})}
+                            >
+                                <Image source={require('../../assets/yay.png')}
+                                       style={styles.image}
+                                />
+                            </TouchableOpacity>
+
                         </View>
                         <Text> Progress: {this.state.billIndex}/{this.props.total} </Text>
                         <Button
@@ -44,7 +65,13 @@ export default class VotingBar extends Component {
                             onPress={() => this.props.mainNav('BillInfo', {bill: this.props.bills[billIndex]})}
                         />
                     </View>
-                }
+                ) : (
+                    <View>
+                        <Text> You’re Totally Caught Up! </Text>
+                        <Text> We update regularly, so check back soon </Text>
+                        <Text> for more bills and voting information </Text>
+                    </View>
+                )}
 
             </View>
         );
@@ -58,6 +85,14 @@ const styles = StyleSheet.create({
     },
     align: {
         alignItems: 'center',
-        backgroundColor: 'lightgray',
+        backgroundColor: 'white',
+    },
+    button: {
+        padding: 25
+    },
+    image: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain'
     }
 });
