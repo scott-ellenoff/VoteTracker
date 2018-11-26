@@ -4,7 +4,8 @@ import React, {Component} from 'react';
 import {Text,
         View,
         StyleSheet,
-        Button} from 'react-native';
+        Button,
+        Linking} from 'react-native';
 
 export default class BillInfo extends Component {
     constructor(props) {
@@ -19,21 +20,55 @@ export default class BillInfo extends Component {
     render() {
         const {navigate} = this.props.navigation;
         var bill = this.props.navigation.state.params.bill
-        // NEED CONDITIONAL ON THE VOTED ON STUFF
         return(
             <View style={styles.container}>
-                <Text> Bill Id: {bill.BID} {"\n"} </Text>
+                <Text>{"\n"}Bill {bill.BID}{"\n"}</Text>
 
-                <Text> Date Introduced: {bill.date_introduced} </Text>
-                <Text> Voted On: {String(bill.voted_on)} </Text>
-                <Text> Date Voted On: {bill.date_voted} {"\n"}</Text>
+                <View
+                  style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: 5,
+                  }}
+                 />
 
-                <Text> Short Summary: {bill.description} {"\n"}</Text>
+                <Text>{"\n"}Information{"\n"}</Text>
+                <Text>Deliberated on by the {bill.chamber}</Text>
+                <Text>Introduced on {bill.date_introduced}</Text>
+                {bill.voted_on ? (
+                    <Text>Voted on {bill.date_voted}{"\n"}</Text>
+                ) : (
+                    <Text>This bill has not been voted on{"\n"}</Text>
+                )}
 
-                <Text> Status: {bill.status} </Text>
-                <Text> Chamber: {bill.chamber} {"\n"}</Text>
+                <View
+                  style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: 5,
+                  }}
+                 />
 
-                <Text> Url: {bill.url} </Text>
+                <Text>{"\n"}Short Summary{"\n\n"}{bill.description} {"\n"}</Text>
+
+                <View
+                  style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: 5,
+                  }}
+                 />
+
+                <Text>{"\n"}Status{"\n\n"}{bill.status}{"\n"}</Text>
+
+                <View
+                  style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: 5,
+                  }}
+                  />
+
+                <Text>{"\n"}</Text>
+
+                <Button title="Learn Even More"
+                        onPress={ ()=>{ Linking.openURL(bill.url)}} />
             </View>
         );
     }
@@ -42,10 +77,7 @@ export default class BillInfo extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        paddingTop: 100,
-        paddingRight: 50,
-        paddingLeft: 50
+        padding: 10
     },
 
     votebuttons: {

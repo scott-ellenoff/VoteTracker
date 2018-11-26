@@ -21,7 +21,6 @@ export default class Main extends Component {
         }
     }
 
-
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Main',
