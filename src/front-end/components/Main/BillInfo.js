@@ -10,7 +10,6 @@ import {Text,
 export default class BillInfo extends Component {
     constructor(props) {
         super(props)
-
     }
 
     static navigationOptions = {
@@ -68,7 +67,7 @@ export default class BillInfo extends Component {
                 <Text>{"\n"}</Text>
 
                 <Button title="Learn Even More"
-                        onPress={ ()=>{ Linking.openURL(bill.url)}} />
+                        onPress={ ()=> { Linking.openURL(bill.url) } }/>
             </View>
         );
     }

@@ -1,5 +1,8 @@
 'use strict';
 
+/*
+    IMPORTS
+*/
 import axios from 'axios'
 
 import React, {Component} from 'react';
@@ -7,12 +10,19 @@ import {Text,
         View,
         StyleSheet,
         Button,
-        ScrollView} from 'react-native';
+        ScrollView,
+        Linking} from 'react-native';
 
 import VotingBar from "./VotingBar.js";
 import Boot from "./Boot.js"
 
+/*
+    Main Screen Component
+*/
 export default class Main extends Component {
+    /*
+        Constructor to initialize state as "loading"
+    */
     constructor(props) {
         super(props)
 
@@ -21,6 +31,9 @@ export default class Main extends Component {
         }
     }
 
+    /*
+        Header Title as Main, and Header button moving user to Profile screen
+    */
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Main',
@@ -33,6 +46,9 @@ export default class Main extends Component {
         }
     };
 
+    /*
+        Loading User API Information to state (finish loading bills)
+    */
     componentWillMount() {
         this.setState({loading: "true"})
 
@@ -77,6 +93,31 @@ export default class Main extends Component {
                     />
                 </View>
 
+                <View style={styles.historybar}>
+                    <ScrollView>
+                        {(this.state.bills).map((bill, key) => {
+                            return (
+                                <View key={key} style={styles.historyitems}>
+                                    <Text> {bill.BID} </Text>
+
+                                    {bill.voted_on? (
+                                        <Text> Concluded </Text>
+                                    ) : (
+                                        <Text> Pending... </Text>
+                                    )}
+
+                                    <Button title="About"
+                                            onPress={() => navigate('BillInfo', {bill: bill})}
+                                    />
+                                    <Button title="Map" />
+                                </View>
+                            )
+                        })}
+                    </ScrollView>
+                </View>
+
+
+
             </View>
         );
     }
@@ -85,14 +126,22 @@ export default class Main extends Component {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        paddingTop: 5,
-        paddingRight: 50,
-        paddingLeft: 50,
+        padding: 10,
     },
     votingbar: {
         alignItems: "center",
         width: 400,
-        height: 200,
+        height: 175,
         backgroundColor: "white"
+    },
+    historybar: {
+        marginTop: 10,
+        alignItems: "center",
+        width: 400,
+        height: 400,
+        backgroundColor: "white"
+    },
+    historyitems: {
+        flexDirection: "row"
     }
 });
