@@ -1,5 +1,8 @@
 'use strict';
 
+/*
+    IMPORTS
+*/
 import React, {Component} from 'react';
 import {Text,
         View,
@@ -7,17 +10,26 @@ import {Text,
         Button,
         Linking} from 'react-native';
 
+/*
+    Bill Information Component
+*/
 export default class BillInfo extends Component {
+    /*
+        Constructor for passing of bill props
+    */
     constructor(props) {
         super(props)
     }
 
+    /*
+        NavOptions for changing of Header title
+    */
     static navigationOptions = {
         title: 'Bill Info',
     };
 
     render() {
-        const {navigate} = this.props.navigation;
+        // Pulling props from navigation
         var bill = this.props.navigation.state.params.bill
         return(
             <View style={styles.container}>
@@ -74,6 +86,9 @@ export default class BillInfo extends Component {
 
 }
 
+/*
+    Styling for JSX
+*/
 const styles = StyleSheet.create({
     container: {
         padding: 10

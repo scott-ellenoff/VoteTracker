@@ -14,6 +14,7 @@ import {Text,
         Linking} from 'react-native';
 
 import VotingBar from "./VotingBar.js";
+import VotingHistory from "./VotingHistory.js"
 import Boot from "./Boot.js"
 
 /*
@@ -94,35 +95,20 @@ export default class Main extends Component {
                 </View>
 
                 <View style={styles.historybar}>
-                    <ScrollView>
-                        {(this.state.bills).map((bill, key) => {
-                            return (
-                                <View key={key} style={styles.historyitems}>
-                                    <Text> {bill.BID} </Text>
-
-                                    {bill.voted_on? (
-                                        <Text> Concluded </Text>
-                                    ) : (
-                                        <Text> Pending... </Text>
-                                    )}
-
-                                    <Button title="About"
-                                            onPress={() => navigate('BillInfo', {bill: bill})}
-                                    />
-                                    <Button title="Map" />
-                                </View>
-                            )
-                        })}
-                    </ScrollView>
+                    <VotingHistory
+                        bills={this.state.bills}
+                        mainNav={navigate}
+                    />
                 </View>
-
-
 
             </View>
         );
     }
 }
 
+/*
+    Styling for JSX
+*/
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
@@ -140,8 +126,5 @@ const styles = StyleSheet.create({
         width: 400,
         height: 400,
         backgroundColor: "white"
-    },
-    historyitems: {
-        flexDirection: "row"
     }
-});
+})

@@ -1,7 +1,8 @@
 'use strict';
 
-import axios from 'axios'
-
+/*
+    IMPORTS
+*/
 import React, {Component} from 'react';
 import {Text,
         View,
@@ -9,7 +10,13 @@ import {Text,
         StatusBar,
         ActivityIndicator} from 'react-native';
 
+/*
+    Boot Screen Component
+*/
 export default class Boot extends Component {
+    /*
+        Constructor for passing of text props
+    */
     constructor(props) {
         super(props)
     }
@@ -25,6 +32,9 @@ export default class Boot extends Component {
     }
 }
 
+/*
+    Styling for JSX
+*/
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -1,5 +1,8 @@
 'use strict';
 
+/*
+    IMPORTS
+*/
 import React, {Component} from 'react';
 import {Text,
         View,
@@ -8,7 +11,13 @@ import {Text,
         TouchableOpacity,
         Image} from 'react-native';
 
+/*
+    Voting Bar Component
+*/
 export default class VotingBar extends Component {
+    /*
+        Constructor to receive Main's props and initialize incrementing through bills
+    */
     constructor(props) {
         super(props)
 
@@ -18,8 +27,12 @@ export default class VotingBar extends Component {
     }
 
     render() {
+        // To Increment Through Bills
         var billIndex = this.state.billIndex
         var nextIndex = this.state.billIndex + 1
+
+        // To Create Yay, Nay, IDC Buttons
+        var voteOptions = ['yay', 'idc', 'nay']
         return(
             <View>
 
@@ -28,35 +41,27 @@ export default class VotingBar extends Component {
                         <Text> {this.props.bills[billIndex].BID} </Text>
                         <View style={styles.votebuttons}>
 
-                            <TouchableOpacity
-                            title="Nay"
-                            style={styles.button}
-                            onPress={() => this.setState({billIndex: nextIndex})}
-                            >
-                                <Image source={require('../../assets/nay.png')}
-                                       style={styles.image}
-                                />
-                            </TouchableOpacity>
+                            {voteOptions.map((option, key) => {
+                                var req = require('../../assets/yay.png')
+                                if (option == 'nay') {
+                                    req = require('../../assets/nay.png')
+                                } else if (option == 'idc') {
+                                    req = require('../../assets/idc.png')
+                                }
+                                return (
+                                    <TouchableOpacity
+                                    title={option}
+                                    key={key}
+                                    style={styles.button}
+                                    onPress={() => this.setState({billIndex: nextIndex})}
+                                    >
 
-                            <TouchableOpacity
-                            title="No Opinion"
-                            style={styles.button}
-                            onPress={() => this.setState({billIndex: nextIndex})}
-                            >
-                                <Image source={require('../../assets/idc.png')}
-                                       style={styles.image}
-                                />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                            title="Yay"
-                            style={styles.button}
-                            onPress={() => this.setState({billIndex: nextIndex})}
-                            >
-                                <Image source={require('../../assets/yay.png')}
-                                       style={styles.image}
-                                />
-                            </TouchableOpacity>
+                                    <Image source={req}
+                                           style={styles.image}
+                                    />
+                                    </TouchableOpacity>
+                                )
+                            })}
 
                         </View>
                         <Text> Progress: {this.state.billIndex}/{this.props.total} </Text>
@@ -76,9 +81,11 @@ export default class VotingBar extends Component {
             </View>
         );
     }
-
 }
 
+/*
+    Styling for JSX
+*/
 const styles = StyleSheet.create({
     votebuttons: {
         flexDirection: 'row'
