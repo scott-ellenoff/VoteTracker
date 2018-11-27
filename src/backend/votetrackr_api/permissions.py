@@ -6,7 +6,7 @@ class IsAdminOrSelf(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, user_obj):
-        return user_obj == request.user or request.user.is_staff
+        return (user_obj == request.user) or request.user.is_staff
 
 class IsSelf(permissions.BasePermission):
     """

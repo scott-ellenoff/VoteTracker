@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, filters
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.reverse import reverse, reverse_lazy
 from .models import User, Bill, Legislator, Vote
 from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, CustomRegisterSerializer
@@ -19,13 +19,16 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    # def get_permissions(self):
-    #     """
-    #     Instantiates and returns the list of permissions that this view requires.
-    #     """
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
         
-    #     permission_classes = [IsAuthenticated]
-    #     return [permission() for permission in permission_classes]
+        if self.action == 'list':
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 class LegislatorViewSet(viewsets.ModelViewSet):
     """
