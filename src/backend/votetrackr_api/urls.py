@@ -17,9 +17,9 @@ router.register(r'votes', VoteViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     # path('rest-auth/registration/', include('rest_auth.registration.urls')),
-    path('rest-auth/registration/', CustomRegisterView.as_view(), name='register'),
-    path('rest-auth/login/', CustomLoginView.as_view(), name='login'),
-    path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
+    path('registration/', CustomRegisterView.as_view(), name='register'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('login/facebook/', FacebookLogin.as_view(), name='fb_login'),
 ]
 
 # urlpatterns = [
