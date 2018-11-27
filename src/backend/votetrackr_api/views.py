@@ -3,17 +3,19 @@ from rest_framework import generics, viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.reverse import reverse, reverse_lazy
 from .models import User, Bill, Legislator, Vote
-from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer
+from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, CustomRegisterSerializer
+from .permissions import IsAdminOrSelf
 
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-from rest_auth.registration.views import SocialLoginView
+from rest_auth.registration.views import SocialLoginView, RegisterView
+from rest_auth.views import LoginView
 
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
 
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAdminOrSelf,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -29,6 +31,7 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+    permission_classes = (IsAuthenticated,)
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
@@ -46,6 +49,7 @@ class BillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+    permission_classes = (IsAuthenticated,)
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
 
@@ -56,6 +60,7 @@ class VoteViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+    permission_classes = (IsAuthenticated,)
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
 
@@ -68,7 +73,19 @@ class FacebookLogin(SocialLoginView):
         # r.data['user'] = reverse('user-detail', args=[self.user.id], request=self.request)
         return r
 
-# class CustomRegistration()
+class CustomRegisterView(RegisterView):
+    serializer_class = CustomRegisterSerializer
+
+    def get_response_data(self, user):
+        data = super(CustomRegisterView, self).get_response_data(user)
+        data['user'] = UserSerializer(user, context={'request': self.request}).data
+        return data
+
+class CustomLoginView(LoginView):
+    def get_response(self):
+        r = super(CustomLoginView, self).get_response()
+        r.data['user'] = UserSerializer(self.user, context={'request': self.request}).data
+        return r
 
 # # Create your views here.
 # class ListUserView(generics.ListAPIView):

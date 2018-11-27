@@ -2,6 +2,8 @@ from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedIdentityField
 from rest_framework.validators import UniqueTogetherValidator
 
+from rest_auth.registration.serializers import RegisterSerializer
+
 from .models import User, Bill, Legislator, Vote
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -47,3 +49,13 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
             pass
             
         return data
+
+class CustomRegisterSerializer(RegisterSerializer):
+    UID = serializers.UUIDField(read_only=True)
+    district = serializers.IntegerField()
+    name = serializers.CharField()
+
+    def custom_signup(self, request, user):
+        user.name = self.validated_data.get('name', '')
+        user.district = self.validated_data.get('district', '')
+        user.save()

@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url, include
 # from .views import ListUserView, ListBillView, ListLegislatorView, ListVoteView
-from .views import UserViewSet, BillViewSet, LegislatorViewSet, VoteViewSet, FacebookLogin
+from .views import UserViewSet, BillViewSet, LegislatorViewSet, VoteViewSet, FacebookLogin, CustomRegisterView, CustomLoginView
 from rest_framework import routers
 
 
@@ -10,11 +10,16 @@ router.register(r'users', UserViewSet)
 router.register(r'bills', BillViewSet)
 router.register(r'legislators', LegislatorViewSet)
 router.register(r'votes', VoteViewSet)
-
+# router.register(r'rest-auth/register', CustomRegisterView)
+# router.register(r'rest-auth/login/', CustomLoginView)
+# router.register(r'rest-auth/facebook/', FacebookLogin)
+# print(include(router.urls))
 urlpatterns = [
-    url(r'^', include(router.urls)),
-    path('rest-auth/registration/', include('rest_auth.registration.urls')),
-    url(r'^rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login'),
+    path('', include(router.urls)),
+    # path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('rest-auth/registration/', CustomRegisterView.as_view(), name='register'),
+    path('rest-auth/login/', CustomLoginView.as_view(), name='login'),
+    path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
 ]
 
 # urlpatterns = [
