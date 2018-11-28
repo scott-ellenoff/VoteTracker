@@ -2,50 +2,90 @@
 
 import React, {Component} from 'react';
 import {Platform,
-        Text,
-        View,
-        StyleSheet,
-        Button,
-        TextInput} from 'react-native';
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  TextInput,
+  AsyncStorage,
+  Alert} from 'react-native';
 
 export default class Home extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-                        username: 'Username',
-                        password: 'Password'
-                    };
-     }
-
-    static navigationOptions = {
-        title: 'Home',
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: 'Username',
+      password: 'Password'
     };
+  }
 
-    render() {
-        const {navigate} = this.props.navigation;
-        return(
-            <View style={styles.container}>
-                <Text> VoteTracker </Text>
+  static navigationOptions = {
+    title: 'Home',
+  };
 
-                <TextInput
-                    style={styles.box}
-                    onChangeText={(text) => this.setState({username: text})}
-                    value={this.state.username}
-                />
-                <TextInput
-                    style={styles.box}
-                    onChangeText={(text) => this.setState({password: text})}
-                    value={this.state.password}
-                />
+  render() {
+    const {navigate} = this.props.navigation;
+    return(
+      <View style={styles.container}>
+        <Text> VoteTracker </Text>
 
-                <Button
-                    title="Login"
-                    onPress={() => navigate('Main')}
-                />
-            </View>
-        );
-    }
+        <TextInput
+          style={styles.box}
+          onChangeText={(text) => this.setState({username: text})}
+          value={this.state.username}
+          autoCapitalize='none' //added
+        />
 
+        <TextInput
+          style={styles.box}
+          onChangeText={(text) => this.setState({password: text})}
+          value={this.state.password}
+          autoCapitalize='none' //added
+        />
+
+        <Button
+          title="Login"
+          onPress={this.login}
+        />
+
+        <Button
+          title="Sign Up"
+          onPress={() => navigate('Signup')}
+        />
+
+      </View>
+    );
+  }
+
+  login = () => {
+
+    fetch('http://52.15.86.243:8080/api/v1/login/', {
+      method: 'POST',
+      // POSTing to server
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password,
+      })
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.key) {
+          // if there is a token in the object returned by the server
+          AsyncStorage.setItem('key', json.key); //syntax is setItem(key,value)
+          // save the token value in AsyncStorage, a global storage
+
+          AsyncStorage.getItem('key')
+            .then((value) => Alert.alert('Login succeeded, key is saved, its value is', value)) // this is the key
+
+        } else {
+          Alert.alert('Login failed');
+        }
+      })
+      .done()
+  }
 }
 
 const styles = StyleSheet.create({
@@ -56,10 +96,10 @@ const styles = StyleSheet.create({
     paddingLeft: 50,
   },
   box: {
-      height: 40,
-      width: 150,
-      backgroundColor: 'white',
-      borderColor: 'black',
-      borderWidth: 1
+    height: 40,
+    width: 150,
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderWidth: 1
   }
 });
