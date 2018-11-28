@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics, viewsets, filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.reverse import reverse, reverse_lazy
+from rest_framework.decorators import action
 from .models import User, Bill, Legislator, Vote
 from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, CustomRegisterSerializer
 from .permissions import IsAdminOrSelf
@@ -29,6 +30,18 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
+
+
+    # @action(detail=True, methods=['put'], name='Update Unvoted')
+    # def update_unvoted(self, request):
+    #     user = self.get_object()
+    #     serializer = UserSerializer(data = request.data)
+    #     if serializer.is_valid():
+    #         user.save()
+    #         return Response({'status': 'unvoted updated'})
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_400_BAD_REQUEST)
 
 class LegislatorViewSet(viewsets.ModelViewSet):
     """
@@ -66,6 +79,36 @@ class VoteViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+
+    def create(self, request):
+        mutable = request.data._mutable
+        request.data._mutable = True
+        request.data['user'] = reverse('user-detail', args=[request.user.id])
+        request.data._mutable = mutable
+
+        user = request.user
+        print(user.unvoted)
+        user.unvoted.remove(request.data['bill'])
+        print(user.unvoted)
+        return super(VoteViewSet, self).create(request)
+
+
+    @action(detail=False, methods=['post'])
+    def submit_vote(self, request):
+        print('submitting vote')
+    #     vote = self.get_object()
+    #     serializer = VoteSerializer(data = request.data)
+    #     if serializer.is_valid():
+    #         bill = serializer.data['bill']
+    #         vote.user = request.user
+    #         # user = serializer.data['user']
+    #         print(request.user)
+
+    #         vote.save()
+    #         return Response({'status': 'vote submitted'})
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_400_BAD_REQUEST)
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
