@@ -77,6 +77,7 @@ class Bill(models.Model):
 
 
     BID = models.CharField(db_column='BID', max_length=12, default=create_random_id, primary_key=True, editable=False)
+    name = models.TextField(db_column='Name', blank=True)
     description = models.TextField(db_column='Description', blank=True)
     date_introduced = models.DateField(db_column='DateIntroduced', default=datetime.date.today)
     status = models.TextField(db_column='Status', choices=BILL_STATUS, blank=True)

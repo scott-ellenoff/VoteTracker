@@ -15,7 +15,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    permission_classes = (IsAdminOrSelf,)
+    # permission_classes = (IsAdminOrSelf,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -27,7 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             permission_classes = [IsAdminUser]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
 class LegislatorViewSet(viewsets.ModelViewSet):
