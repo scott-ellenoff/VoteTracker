@@ -108,6 +108,14 @@ react-native run-ios
 
 This will take a bit of time, so hang on. If you still get a CFBundleIdentifier error, please contact yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
 
+# Sample Login Credentials #
+--Set1--
+Username: scottwang4
+Password: uchicago4
+
+--Set2--
+Username: scottwang0
+Password: uchicago0
 
 # How to Run Back-End #
 
