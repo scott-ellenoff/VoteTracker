@@ -152,7 +152,7 @@ For the Django API, we created the endpoints and the models that the front-end w
 
 Yasoob Rasheed - Worked on React Framework (Home, Main, Segues) <br />
 Zach Kamran - Worked on React Framework (Profile, Segues) <br />
-Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well <br />
+Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well. Also worked on implementing auth for login and registration.<br />
 
 **Back-End:** <br />
 Larry Chen, Emily Xue, Scott Ellenoff - Worked together to create the Django API <br />
