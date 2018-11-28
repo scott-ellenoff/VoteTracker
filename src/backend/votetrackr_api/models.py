@@ -24,7 +24,7 @@ class User(AbstractUser):
     district = models.IntegerField(db_column='District', blank=True, null=True)
     matched = models.ManyToManyField('Legislator', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
-
+    unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
 # @receiver(pre_social_login)
 # def save_user(sender, request, sociallogin, **kwargs):
 #     print(kwargs)
