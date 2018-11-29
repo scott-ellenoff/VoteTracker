@@ -71,8 +71,8 @@ class Bill(models.Model):
     )
 
     CHAMBERS = (
-        ('S', 'Senate'),
-        ('H', 'House of Representatives')
+        ('Senate', 'Senate'),
+        ('House', 'House of Representatives')
     )
 
 
@@ -93,15 +93,17 @@ class Legislator(models.Model):
         db_table = 'Legislators'
 
     AFFILIATION = (
-            ('D', 'Democrat'),
-            ('R', 'Republican'),
-            ('I', 'Independent'),
-            ('O', 'Other')
+            ('Democrat', 'Democrat'),
+            ('Republican', 'Republican'),
+            ('Independent', 'Independent'),
+            ('Other', 'Other')
     )
     LID = models.CharField(db_column='LID', max_length=12, default=create_random_id, primary_key=True, editable=False)
     fullname = models.CharField(db_column='FullName', max_length=255, blank=True)
     senator = models.BooleanField(db_column='isSenator', blank=True, null=True)
     affiliation = models.TextField(db_column='Affiliation', choices=AFFILIATION, blank=True, null=True)
+    district = models.IntegerField(db_column='District', blank=True, null=True)
+    state = models.CharField(db_column='State', max_length=20, blank=True)
     dwnominate = models.FloatField(db_column='DWNominate', blank=True, null=True)
     url = models.URLField(db_column='URL', blank=True, null=True)
 
