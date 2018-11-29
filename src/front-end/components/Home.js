@@ -1,14 +1,16 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Platform,
+import {
+  Platform,
   Text,
   View,
   StyleSheet,
   Button,
   TextInput,
   AsyncStorage,
-  Alert} from 'react-native';
+  Alert
+} from 'react-native';
 
 export default class Home extends Component {
   constructor(props) {
@@ -25,21 +27,21 @@ export default class Home extends Component {
 
   render() {
     const {navigate} = this.props.navigation;
-    return(
+    return (
       <View style={styles.container}>
         <Text> VoteTracker </Text>
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({username: text})}
-          value={this.state.username}
+          placeholder={this.state.username}
           autoCapitalize='none' //added
         />
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({password: text})}
-          value={this.state.password}
+          placeholder={this.state.password}
           autoCapitalize='none' //added
         />
 
@@ -71,16 +73,17 @@ export default class Home extends Component {
     })
       .then((response) => response.json())
       .then((json) => {
+        console.log(json);
         if (json.key) {
           // if there is a token in the object returned by the server
           AsyncStorage.setItem('key', json.key); //syntax is setItem(key,value)
           // save the token value in AsyncStorage, a global storage
 
-          AsyncStorage.getItem('key')
-            .then((value) => Alert.alert('Login succeeded, key is saved, its value is', value)) // this is the key
-
+          // AsyncStorage.getItem('key')
+          //   .then((value) => Alert.alert('Login succeeded, key is saved, its value is', value)) // this is the key
+          this.props.navigation('Main')
         } else {
-          Alert.alert('Login failed');
+          Alert.alert("Login Error", 'Login failed');
         }
       }).catch((err) => console.log(err))
       .done()
