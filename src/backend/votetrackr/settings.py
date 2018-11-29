@@ -165,7 +165,7 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'mysql.connector.django',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test_db',
+        'NAME': 'deploy_db',
         'USER': 'VoteTrackrMaster',
         'PASSWORD': 'VotePass',
         'HOST': 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com',
