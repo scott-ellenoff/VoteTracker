@@ -46,6 +46,7 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
                     raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
             else:
                 obj = Vote.objects.get(bill=bill, legislator=legislator)
+                raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
             # if obj:
             #     print(obj)
             #     raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')

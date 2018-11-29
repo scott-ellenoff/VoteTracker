@@ -40,21 +40,37 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(request.data)
         # print(request.data['followed'])
         user = User.objects.get(pk=pk)
-        print(user)
+        # print(user)
         followed = request.data.getlist('followed')
-        print(followed)
+        # print(followed)
         matched = []
 
+        request.data._mutable = True
+
+        # print(user.matched.all())
+        for pm in user.matched.all():
+            pm.delete()
+        prev_matched = user.matched.all()
         user.matched.clear()
+        # print()
+        # print(prev_matched)
+            # print(pm)
+
         for l in followed:
             l_pk = l.split('/')[-2]
             legislator = Legislator.objects.get(pk=l_pk)
-            print(legislator)
+            # print(legislator)
             m = Match(legislator=legislator)
-            print(m)
-            user.matched.add(m)
+            m.save()
+            # print(m.MID)
+            request.data.update({'matched': reverse('match-detail', args=[m.MID])})
+            # user.matched.add(m)
 
-            
+        request.data._mutable = False
+        # mutable = request.data._mutable
+        # request.data._mutable = True
+        # request.data['matched'] = matched
+        # request.data._mutable = mutable
         # print(request.data.getlist('followed'))
 
         return super(UserViewSet, self).update(request)

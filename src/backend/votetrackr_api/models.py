@@ -31,7 +31,7 @@ class User(AbstractUser):
     UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
-    # matched = models.ForeignKey('Match', on_delete=models.CASCADE, blank=True)
+    # matched = models.ForeignKey('Match', on_delete=models.CASCADE, blank=True, null=True)
     matched = models.ManyToManyField('Match', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
     unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
