@@ -93,7 +93,6 @@ def add_table_entry(conn, cursor, table_name, args):
     if not valid_table_entry(conn, cursor, table_name, args):
         return False
 
-    # add_query = 'INSERT INTO ' + table_name + '(' + ', '.join(list(args.keys())) + ') VALUES(%s,%s,%s,%s,%s,%s)'
     add_query = 'INSERT INTO ' + table_name + '(' + ', '.join(list(args.keys())) + \
                 ') VALUES(' + ','.join(['%s'] * len(args.values())) + ')'
     print('Query is: ', add_query)
@@ -101,17 +100,41 @@ def add_table_entry(conn, cursor, table_name, args):
     cursor.execute(add_query, list(args.values()))
 
 
+# Update a specific entry with key ID in a specified database
+# Args is a dictionary of arguments
+def update_table_entry(conn, cursor, table_name, id, args):
+    if not valid_table_entry(conn, cursor, table_name, args):
+        return False
+
+    id_val = args[id]
+    args.pop(id)
+
+    query_string = ', '.join(["{} = '{}'".format(k, v) for k, v in args.items()])
+
+    upd_query = 'UPDATE ' + table_name + \
+                ' SET ' + query_string + \
+                ' WHERE ' + id + " = '" + id_val + "'"
+
+    # print('Query is: ', upd_query)
+    # print (list(args.values()))
+    cursor.execute(upd_query)
+
+
 # Populate the legislators table from the clean_legislators.json
 def populate_legislators(conn, cursor):
     # Populate legislators table
-    new_legislators = json.loads(open(os.path.join(DICT_DIR, 'Clean/clean_legislators.json')).read())
+    new_legislators = json.loads(open('Data Scraping/Dictionaries/Clean/clean_legislators.json').read())
     for leg in new_legislators:
-        print(leg)
+        # print(leg)
         try:
             add_table_entry(conn, cursor, 'Legislators', leg)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_DUP_ENTRY:
                 print('Tried to input duplicate entry for key: ', leg['LID'])
+                try:
+                    update_table_entry(conn, cursor, 'Legislators', 'LID', leg)
+                except:
+                    print(err, ' occured while checking trying to update the row')
             else:
                 print(err, ' occured while checking trying to add the entry')
             continue
@@ -120,17 +143,43 @@ def populate_legislators(conn, cursor):
 # Populate the bills table from the clean_house_bills.json and clean senate_bills.json
 def populate_bills(conn, cursor):
     # Populate legislators table
-    new_house_bills = json.loads(open(os.path.join(DICT_DIR, 'Clean/clean_house_bills.json')).read())
-    new_senate_bills = json.loads(open(os.path.join(DICT_DIR, 'Clean/clean_senate_bills.json')).read())
+    new_house_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_house_bills.json').read())
+    new_senate_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_senate_bills.json').read())
 
     new_bills = new_house_bills + new_senate_bills
+    # print(len(new_bills))
     for bill in new_bills:
-        print(bill)
+        # print(bill)
         try:
             add_table_entry(conn, cursor, 'Bills', bill)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_DUP_ENTRY:
                 print('Tried to input duplicate entry for key: ', bill['BID'])
+                try:
+                    update_table_entry(conn, cursor, 'Bills', 'BID', bill)
+                except:
+                    print(err, ' occured while checking trying to update the row')
+            else:
+                print(err, ' occured while checking trying to add the entry')
+            continue
+
+
+# Populate the votes table with the votes of legislators for the bills in the db
+def populate_votes(conn, cursor):
+    # Populate legislators table
+    votes = json.loads(open('Data Scraping/Dictionaries/Clean/collected_votes.json').read())
+    print(len(list(votes.keys())))
+    for vote in votes:
+        print(vote)
+        try:
+            add_table_entry(conn, cursor, 'Bills', vote)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_DUP_ENTRY:
+                print('Tried to input duplicate entry for key: ', vote['BID'])
+                try:
+                    update_table_entry(conn, cursor, 'Bills', 'BID', vote)
+                except:
+                    print(err, ' occured while checking trying to update the row')
             else:
                 print(err, ' occured while checking trying to add the entry')
             continue
@@ -139,5 +188,4 @@ def populate_bills(conn, cursor):
 # Prints out a table from the database with a given name
 def print_table(table_name):
     db = pd.read_sql('select * from ' + table_name, con=conn)
-    print(db)
-
+    print(db.to_string())

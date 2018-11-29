@@ -2,6 +2,11 @@ from django.shortcuts import render
 from rest_framework import generics, viewsets, filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.reverse import reverse, reverse_lazy
+from rest_framework.filters import SearchFilter
+from itertools import chain
+from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework.decorators import action
 from .models import User, Bill, Legislator, Vote
 from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, CustomRegisterSerializer
 from .permissions import IsAdminOrSelf
@@ -15,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    permission_classes = (IsAdminOrSelf,)
+    # permission_classes = (IsAdminOrSelf,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -27,8 +32,20 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             permission_classes = [IsAdminUser]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
+
+
+    # @action(detail=True, methods=['put'], name='Update Unvoted')
+    # def update_unvoted(self, request):
+    #     user = self.get_object()
+    #     serializer = UserSerializer(data = request.data)
+    #     if serializer.is_valid():
+    #         user.save()
+    #         return Response({'status': 'unvoted updated'})
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_400_BAD_REQUEST)
 
 class LegislatorViewSet(viewsets.ModelViewSet):
     """
@@ -38,6 +55,30 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        if self.action == 'list':
+            queryset = Legislator.objects.all()
+            affiliation = self.request.query_params.get('affiliation', None)
+            senator = self.request.query_params.get('senator', None)
+            fullname = self.request.query_params.get('fullname', None)
+
+            if affiliation is not None:
+                queryset = queryset.filter(affiliation=affiliation)
+
+            if senator is not None:
+                queryset = queryset.filter(senator=senator)
+
+            if fullname is not None:
+                queryset = queryset.filter(fullname=fullname)
+
+            return queryset
+
+        else:
+            return super(LegislatorViewSet, self).get_queryset()
     # def get_queryset(self):
     #     try:
     #         legislator = self.request.legislator
@@ -55,6 +96,36 @@ class BillViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated,)
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
+    # filter_backends = (DjangoFilterBackend, SearchFilter)
+    # filter_fields = ('chamber', 'status')
+    filter_backends = (SearchFilter,)
+    search_fields = ('description')
+
+    # def get_queryset(self):
+    #     """
+    #     Optionally restricts the returned purchases to a given user,
+    #     by filtering against a `username` query parameter in the URL.
+    #     """
+    #     if self.action == 'list':
+    #         queryset = Bill.objects.all()
+    #         chamber = self.request.query_params.get('chamber', None)
+    #         # senator = self.request.query_params.get('senator', None)
+    #         # fullname = self.request.query_params.get('fullname', None)
+
+    #         if chamber is not None:
+    #             queryset = queryset.filter(chamber=chamber)
+
+    #         # if senator is not None:
+    #         #     queryset = queryset.filter(senator=senator)
+
+    #         # if fullname is not None:
+    #         #     queryset = queryset.filter(fullname=fullname)
+
+    #         return queryset
+
+    #     else:
+    #         return super(LegislatorViewSet, self).get_queryset()
+
 
     # filter_backends = (filters.SearchFilter)
     # search_fields = ('description', 'status', 'voted-on', 'congress-num', 'chamber', 'session', 'date-voted', 'date-introduced')
@@ -64,8 +135,39 @@ class VoteViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     # permission_classes = (IsAuthenticated,)
-    queryset = Vote.objects.all()
+    queryset = Vote.objects.all()#.filter(owner=request.owner)
     serializer_class = VoteSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        if self.action == 'list':
+            queryset = Vote.objects.all()
+
+            uvotes = queryset.filter(user__id=self.request.user.id)
+            lvotes = queryset.filter(legislator__isnull=False)
+            queryset = list(chain(uvotes, lvotes))
+
+            return queryset
+
+        else:
+            return super(VoteViewSet, self).get_queryset()
+
+    def create(self, request):
+        mutable = request.data._mutable
+        request.data._mutable = True
+        request.data['user'] = reverse('user-detail', args=[request.user.id])
+        request.data._mutable = mutable
+
+        user = request.user
+        print(user.unvoted)
+        user.unvoted.remove(request.data['bill'])
+        print(user.unvoted)
+        return super(VoteViewSet, self).create(request)
+
+
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
