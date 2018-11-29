@@ -7,13 +7,25 @@ from itertools import chain
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.decorators import action
-from .models import User, Bill, Legislator, Vote
-from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, CustomRegisterSerializer
-from .permissions import IsAdminOrSelf
+from rest_framework.pagination import PageNumberPagination
+from .models import User, Bill, Legislator, Vote, Match
+from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, MatchSerializer, CustomRegisterSerializer
+from .permissions import IsAdminOrSelf, IsOwner
 
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView, RegisterView
 from rest_auth.views import LoginView
+
+# def create_match(legislator, user):
+
+class MatchViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+
+    # permission_classes = (IsAdminOrSelf,)
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -24,17 +36,84 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def update(self, request, pk):
+        # print(request.data)
+        # print(request.data['followed'])
+        user = User.objects.get(pk=pk)
+        print(user)
+        followed = request.data.getlist('followed')
+        print(followed)
+        matched = []
+
+        user.matched.clear()
+        for l in followed:
+            l_pk = l.split('/')[-2]
+            legislator = Legislator.objects.get(pk=l_pk)
+            print(legislator)
+            m = Match(legislator=legislator)
+            print(m)
+            user.matched.add(m)
+
+            
+        # print(request.data.getlist('followed'))
+
+        return super(UserViewSet, self).update(request)
+
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
         """
         
         if self.action == 'list':
-            permission_classes = [IsAdminUser]
+            permission_classes = []#[IsAdminUser]
+        # elif self.action == 'add_vote':
+        #     permission_classes = []#[IsSelf]
         else:
-            permission_classes = [IsAdminOrSelf]
+            permission_classes = []#[IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
+    def get_serializer_class(self):
+        if self.action == 'add_vote':
+            return VoteSerializer
+        else:
+            return UserSerializer
+
+    # @action(detail=True, methods=['post'], name='Vote')
+    # def add_vote(self, request, pk):
+    #     print(request.data)
+    #     print(pk)
+    #     # self.serializer_class = VoteSerializer
+    #     mutable = request.data._mutable
+    #     request.data._mutable = True
+    #     request.data['user'] = reverse('user-detail', args=[pk])
+    #     request.data._mutable = mutable
+
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+
+    #     try:
+    #         headers =  {'Location': str(serializer.data[api_settings.URL_FIELD_NAME])}
+    #     except (TypeError, KeyError):
+    #         headers = {}
+
+    #     user.unvoted.remove(request.data['bill'])
+
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        # return super(VoteViewSet, self).create(request)
+
+    # def create(self, request):
+    #     mutable = request.data._mutable
+    #     request.data._mutable = True
+    #     request.data['user'] = reverse('user-detail', args=[request.user.id])
+    #     request.data._mutable = mutable
+
+    #     user = request.user
+    #     print(user.unvoted)
+    #     user.unvoted.remove(request.data['bill'])
+    #     print(user.unvoted)
+    #     return super(VoteVi
 
     # @action(detail=True, methods=['put'], name='Update Unvoted')
     # def update_unvoted(self, request):
@@ -137,37 +216,44 @@ class VoteViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated,)
     queryset = Vote.objects.all()#.filter(owner=request.owner)
     serializer_class = VoteSerializer
+    pagination_class = PageNumberPagination
+
+    def get_permissions(self):
+        if self.action == 'user_vote':
+            permission_classes = [IsAuthenticated]
+        elif self.action == 'detail':
+            permission_classes = [IsOwner]
+        # elif self.action == 'user_vote':
+            # permission_classes = []#[IsAuthenticated]
+        else:
+            permission_classes = []#[IsAdminOrSelf]
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
         if self.action == 'list':
             queryset = Vote.objects.all()
 
             uvotes = queryset.filter(user__id=self.request.user.id)
             lvotes = queryset.filter(legislator__isnull=False)
             queryset = list(chain(uvotes, lvotes))
+            # queryset = uvotes
 
             return queryset
 
         else:
             return super(VoteViewSet, self).get_queryset()
 
-    def create(self, request):
+    @action(detail=False, methods=['post'], name='Vote')
+    def user_vote(self, request):
         mutable = request.data._mutable
         request.data._mutable = True
         request.data['user'] = reverse('user-detail', args=[request.user.id])
         request.data._mutable = mutable
 
         user = request.user
-        print(user.unvoted)
+        # print(user)
         user.unvoted.remove(request.data['bill'])
-        print(user.unvoted)
         return super(VoteViewSet, self).create(request)
-
-
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter

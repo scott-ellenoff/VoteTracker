@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from requests.auth import HTTPBasicAuth
 from votetrackr_api.models import User, Bill, Legislator, Vote
-from push_notifications.models import APNSDevice, GCMDevice
+# from push_notifications.models import APNSDevice, GCMDevice
 from votetrackr_api.db_updater import db_updater
 # Create your tests here.
 import unittest

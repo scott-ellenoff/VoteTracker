@@ -15,6 +15,15 @@ from allauth.socialaccount.signals import pre_social_login
 def create_random_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
+class Match(models.Model):
+    class Meta:
+        db_table = 'Matches'
+
+    MID = models.UUIDField(db_column='MID', default=uuid.uuid4, editable=False, primary_key=True)
+    legislator = models.ForeignKey('Legislator', on_delete=models.CASCADE, blank=True, null=True)
+    match_percentage = models.DecimalField(db_column='Percentage', decimal_places=4, max_digits=6, default=0)
+    num_votes = models.IntegerField(db_column='NumVotes', default=0)
+
 class User(AbstractUser):
     class Meta:
         db_table = 'Users'
@@ -22,9 +31,29 @@ class User(AbstractUser):
     UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
+    # matched = models.ForeignKey('Match', on_delete=models.CASCADE, blank=True)
     matched = models.ManyToManyField('Match', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
     unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
+
+    def save(self, *args, **kwargs):
+        # print(locals())
+        # if self.user:
+        #     for l in self.user.followed():
+        #         print(l)
+        #         Vote.objects.filter(legislator=self.legislator).filter(bill=self.bill)
+        #         match = u.matched.filter(Legislator = self.legislator)
+        #         match.numberOfVotes = match.numberOfVotes+1
+        #         if self.vote == lVote.vote:
+        #             match.matchPercentage = match.matchPercentage + (1-match.matchPercentage)/(match.numberOfVotes)
+        #         else:
+        #             match.matchPercentage = match.mmatchPercentage + (0-match.matchPercentage)/(match.numberOfVotes)
+        #         match.save()
+
+        super(User, self).save(*args, **kwargs)
+
+    # def compute_matches():
+
 # @receiver(pre_social_login)
 # def save_user(sender, request, sociallogin, **kwargs):
 #     print(kwargs)
@@ -58,23 +87,15 @@ def on_user_signed_up(request, user, sociallogin=None, **kwargs):
             #     gender = 'F'
             # user.create_profile(fullname=name, gender=gender)
 
-class Match(models.Model):
-    class Meta:
-        db_table = 'Matches'
-
-    legislator = models.ForeignKey('Legislator', on_delete=models.CASCADE, blank=True, null=True)
-    matchPercentage = models.DecimalField(db_column='Percentage', decimal_places=4, max_digits=6, default=0)
-    numberOfVotes = models.IntegerField(db_column='NumVotes', default=0)
-
 class Bill(models.Model):
     class Meta:
         db_table = 'Bills'
 
     BILL_STATUS = (
-        ('P', 'Passed'),
-        ('R', 'Rejected'),
-        ('OTF', 'On the Floor'),
-        ('IC', 'In committee')
+        ('Passed', 'Passed'),
+        ('Rejected', 'Rejected'),
+        ('On the Floor', 'On the Floor'),
+        ('In Commitee', 'In committee')
     )
 
     CHAMBERS = (
@@ -133,16 +154,16 @@ class Vote(models.Model):
     def save(self, *args, **kwargs):
         if self.user and self.legislator or not self.user and not self.legislator:
             raise ValueError('Exactly one of [Vote.user, Vote.legislator] must be set')
-        if self.user:
-            u = User.objects.get(self.user)
-            for t in u.followed():
-                lVote.objects.filter(legislator = self.legislator).filter(bill = self.bill)
-                match = u.matched.filter(Legislator = self.legislator)
-                match.numberOfVotes = match.numberOfVotes+1
-                if self.vote == lVote.vote:
-                    match.matchPercentage = match.matchPercentage + (1-match.matchPercentage)/(match.numberOfVotes)
-                else:
-                    match.matchPercentage = match.mmatchPercentage + (0-match.matchPercentage)/(match.numberOfVotes)
-                match.save()
+        # if self.user:
+        #     for l in self.user.followed():
+        #         print(l)
+        #         Vote.objects.filter(legislator=self.legislator).filter(bill=self.bill)
+        #         match = u.matched.filter(Legislator = self.legislator)
+        #         match.numberOfVotes = match.numberOfVotes+1
+        #         if self.vote == lVote.vote:
+        #             match.matchPercentage = match.matchPercentage + (1-match.matchPercentage)/(match.numberOfVotes)
+        #         else:
+        #             match.matchPercentage = match.mmatchPercentage + (0-match.matchPercentage)/(match.numberOfVotes)
+        #         match.save()
 
         super(Vote, self).save(*args, **kwargs)

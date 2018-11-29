@@ -4,7 +4,7 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from rest_auth.registration.serializers import RegisterSerializer
 
-from .models import User, Bill, Legislator, Vote
+from .models import User, Bill, Legislator, Vote, Match
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='user-detail')
@@ -53,6 +53,12 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
             pass
             
         return data
+
+class MatchSerializer(serializers.HyperlinkedModelSerializer):
+    detail = HyperlinkedIdentityField(view_name='match-detail')
+    class Meta:
+        model = Match
+        fields = ('MID', 'legislator', 'match_percentage', 'num_votes', 'detail')
 
 class CustomRegisterSerializer(RegisterSerializer):
     UID = serializers.UUIDField(read_only=True)

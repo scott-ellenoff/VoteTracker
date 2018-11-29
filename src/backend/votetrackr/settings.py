@@ -34,6 +34,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
 }
 
 
@@ -103,7 +105,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
 
     'votetrackr_api',
-    'push_notifications'
+    # 'push_notifications'
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -122,16 +124,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-PUSH_NOTIFICATIONS_SETTINGS = {
-        "FCM_API_KEY": "[your api key]",
-        "GCM_API_KEY": "[your api key]",
-        "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
-        "APNS_TOPIC": "com.example.push_test",
-        "WNS_PACKAGE_SECURITY_ID": "[your package security id, e.g: 'ms-app://e-3-4-6234...']",
-        "WNS_SECRET_KEY": "[your app secret key, e.g.: 'KDiejnLKDUWodsjmewuSZkk']",
-        "WP_PRIVATE_KEY": "/path/to/your/private.pem",
-        "WP_CLAIMS": {'sub': "mailto: development@example.com"}
-}
+# PUSH_NOTIFICATIONS_SETTINGS = {
+#         "FCM_API_KEY": "[your api key]",
+#         "GCM_API_KEY": "[your api key]",
+#         "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+#         "APNS_TOPIC": "com.example.push_test",
+#         "WNS_PACKAGE_SECURITY_ID": "[your package security id, e.g: 'ms-app://e-3-4-6234...']",
+#         "WNS_SECRET_KEY": "[your app secret key, e.g.: 'KDiejnLKDUWodsjmewuSZkk']",
+#         "WP_PRIVATE_KEY": "/path/to/your/private.pem",
+#         "WP_CLAIMS": {'sub': "mailto: development@example.com"}
+# }
 
 ROOT_URLCONF = 'votetrackr.urls'
 
@@ -165,7 +167,7 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'mysql.connector.django',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test_db',
+        'NAME': 'deploy_db',
         'USER': 'VoteTrackrMaster',
         'PASSWORD': 'VotePass',
         'HOST': 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com',
