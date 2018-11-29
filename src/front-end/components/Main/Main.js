@@ -54,7 +54,7 @@ export default class Main extends Component {
         this.setState({loading: "true"});
 
         var main = this;
-        axios.get('http://52.15.86.243:8080/bills/')
+        axios.get('http://52.15.86.243:8080/api/v1/bills/')
             .then(function (response) {
                 const data = response.data.slice(0, 10);
                 main.setState({bills: data,
