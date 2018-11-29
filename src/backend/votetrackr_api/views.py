@@ -155,17 +155,17 @@ class VoteViewSet(viewsets.ModelViewSet):
         else:
             return super(VoteViewSet, self).get_queryset()
 
-    def create(self, request):
-        mutable = request.data._mutable
-        request.data._mutable = True
-        request.data['user'] = reverse('user-detail', args=[request.user.id])
-        request.data._mutable = mutable
+    # def create(self, request):
+    #     mutable = request.data._mutable
+    #     request.data._mutable = True
+    #     request.data['user'] = reverse('user-detail', args=[request.user.id])
+    #     request.data._mutable = mutable
 
-        user = request.user
-        print(user.unvoted)
-        user.unvoted.remove(request.data['bill'])
-        print(user.unvoted)
-        return super(VoteViewSet, self).create(request)
+    #     user = request.user
+    #     print(user.unvoted)
+    #     user.unvoted.remove(request.data['bill'])
+    #     print(user.unvoted)
+    #     return super(VoteViewSet, self).create(request)
 
 
 
