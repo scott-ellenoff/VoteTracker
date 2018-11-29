@@ -16,14 +16,14 @@ class BillSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='bill-detail')
     class Meta:
         model = Bill
-        fields = ('BID', 'description', 'date_introduced', 'status', 'voted_on', 'chamber', 'date_voted', 'url', 'detail')
+        fields = ('BID', 'name', 'description', 'date_introduced', 'status', 'voted_on', 'chamber', 'date_voted', 'url', 'detail')
 
 
 class LegislatorSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='legislator-detail')
     class Meta:
         model = Legislator
-        fields = ('LID', 'fullname', 'senator', 'affiliation', 'dwnominate', 'url', 'detail')
+        fields = ('LID', 'fullname', 'district', 'state', 'senator', 'affiliation', 'dwnominate', 'url', 'detail')
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='vote-detail')
