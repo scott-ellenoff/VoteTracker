@@ -27,7 +27,7 @@ Updating bill/votes: updating bill and voting information on the client side fro
  
 Finish user login: authenticating users and fetching their data for client side loading
 * Larry: Setting up a registration form, login/logout endpoint, and adding permissions to certain endpoints so that only authenticated users can access their user information.
-* Scott W.
+* Scott W.: Implementing and testing login auth from front-end; creating, implementing and testing a sign up screen/auth navigable from the login screen, also from front-end. 
  
 Deploying the server: deploying the AWS Server for use by the front-end
 * Larry: Launching an Amazon EC2 instance and deploying the django backend server in production mode.
@@ -67,22 +67,55 @@ Node v8.11.3
 NPM v6.4.1
 
 1. Clone the git repository for front-end at:
-
 https://github.com/scott-ellenoff/VoteTracker/tree/front-end
 
-2. Install homebrew
-3. Navigate to the folder at which you’ve downloaded the front-end project
-4. Run the following commands:
+2. Ruby should be installed on your MacBook already. Install homebrew by running the following.
+```python
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 
+3. Navigate to the folder at which you’ve downloaded the front-end project.
 
+4. Run the following commands.
 ```python
 brew install node
 npm install 
+```
+
+5. Install React Native.
+```python
+npm install -g react-native-cli
+```
+
+6. Set command line tools by opening XCode application. 
+
+7. Resolve compabitility issue between XCode10 and React client. Navigate to your project root, and run these. 
+```python
+$ cd node_modules/react-native/scripts && ./ios-install-third-party.sh && cd ../../../
+$ cd node_modules/react-native/third-party/glog-0.3.5/ && ../../scripts/ios-configure-glog.sh && cd ../../../../
+```
+
+8. Upgrade react-native to catch older versions, and link. 
+```python
+react-native upgrade
+react-native link
+```
+
+9. Run for iOS now. The simulator should load, and the VoteTracker app should start up automatically, with "Build Success" showing in Terminal. Otherwise we will see "Build Failed".  
+```python
 react-native run-ios
 ```
-This will take a bit of time, so hang on. Also, if you get a CFBundleIdentifier error, please contact me at yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
 
-5. You’re all set! The react-native front-end framework is ready to be viewed.
+This will take a bit of time, so hang on. If you still get a CFBundleIdentifier error, please contact yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
+
+# Sample Login Credentials #
+--Set1--
+Username: scottwang4
+Password: uchicago4
+
+--Set2--
+Username: scottwang0
+Password: uchicago0
 
 # How to Run Back-End #
 
@@ -127,7 +160,7 @@ For the Django API, we created the endpoints and the models that the front-end w
 
 Yasoob Rasheed - Worked on React Framework (Home, Main, Segues) <br />
 Zach Kamran - Worked on React Framework (Profile, Segues) <br />
-Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well <br />
+Scott Wang - Worked on mock-up of design, really helping us structure the design of our components well. Also worked on auth.<br />
 
 **Back-End:** <br />
 Larry Chen, Emily Xue, Scott Ellenoff - Worked together to create the Django API <br />
