@@ -56,10 +56,10 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
 
 class CustomRegisterSerializer(RegisterSerializer):
     UID = serializers.UUIDField(read_only=True)
-    district = serializers.IntegerField()
-    name = serializers.CharField()
+    district = serializers.CharField(required=False, default='0')
+    name = serializers.CharField(required=False, default='')
 
     def custom_signup(self, request, user):
         user.name = self.validated_data.get('name', '')
-        user.district = self.validated_data.get('district', '')
+        user.district = int(self.validated_data.get('district', ''))
         user.save()
