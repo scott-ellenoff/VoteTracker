@@ -83,7 +83,6 @@ class Bill(models.Model):
     voted_on = models.BooleanField(db_column='VotedOn', blank=True, null=True)
     congress_num = models.IntegerField(db_column='CongressN', blank=True, null=True)
     chamber = models.CharField(db_column='Chamber', max_length=10, choices=CHAMBERS, blank=True)
-    session = models.IntegerField(db_column='Session', blank=True, null=True)
     date_voted = models.DateField(db_column='DateVoted', default=datetime.date.today, blank=True)
     url = models.URLField(db_column='URL', blank=True, null=True)
 
