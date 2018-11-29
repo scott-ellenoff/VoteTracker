@@ -22,7 +22,7 @@ class User(AbstractUser):
     UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
-    Match = models.ManyToManyField('Match', related_name='matches', blank=True)
+    matched = models.ManyToManyField('Match', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
     unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
 # @receiver(pre_social_login)
@@ -58,14 +58,13 @@ def on_user_signed_up(request, user, sociallogin=None, **kwargs):
             #     gender = 'F'
             # user.create_profile(fullname=name, gender=gender)
 
-
 class Match(models.Model):
     class Meta:
-        db_table = "Matches"
+        db_table = 'Matches'
 
-    legislator = models.ForeignKey(Legislator, on_delete=models.CASCADE, blank=True, null=True)
-    matchPercentage = models.IntegerField(default=0)
-    numberOfVotes = model.IntegerField(default=0)
+    legislator = models.ForeignKey('Legislator', on_delete=models.CASCADE, blank=True, null=True)
+    matchPercentage = models.DecimalField(db_column='Percentage', decimal_places=4, max_digits=6, default=0)
+    numberOfVotes = models.IntegerField(db_column='NumVotes', default=0)
 
 class Bill(models.Model):
     class Meta:
@@ -92,7 +91,6 @@ class Bill(models.Model):
     voted_on = models.BooleanField(db_column='VotedOn', blank=True, null=True)
     congress_num = models.IntegerField(db_column='CongressN', blank=True, null=True)
     chamber = models.CharField(db_column='Chamber', max_length=10, choices=CHAMBERS, blank=True)
-    session = models.IntegerField(db_column='Session', blank=True, null=True)
     date_voted = models.DateField(db_column='DateVoted', default=datetime.date.today, blank=True)
     url = models.URLField(db_column='URL', blank=True, null=True)
 

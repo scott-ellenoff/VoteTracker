@@ -51,7 +51,7 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
@@ -93,7 +93,7 @@ class BillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
     # filter_backends = (DjangoFilterBackend, SearchFilter)
