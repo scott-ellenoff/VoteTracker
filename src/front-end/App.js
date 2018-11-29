@@ -6,7 +6,7 @@ import Home from './components/Home.js';
 import Main from './components/Main/Main.js';
 import BillInfo from './components/Main/BillInfo';
 import Profile from './components/Profile/Profile.js';
-import Signup from './components/Signup/Signup.js';
+import Signup from './components/signup/Signup';
 
 import {
   createStackNavigator,

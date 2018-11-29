@@ -25,7 +25,7 @@ export default class Main extends Component {
         Constructor to initialize state as "loading"
     */
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             loading: "initial"
@@ -51,12 +51,12 @@ export default class Main extends Component {
         Loading User API Information to state (finish loading bills)
     */
     componentWillMount() {
-        this.setState({loading: "true"})
+        this.setState({loading: "true"});
 
-        var main = this
+        var main = this;
         axios.get('http://52.15.86.243:8080/bills/')
             .then(function (response) {
-                let data = response.data.slice(0, 10)
+                const data = response.data.slice(0, 10);
                 main.setState({bills: data,
                                loading: false,
                                progress: 0,
@@ -72,7 +72,7 @@ export default class Main extends Component {
         const {navigate} = this.props.navigation;
 
         // Initialize
-        if (this.state.loading == 'initial') {
+        if (this.state.loading === 'initial') {
             return <Boot text="Initializing..."/>
         }
 

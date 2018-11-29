@@ -1,13 +1,21 @@
 'use strict';
 
 import React, {Component} from 'react';
+import axios from 'axios';
 import {FlatList, StyleSheet, View, Image, Text, TouchableHighlight} from 'react-native';
 import ListItem from './Row';
 import listData from './data';
 import SelectLegislators from './selectLegislators';
+import { AsyncStorage } from "react-native"
+
+
+
+
+// Alter defaults after instance has been created
 
 export default class Profile extends Component {
   static navigationOptions = {};
+
 
   constructor(props) {
     super(props);
@@ -18,10 +26,39 @@ export default class Profile extends Component {
     this.state = {
       enable: true,
       data: listData,
-      addMode: false
+      addMode: false,
+      legialstors: null,
+      followedLegislators: null
     };
   }
+  componentDidMount(){
+    const AUTH_TOKEN = this._retrieveData('token');
+    console.log(AUTH_TOKEN)
+    const instance = axios.create({
+      baseURL: 'http://52.15.86.243:8080/api/v1/'
+    });
+    const key =  axios.get('user');
+    console.log(key);
+    instance.defaults.headers.common['Authorization'] = key;
+    this.getUserInfo()
+  }
 
+  getUserInfo = () => {
+    console.log('here')
+  }
+  _retrieveData = async (item) => {
+    try {
+      const value = await AsyncStorage.getItem(item);
+      if (value !== null) {
+        return value;
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log(error)
+    }
+  };
+  // to follow legislator send PUT request to  users/v1 with followed: /api/v1/:LID in body to users/:id/ and have username in body as username
+  // followed:  link to legialstor /api/v1/legislators/:LID, with a followed key for , "username": "admin",
   renderSeparator() {
     return (
       <View style={styles.separatorViewStyle}>
