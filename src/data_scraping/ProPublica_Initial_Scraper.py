@@ -35,7 +35,7 @@ def scrape_bills():
         senate_bills.append(cur_dict)
     print(len(senate_bills))
 
-    with open('Data Scraping/Dictionaries/Clean/clean_senate_bills.json', 'w') as outfile:
+    with open('Dictionaries/Clean/clean_senate_bills.json', 'w') as outfile:
         json.dump(senate_bills, outfile, ensure_ascii=True)
     outfile.close()
 
@@ -64,7 +64,7 @@ def scrape_bills():
 
         house_bills.append(cur_dict)
 
-    with open('Data Scraping/Dictionaries/Clean/clean_house_bills.json', 'w') as outfile:
+    with open('Dictionaries/Clean/clean_house_bills.json', 'w') as outfile:
         json.dump(house_bills, outfile, ensure_ascii=True)
     outfile.close()
 
@@ -72,8 +72,8 @@ def scrape_bills():
 # Scrapes the votes from the ProPublica API
 def scrape_votes_for_bills():
     # Getting votes for bills already in the db
-    all_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_house_bills.json').read()) + \
-                json.loads(open('Data Scraping/Dictionaries/Clean/clean_senate_bills.json').read())
+    all_bills = json.loads(open('Dictionaries/Clean/clean_house_bills.json').read()) + \
+                json.loads(open('Dictionaries/Clean/clean_senate_bills.json').read())
 
     all_bids = [bill['BID'] for bill in all_bills]
 
@@ -99,7 +99,7 @@ def scrape_votes_for_bills():
                         for l in cur_vote_breakdown:
                             collected_votes[cur_vote_bid][l['member_id']] = l['vote_position']
     print(len(collected_votes))
-    with open('Data Scraping/Dictionaries/Clean/collected_votes.json', 'w') as outfile:
+    with open('Dictionaries/Clean/collected_votes.json', 'w') as outfile:
         json.dump(collected_votes, outfile, ensure_ascii=True)
     outfile.close()
 
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     # bills = congress.bills.recent(chamber='house')
     # print(bills)
 
-    scrape_votes_for_bills()
+    # scrape_votes_for_bills()
     exit()
