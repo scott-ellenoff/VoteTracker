@@ -11,7 +11,9 @@ export default class SelectLegislators extends Component {
 
 
   render() {
+
     const {legislators} = this.props;
+    console.log(legislators, 'here');
     return (
       <View>
         <Button onPress={this.handleConfirmClick} title={"Add"}/>

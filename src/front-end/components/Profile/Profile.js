@@ -38,11 +38,13 @@ export default class Profile extends Component {
       username: '',
       token: null,
       pickerSelected: '',
-      byLid: null
+      byLid: null,
+      userInfo: null
     };
   }
 
   componentDidMount() {
+    console.log('here');
     const AUTH_TOKEN = AsyncStorage.getItem('key')
       .then((v) => {
         this.setState({token: v});
@@ -65,7 +67,8 @@ export default class Profile extends Component {
           userMatched: userInfo.matched,
           userID: userInfo.id,
           axiosInstance: instance,
-          username: userInfo.username
+          username: userInfo.username,
+          userInfo: userInfo
         }, this.getLegislators)
       }); // this is the key
 
@@ -98,6 +101,7 @@ export default class Profile extends Component {
 
     form.append('username', username);
     followedLegislators.forEach((leg) => form.append('followed', leg));
+    console.log("all legislators", form, followedLegislators);
     axios.put(`http://52.15.86.243:8080/api/v1/users/${userID}/`, form, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -131,6 +135,7 @@ export default class Profile extends Component {
 
   renderItem(item) {
     console.log(item);
+    console.log(this.state.byLid[item.split('/')[6]][0].fullname, 'in');
     return (
       <ListItem
         text={this.state.byLid[item.split('/')[6]][0].fullname} // TODO add match percent
@@ -142,8 +147,11 @@ export default class Profile extends Component {
 
   updateLegislators = (val) => {
     this.setState((prevState) => {
+      const updated =prevState.userInfo;
+      updated.followed.push(prevState.byLid[val][0].detail);
+      AsyncStorage.setItem('user', JSON.stringify([updated]));
       return {
-        followedLegislators: [...prevState.followedLegislators, prevState.byLid[val][0].detail],
+        followedLegislators: [...updated.followed],
         pickerSelected: prevState.legislators[prevState.followedLegislators.length].detail.split('/')[6],
         addMode: false
       }
@@ -156,16 +164,21 @@ export default class Profile extends Component {
 
   setMode = () => {
     const {legislators, followedLegislators} = this.state;
-    console.log(this.state.byLid, 'here', followedLegislators);
-    const notSelected = legislators.filter(item => followedLegislators.reduce((acc, d) => d === item.detail, false));
-    console.log(notSelected, notSelected.length);
-    if (notSelected.length) {
+    console.log(typeof(followedLegislators), this.state.byLid, 'here', followedLegislators);
+
+    const filtered = legislators.filter(function(item) {
+      console.log(item.detail, followedLegislators);
+
+      return followedLegislators.indexOf(item.detail) !== -1;
+    });
+    console.log(legislators, legislators.length, filtered);
+
+    if (filtered.length || followedLegislators.length === 0) {
       this.setState({addMode: true})
     } else {
       console.log(this.state.followedLegislators);
       alert("All Legislators Already Selected")
     }
-
   };
 
   render() {
@@ -212,7 +225,7 @@ export default class Profile extends Component {
           </View>
           <View>
             <SelectLegislators pickerSelected={pickerSelected} updateSelected={this.updateSelected}
-                               legislators={legislators.filter(item => followedLegislators.find((d) => item.fullname !== this.state.byLid[d.split('/')[6]][0].fullname))}
+                               legislators={legislators}
                                updateLegislators={this.updateLegislators}/>
           </View>
         </View>

@@ -74,7 +74,7 @@ export default class Home extends Component {
         password: this.state.password,
       })
     })
-      .then((response) => {return response.json();})
+      .then((response) => {console.log(response); return response.json();})
       .then((json) => {
         if (json.key) {
           // if there is a token in the object returned by the server
