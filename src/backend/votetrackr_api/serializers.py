@@ -32,8 +32,8 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
 
     def validate(self, data):
-        bill = data.get('bill')
-        user = data.get('user')
+        bill = data.get('bill', None)
+        user = data.get('user', None)
         legislator = data.get('legislator')
         
         if legislator and user:
@@ -41,10 +41,14 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
 
         try:
             if user:
-                obj = Vote.objects.get(bill=bill, user=user)
+                obj = Vote.objects.get(bill=bill)
+                if obj.user == user:
+                    raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
             else:
                 obj = Vote.objects.get(bill=bill, legislator=legislator)
-            raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
+            # if obj:
+            #     print(obj)
+            #     raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
         except Vote.DoesNotExist as e:
             pass
             

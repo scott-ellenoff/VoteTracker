@@ -22,7 +22,7 @@ class User(AbstractUser):
     UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
-    matched = models.ManyToManyField('Legislator', related_name='matched', blank=True)
+    Match = models.ManyToManyField('Match', related_name='matches', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
     unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
 # @receiver(pre_social_login)
@@ -58,6 +58,14 @@ def on_user_signed_up(request, user, sociallogin=None, **kwargs):
             #     gender = 'F'
             # user.create_profile(fullname=name, gender=gender)
 
+
+class Match(models.Model):
+    class Meta:
+        db_table = "Matches"
+
+    legislator = models.ForeignKey(Legislator, on_delete=models.CASCADE, blank=True, null=True)
+    matchPercentage = models.IntegerField(default=0)
+    numberOfVotes = model.IntegerField(default=0)
 
 class Bill(models.Model):
     class Meta:
@@ -127,5 +135,16 @@ class Vote(models.Model):
     def save(self, *args, **kwargs):
         if self.user and self.legislator or not self.user and not self.legislator:
             raise ValueError('Exactly one of [Vote.user, Vote.legislator] must be set')
+        if self.user:
+            u = User.objects.get(self.user)
+            for t in u.followed():
+                lVote.objects.filter(legislator = self.legislator).filter(bill = self.bill)
+                match = u.matched.filter(Legislator = self.legislator)
+                match.numberOfVotes = match.numberOfVotes+1
+                if self.vote == lVote.vote:
+                    match.matchPercentage = match.matchPercentage + (1-match.matchPercentage)/(match.numberOfVotes)
+                else:
+                    match.matchPercentage = match.mmatchPercentage + (0-match.matchPercentage)/(match.numberOfVotes)
+                match.save()
 
         super(Vote, self).save(*args, **kwargs)

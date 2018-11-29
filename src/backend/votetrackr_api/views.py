@@ -6,6 +6,7 @@ from rest_framework.filters import SearchFilter
 from itertools import chain
 from django_filters.rest_framework import DjangoFilterBackend
 
+from rest_framework.decorators import action
 from .models import User, Bill, Legislator, Vote
 from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, CustomRegisterSerializer
 from .permissions import IsAdminOrSelf
@@ -33,6 +34,18 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
+
+
+    # @action(detail=True, methods=['put'], name='Update Unvoted')
+    # def update_unvoted(self, request):
+    #     user = self.get_object()
+    #     serializer = UserSerializer(data = request.data)
+    #     if serializer.is_valid():
+    #         user.save()
+    #         return Response({'status': 'unvoted updated'})
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_400_BAD_REQUEST)
 
 class LegislatorViewSet(viewsets.ModelViewSet):
     """
@@ -141,6 +154,20 @@ class VoteViewSet(viewsets.ModelViewSet):
 
         else:
             return super(VoteViewSet, self).get_queryset()
+
+    def create(self, request):
+        mutable = request.data._mutable
+        request.data._mutable = True
+        request.data['user'] = reverse('user-detail', args=[request.user.id])
+        request.data._mutable = mutable
+
+        user = request.user
+        print(user.unvoted)
+        user.unvoted.remove(request.data['bill'])
+        print(user.unvoted)
+        return super(VoteViewSet, self).create(request)
+
+
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
