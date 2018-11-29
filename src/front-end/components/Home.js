@@ -49,10 +49,7 @@ export default class Home extends Component {
         <Button
           title="Login"
           onPress={() => {
-            const success = this.login();
-            if (success) {
-              navigate('Main');
-            }
+            this.login();
           }}
         />
 
@@ -66,7 +63,7 @@ export default class Home extends Component {
   }
 
   login = () => {
-    fetch('http://52.15.86.243:8080/rest-auth/login/', {
+    fetch('http://52.15.86.243:8080/api/v1/login/', {
       method: 'POST',
       // POSTing to server
       headers: {
@@ -77,17 +74,15 @@ export default class Home extends Component {
         password: this.state.password,
       })
     })
-      .then((response) => response.json())
+      .then((response) => {return response.json();})
       .then((json) => {
         if (json.key) {
           // if there is a token in the object returned by the server
           AsyncStorage.setItem('key', json.key); //syntax is setItem(key,value)
           // save the token value in AsyncStorage, a global storage
+          AsyncStorage.setItem('user', JSON.stringify([json.user]));
 
-          // AsyncStorage.getItem('key')
-          //   .then((value) => Alert.alert('Login succeeded, key is saved, its value is', value)) // this is the key
-          this.props.navigation('Main');
-          return true;
+          this.props.navigation.navigate('Main', {"user": json.user});
         } else {
           Alert.alert("Login Error", 'Login failed');
           return false;

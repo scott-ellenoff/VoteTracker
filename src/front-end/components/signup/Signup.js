@@ -36,42 +36,42 @@ export default class Signup extends Component {
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({username: text})}
-          value={this.state.username}
+          placeholder={this.state.username}
           autoCapitalize='none'
         />
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({email: text})}
-          value={this.state.email}
+          placeholder={this.state.email}
           autoCapitalize='none'
         />
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({password1: text})}
-          value={this.state.password1}
+          placeholder={this.state.password1}
           autoCapitalize='none'
         />
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({password2: text})}
-          value={this.state.password2}
+          placeholder={this.state.password2}
           autoCapitalize='none'
         />
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({name: text})}
-          value={this.state.name}
+          placeholder={this.state.name}
           autoCapitalize='none'
         />
 
         <TextInput
           style={styles.box}
           onChangeText={(text) => this.setState({district: text})}
-          value={this.state.district}
+          placeholder={this.state.district}
           autoCapitalize='none'
 
         />
@@ -104,8 +104,10 @@ export default class Signup extends Component {
     // end of fetch
       .then((response) => response.json())
       .then((json) => {
+        console.log(json);
         if (json.key) {
           Alert.alert('Registration was successful, key is (not saved), its value is', json.key)
+
         } else {
           Alert.alert('Registration was NOT successful')
         }
