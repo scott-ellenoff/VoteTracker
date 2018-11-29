@@ -3,34 +3,22 @@ import {View, Text, Picker, StyleSheet, Button} from 'react-native'
 
 export default class SelectLegislators extends Component {
   state = {
-    pickerSelected: 'Steve',
-    availableLegislators: [{label: "Steve", value: "steve"}, {label: "Ellen", value: "ellen"}, {
-      label: "Maria",
-      value: "maria"
-    }]
-  };
-  updateSelected = (val) => {
-    console.log(val);
-    this.setState({pickerSelected: val})
   };
 
-  handleConfirmClick = () =>  {
-    console.log(this.state.pickerSelected, 'jklfad');
-    this.props.updateLegislators(this.state.pickerSelected);
+  handleConfirmClick = () => {
+    this.props.updateLegislators(this.props.pickerSelected);
+  };
 
-    this.setState((prevState) => {
-      return {availableLegislators: [...prevState.availableLegislators]}
-    });
-  }
 
   render() {
-    const {availableLegislators} = this.state;
+    const {legislators} = this.props;
     return (
       <View>
-        <Picker selectedValue={this.state.pickerSelected} onValueChange={this.updateSelected}>
-          {availableLegislators.map((val, i) => <Picker.Item label={val.label} value={val.label} key={i}/>)}
-        </Picker>
         <Button onPress={this.handleConfirmClick} title={"Add"}/>
+        <Picker selectedValue={this.props.pickerSelected}
+                onValueChange={(itemValue, itemIndex) => this.props.updateSelected(itemValue, itemIndex)}>
+          {legislators.map((val, i) => <Picker.Item label={val.fullname} value={val.LID} key={i}/>)}
+        </Picker>
       </View>
     )
   }
