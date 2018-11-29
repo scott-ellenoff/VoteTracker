@@ -24,7 +24,7 @@ class UserTests(APITestCase):
         response_body = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_body, {'username': ['A user with that username already exists.']})
-        
+
         #testing getting user
         response = self.client.get('http://testserver/users/'+realUID+'/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -145,14 +145,17 @@ class UserTests(APITestCase):
         data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realUID+'/', "vote":"Y"}
         response = self.client.post('http://testserver/votes/', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-         data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realLID+'/', "vote":"Y"}
+        data = {"bill":"http://localhost:8000/bills/"+realBID+'/', "legislator":"null", "user":'http://localhost:8000/users/' + realLID+'/', "vote":"Y"}
         response = self.client.post('http://testserver/votes/', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
          #test matching
         response = self.client.get('http://testserver/users/'+realUID+'/')
         response_body = json.loads(response.content)
-        matched = response_body['matched']
-        self.assertEqual(matched, {realLID:"1.00"}})
+        MID = response_body['Match']
+        response = self.client.get('httpy://testserver/match/'+MID+'/')
+        response_body = json.loads(response.content)
+        matchPercentage = response_body['matchPercentage']
+        self.assertEqual(matchPercentage, 1.0)
          #attempting to follow a fake legislators
         data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615", "followed":"Json Bourne"}
         response = self.client.put('http://testserver/users/'+realUID+'/', data)
@@ -205,7 +208,7 @@ class PushNotificationsTests(unittest.TestCase):
     # Spoke with Yuxi on Monday --- these tests will fail due to the fact that we currently don't have
     # Google Cloud Messaging or Apple Push Notification System tokens set up yet. Thus, it will throw an error
     # when it tries to define the "device" variable since we don't have users that are GCM or APNS objects yet.
-    # In my conversation with Yuxi he concluded that this was acceptable for Iteration 4a. This will be set up 
+    # In my conversation with Yuxi he concluded that this was acceptable for Iteration 4a. This will be set up
     # for iteration 4b.
     def test_push_android(self):
         # Android push notifications
@@ -273,4 +276,3 @@ class UpdaterTests(APITestCase):
 
         # Testing pushing notifications to users notifying them that there are new bills they can vote on
         self.assertEqual(newUpdater.push_notifications(), True)
-
