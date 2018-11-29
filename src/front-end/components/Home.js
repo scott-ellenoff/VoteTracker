@@ -58,8 +58,7 @@ export default class Home extends Component {
   }
 
   login = () => {
-
-    fetch('http://52.15.86.243:8080/api/v1/login/', {
+    fetch('http://52.15.86.243:8080/rest-auth/login/', {
       method: 'POST',
       // POSTing to server
       headers: {
@@ -83,7 +82,7 @@ export default class Home extends Component {
         } else {
           Alert.alert('Login failed');
         }
-      })
+      }).catch((err) => console.log(err))
       .done()
   }
 }
