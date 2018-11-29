@@ -43,11 +43,17 @@ export default class Home extends Component {
           onChangeText={(text) => this.setState({password: text})}
           placeholder={this.state.password}
           autoCapitalize='none' //added
+          secureTextEntry={true}
         />
 
         <Button
           title="Login"
-          onPress={this.login}
+          onPress={() => {
+            const success = this.login();
+            if (success) {
+              navigate('Main');
+            }
+          }}
         />
 
         <Button
@@ -73,7 +79,6 @@ export default class Home extends Component {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         if (json.key) {
           // if there is a token in the object returned by the server
           AsyncStorage.setItem('key', json.key); //syntax is setItem(key,value)
@@ -81,9 +86,11 @@ export default class Home extends Component {
 
           // AsyncStorage.getItem('key')
           //   .then((value) => Alert.alert('Login succeeded, key is saved, its value is', value)) // this is the key
-          this.props.navigation('Main')
+          this.props.navigation('Main');
+          return true;
         } else {
           Alert.alert("Login Error", 'Login failed');
+          return false;
         }
       }).catch((err) => console.log(err))
       .done()
