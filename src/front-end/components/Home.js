@@ -86,7 +86,7 @@ export default class Home extends Component {
 
           // AsyncStorage.getItem('key')
           //   .then((value) => Alert.alert('Login succeeded, key is saved, its value is', value)) // this is the key
-          this.props.navigation('Main');
+          this.props.navigation.navigate('Main');
           return true;
         } else {
           Alert.alert("Login Error", 'Login failed');
