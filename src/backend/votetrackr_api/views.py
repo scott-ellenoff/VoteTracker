@@ -41,8 +41,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         user = User.objects.get(pk=kwargs['pk'])
         user.calculate_matches()
-        m = user.matched.all()[0]
-        print(m.user_set.all())
+        # m = Match.objects.all()[0]
+        # print(m.user_set.all())
         return super(UserViewSet, self).retrieve(request, *args, **kwargs)
 
     def update(self, request, pk):
@@ -270,23 +270,39 @@ class VoteViewSet(viewsets.ModelViewSet):
             if self.request.user.is_anonymous:
                 queryset = uvotes
             # queryset = uvotes
-
             return queryset
-
+        elif self.action == 'user_vote':
+            queryset = Vote.objects.all()
+            return queryset.filter(user__id=self.request.user.id)
         else:
             return super(VoteViewSet, self).get_queryset()
 
-    @action(detail=False, methods=['post'], name='Vote')
+    @action(detail=False, methods=['get', 'post'], name='vote')
     def user_vote(self, request):
-        mutable = request.data._mutable
-        request.data._mutable = True
-        request.data['user'] = reverse('user-detail', args=[request.user.id])
-        request.data._mutable = mutable
+        if request.method == 'POST':
+            mutable = request.data._mutable
+            request.data._mutable = True
+            request.data['user'] = reverse('user-detail', args=[request.user.id])
+            request.data._mutable = mutable
 
-        user = request.user
-        # print(user)
-        user.unvoted.remove(request.data['bill'])
-        return super(VoteViewSet, self).create(request)
+            user = request.user
+            # print(user)
+            user.unvoted.remove(request.data['bill'])
+            return super(VoteViewSet, self).create(request)
+        elif request.method == 'GET':
+            return super(VoteViewSet, self).list(request)
+
+    # @action(detail=False, methods=['get'], name='see-vote')
+    # def user_vote(self, request):
+    #     mutable = request.data._mutable
+    #     request.data._mutable = True
+    #     request.data['user'] = reverse('user-detail', args=[request.user.id])
+    #     request.data._mutable = mutable
+
+    #     user = request.user
+    #     # print(user)
+    #     user.unvoted.remove(request.data['bill'])
+        # return super(VoteViewSet, self).create(request)
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter

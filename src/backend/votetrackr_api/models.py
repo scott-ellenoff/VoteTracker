@@ -100,8 +100,8 @@ class Match(models.Model):
 
     def calculate(self):
         print(self)
-        print(dir(self))
-        # print(self.users_set.all())
+        # print(dir(self))
+        print(User.objects.get())
 
     def save(self, *args, **kwargs):
         # print(User.objects.get())
