@@ -3,6 +3,8 @@
 /*
     IMPORTS
 */
+import axios from 'axios'
+
 import React, {Component} from 'react';
 import {Text,
         View,
@@ -30,12 +32,36 @@ export default class VotingBar extends Component {
     postVote(option, currIndex) {
         // Once I vote
         // axios.post(header: {Authorization: "Token value"} body:{bill: "/api/v1/bills/bid", "vote": "YNA"})
-        // endpoint: /api/v1/votes/user_vote
+        console.log(this.props.token)
 
-        axios.post()
+        var config = {
+            headers: {
+                'Authorization': "Token " + String(this.props.token)
+            }
+        }
+
+        var voteResponse = "Y"
+        if (option == "nay") {
+            voteResponse = "N"
+        } else if (option == "idc") {
+            voteResponse = "A"
+        }
+        var details = {
+            bill: "/api/v1/bills/" + String(this.props.bills[currIndex].BID) + '/',
+            vote: voteResponse,
+        }
+
+        axios.post('http://52.15.86.243:8080/api/v1/votes/user_vote/', details, config)
+        .then(res => {
+            console.log(res);
+            console.log(res.data);
+        })
+        .catch(error => {
+            console.log(error.response)
+        });
 
         var nextIndex = currIndex + 1
-        this.setState({billIndex: nextIndex}
+        this.setState({billIndex: nextIndex})
     }
 
     render() {
@@ -46,11 +72,13 @@ export default class VotingBar extends Component {
         var voteOptions = ['yay', 'idc', 'nay']
         return(
             <View>
+                <Button
+                    title="Test Post"
+                    onPress={() => this.postVote("yay", billIndex)}
+                />
 
                 {this.props.bills[billIndex]? (
                     <View style={styles.align}>
-
-
 
                         <Text> {this.props.bills[billIndex].name} </Text>
                         <View style={styles.votebuttons}>
@@ -67,7 +95,7 @@ export default class VotingBar extends Component {
                                     title={option}
                                     key={key}
                                     style={styles.button}
-                                    onPress={() => this.setState({billIndex: nextIndex})}
+                                    onPress={() => this.postVote(option, billIndex)}
                                     >
 
                                     <Image source={req}

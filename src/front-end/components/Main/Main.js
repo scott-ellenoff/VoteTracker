@@ -93,6 +93,7 @@ export default class Main extends Component {
                 <View style={styles.votingbar}>
                     <VotingBar
                         bills={this.state.bills}
+                        token={this.state.token}
                         progress={this.state.progress}
                         total={this.state.total}
                         mainNav={navigate}
