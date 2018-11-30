@@ -27,7 +27,7 @@ export default class VotingHistory extends Component {
                 {(this.props.bills).map((bill, key) => {
                     return (
                         <View key={key} style={styles.historyitems}>
-                            <Text> {bill.BID} </Text>
+                            <Text> {bill.name} </Text>
 
                             {bill.voted_on? (
                                 <Text> Concluded </Text>

@@ -33,7 +33,7 @@ export default class BillInfo extends Component {
         var bill = this.props.navigation.state.params.bill
         return(
             <View style={styles.container}>
-                <Text>{"\n"}Bill {bill.BID}{"\n"}</Text>
+                <Text>{"\n"}Bill {bill.name}{"\n"}</Text>
 
                 <View
                   style={{
