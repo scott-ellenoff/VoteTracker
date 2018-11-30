@@ -86,6 +86,8 @@ We have written tests for:
 
 We have chosen to write tests for the above using python's unittest library. Testing connection of frontend and backend also is done through our existing tests that call the Django API.
 
+For acceptance test, please feel free to use our app (register, login, vote on bills, view the bill info, modify your profile, follow some legislators, view maps). It can be done by following the instructions for the front-end tests, or **Yasoob** can help you to get it running on your phone to get the full experience.
+
 # What Has Been Implemented #
 For the second iteration, we have successfully connected the backend to the front-end and added some new features. <br /> 
 
@@ -96,13 +98,13 @@ For the second iteration, we have successfully connected the backend to the fron
 * The profile screen allows the user to follow any legislator and see how well these legislators matched user’s votes.
 
 **Back-End:** <br />
-* We executed on the Django REST API and AWS server we’ve built and actually integrated response/requests into our front-end code.
-* We have finished the user login and registration parts, having all the user credentials stored in our database.
-* We have also set up our database to use authentication, ensuring only authorized admins can manually access and modify it. Users’ actions in the database are limited to viewing/editing their own information, as well as seeing the voting history for them and the legislators. We have also put in basic methods to prevent data corruption and duplicate occurrence in the database.
-* We have implemented the logic for following and matching the legislators. Now each user has a list of followed legislators in their database entry. In addition to the Bills, Votes, Legislators, and Users tables we already had, we have also added the Matches table that stores the match percentages between the users and the legislators they follow. Each entry in the User table has a list of links to the entries in the Matches table (please see the db_schema.pdf for more info).
-* Each User now also has a list of unvoted bills for which they have not yet expressed their opinion. Once the user votes on such bill, the bill is removed from the unvoted list, a new vote entry is created in the Votes table, and the matching percentage is updated for the legislators the user is following.
-* We have set up an automatic updater (cronjob) that runs on the server side and updates the database as soon as new bills or votes come out. We do not record all the bills to our database, but only those that we find relevant for our project and socially controversial.
-* We have also generated maps for each bill, showing how legislators in each district voted on that bill
+* We executed on the Django REST API and AWS server we’ve built and actually integrated response/requests into our front-end code;
+* We have finished the user login and registration parts, having all the user credentials stored in our database;
+* We have also set up our database to use authentication, ensuring only authorized admins can manually access and modify it. Users’ actions in the database are limited to viewing/editing their own information, as well as seeing the voting history for them and the legislators. We have also put in basic methods to prevent data corruption and duplicate occurrence in the database;
+* We have implemented the logic for following and matching the legislators. Now each user has a list of followed legislators in their database entry. In addition to the Bills, Votes, Legislators, and Users tables we already had, we have also added the Matches table that stores the match percentages between the users and the legislators they follow. Each entry in the User table has a list of links to the entries in the Matches table (please see the db_schema.pdf for more info);
+* Each User now also has a list of unvoted bills for which they have not yet expressed their opinion. Once the user votes on such bill, the bill is removed from the unvoted list, a new vote entry is created in the Votes table, and the matching percentage is updated for the legislators the user is following;
+* We have set up an automatic updater (cronjob) that runs on the server side and updates the database as soon as new bills or votes come out. We do not record all the bills to our database, but only those that we find relevant for our project and socially controversial;
+* We have also generated maps for each bill, showing how legislators in each district voted on that bill.
 
 # Who Did What? #
 
@@ -110,14 +112,14 @@ For the second iteration, we have successfully connected the backend to the fron
 * Please put text here
 
 **Hasmik Grigoryan**:
-* Visualizing how the United States senators have voted on a specific bill
+* Visualizing how the United States senators have voted on a specific bill.
   
 **Larry Chen**: 
 * Worked on setting up a registration form, login/logout endpoint, and adding permissions to certain endpoints so that only authenticated users can access their user information; <br />
-* Launched an Amazon EC2 instance and deploying the django backend server in production mode <br />
+* Launched an Amazon EC2 instance and deploying the django backend server in production mode. <br />
   
 **Scott Ellenoff**:
-* Worked on connecting front and backend, as well as creating the matching algorithm to match Users and Legislators <br />
+* Worked on connecting front and backend, as well as creating the matching algorithm to match Users and Legislators. <br />
 
 **Scott Wang**: 
 * Implemented and tested login auth from front-end;
@@ -133,9 +135,9 @@ For the second iteration, we have successfully connected the backend to the fron
 * Worked on sending bill information to the Main page so that Users can vote and see their history.
 
 **Zach Kamran**:
-* Worked on Login and Signup page on front-end
-* Changed the legislators that users follow in profile page.
-* Built Profile page allowing users to follow legislators and see match percentage
+* Worked on Login and Signup page on front-end;
+* Changed the legislators that users follow in profile page;
+* Built Profile page allowing users to follow legislators and see match percentage.
 
 # Have We Made Any Changes? #
 
