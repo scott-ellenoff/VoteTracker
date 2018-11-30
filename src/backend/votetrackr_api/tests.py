@@ -176,7 +176,10 @@ class UserTests(APITestCase):
     def test_permissions(self):
         data = {"username": "user1",
                 "name" : "First Last", 
-                "password": "pa$$w0rd"}
+                "district" : "10001", 
+                "email" : "qxy@gmail.com", 
+                "password1": "pa$$w0rdy",
+                "password2": "pa$$w0rdy"}
 
         # Registrate the user we'll test
         response = self.client.post(REGISTER_URL, data, format="json")
@@ -184,14 +187,17 @@ class UserTests(APITestCase):
         realUID1 = str(response_body['user']['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        other_user = {"username": "user2",
+        other_user = {"username": "user09",
                       "name" : "Firstname Lastname", 
-                      "password": "s0ftwar3"}
+                      "district" : "10001", 
+                      "email" : "lmn@gmail.com", 
+                      "password1": "s0ftwar3",
+                      "password2": "s0ftwar3"}
 
         # Registrate a second user to test against
-        response = self.client.post(REGISTER_URL, data, format="json")
+        response = self.client.post(REGISTER_URL, other_user, format="json")
         response_body = json.loads(response.content)
-        realUID2 = str(response_body['id'])
+        realUID2 = str(response_body['user']['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         user1_url = USERS_URL+realUID1+'/'
@@ -199,20 +205,23 @@ class UserTests(APITestCase):
 
         #testing getting user without authentication
         response = self.client.get(user1_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # # login to authenticate
         # client = APIClient()
         # client.login(username='user1', password='pa$$w0rd')
 
         # Login with incorrect password
-        data = {"username": "user1", "password": "password"}
-        response = self.client.post(LOGIN_URL, data, format="json")
+        client = self.client
+        client.login(username='user1', password='passwordy')
+
+        #testing getting user on failed login
+        response = self.client.get(user1_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # login correctly
-        client = APIClient()
-        client.login(username='user1', password='pa$$w0rd')
+        client = self.client
+        client.login(username='user1', password='pa$$w0rdy')
 
         # Getting user info after authenticated
         response = self.client.get(user1_url)
