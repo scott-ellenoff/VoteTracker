@@ -4,7 +4,6 @@ from rest_framework.test import APITestCase
 from requests.auth import HTTPBasicAuth
 from rest_framework.authtoken.models import Token
 from votetrackr_api.models import User, Bill, Legislator, Vote
-# from push_notifications.models import APNSDevice, GCMDevice
 # from votetrackr_api.db_updater import db_updater
 # Create your tests here.
 import unittest
@@ -273,51 +272,43 @@ class UserTests(APITestCase):
         response = self.client.get(user1_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # # login to authenticate
-        # client = APIClient()
-        # client.login(username='user1', password='pa$$w0rd')
-
-        # Login with incorrect password
-        # client = self.client
-        # token = Token.objects.get(user__username='lauren')
-        # client = APIClient()
-        # client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-
         #testing getting user on failed login
         response = self.client.get(user1_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # Login with incorrect password
-        wrong_data = {"username": "user1",
-                "name" : "First Last", 
-                "district" : "10001", 
-                "email" : "qxy@gmail.com", 
-                "password1": "pa$$w0rdy"}
+        wrong_data = {"username": "user1", "password": "passwordy"}
         response = self.client.post(LOGIN_URL, wrong_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        # Authenticate
+        user = User.objects.get(id=realUID1)
+        user.save()
+        self.client.force_authenticate(user=user)
+        
         # Getting user info after authenticated
         response = self.client.get(user1_url)
+        # print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Getting the other user info after authenticated
         response = self.client.get(user2_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        # Getting user list view after authenticated
+        # Getting user list view after authenticated if not staff
         response = self.client.get(USERS_URL)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        # Logging out
-        client.logout()
+        # logout
+        self.client.force_authenticate(user=None)
 
         # Testing getting user info after logout
         response = self.client.get(user1_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # Getting user list view after logout
         response = self.client.get(USERS_URL)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     # def test_match(self):
