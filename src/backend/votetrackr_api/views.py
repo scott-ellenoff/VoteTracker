@@ -338,9 +338,9 @@ class VoteViewSet(viewsets.ModelViewSet):
             # print(b)
             # print(user.unvoted.all())
             user.unvoted.remove(b)
-            print(user.voted.all())
+            # print(user.voted.all())
             user.voted.add(b)
-            print(user.voted.all())
+            # print(user.voted.all())
 
             # user.unvoted.all().idrequest.data['bill']
             # print(user.unvoted.all())
