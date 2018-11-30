@@ -54,6 +54,12 @@ def print_table(conn, table_name):
     print(db.to_string())
 
 
+# Obtain the db token
+def get_db_token():
+    r = requests.post(SERVER_BASE + 'login/', data={'username': 'admin', 'password': 'thisis220'})
+    return json.loads(r.content)['key']
+
+
 # ----------------------------------------------------SQL_FUNCTIONS-----------------------------------------------------
 # Check if table exists in our db
 def table_exists(conn, cursor, table_name):
@@ -148,7 +154,8 @@ class db_updater():
                     if chamber == 'senate' and (cur_bill['cosponsors'] < 8):
                         continue
 
-                    if ('res' in cur_bill['bill_type']):
+                    # All the new bills here have not been voted on, otherwise it should already be in our db
+                    if 'res' in cur_bill['bill_type'] or cur_bill['last_vote']:
                         continue
 
                     print(cur_bill)
@@ -156,15 +163,9 @@ class db_updater():
                                 'Name': cur_bill['short_title'],
                                 'DateIntroduced': cur_bill['introduced_date'], 'Status': cur_bill['latest_major_action'],
                                 'CongressN': cur_bill['bill_id'][-3:], 'URL': cur_bill['govtrack_url'],
-                                'Chamber': new_bills['chamber']}
-                    if not cur_bill['last_vote']:
-                        cur_dict['VotedOn'] = 0
-                        cur_dict['DateVoted'] = 0
-                        # cur_dict['RollCallID'] = 0
-                    else:
-                        cur_dict['VotedOn'] = 1
-                        cur_dict['DateVoted'] = cur_bill['last_vote']
-                        # cur_dict['RollCallID'] = 0
+                                'Chamber': new_bills['chamber'], 'VotedOn': 0, 'DateVoted': 0}
+
+                    # cur_dict['RollCallID'] = 0
 
                     bills_to_add.append(cur_dict)
 
@@ -173,6 +174,9 @@ class db_updater():
 
             # Add bills into db
             for bill in bills_to_add:
+                # Add the bid to the list of unvoted for all users
+
+
                 try:
                     add_table_entry(conn, cursor, 'Bills', bill)
                 except mysql.connector.Error as err:
@@ -202,8 +206,6 @@ class db_updater():
             # Get the BIDs for the bills in our database that have not been voted on yet
             cursor.execute('select * from Bills where VotedOn=0')
             unvoted_bids = [b[0] for b in cursor.fetchall()]
-
-
 
             # Check if any of the recent votes were for the bills in our db
             votes_to_add = {}
@@ -244,7 +246,11 @@ class db_updater():
                         'legislator': L_BASE + l + '/',
                         'vote': res
                     }
-                    r = requests.post(url, data=data)
+
+                    # Form a request to a db
+                    auth_token = get_db_token()
+                    headers = {'Authorization': 'Token '+ auth_token}
+                    r = requests.post(url, data=data, headers=headers)
                     print(r.status_code)
                     print(r.text)
 
@@ -264,6 +270,7 @@ class db_updater():
 
 
 if __name__ == "__main__":
+    # print(get_db_token())
     new_updater = db_updater()
     new_updater.update_bills()
     new_updater.update_votes()

@@ -10,7 +10,7 @@ DB_USER = 'VoteTrackrMaster'
 DB_PASS = 'VotePass'
 DB_HOST = 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com'
 DB_PORT = '3306'
-DB_NAME = 'test_db'
+DB_NAME = 'deploy_db'
 
 # Server Constants
 SERVER_BASE = 'http://52.15.86.243:8080/api/v1/'
@@ -47,6 +47,11 @@ def close_db_conn(conn, cursor):
 def print_table(table_name):
     db = pd.read_sql('select * from ' + table_name, con=conn)
     print(db.to_string())
+
+# Obtain the db token
+def get_db_token():
+    r = requests.post(SERVER_BASE + 'login/', data={'username': 'admin', 'password': 'thisis220'})
+    return json.loads(r.content)['key']
 
 
 # ----------------------------------------------------SQL_FUNCTIONS-----------------------------------------------------
@@ -186,7 +191,10 @@ def populate_legislators():
             'dwnominate': l['DWNominate'],
             'url': l['URL']
         }
-        r = requests.post(url, data=data)
+        # Form a request to a db
+        auth_token = get_db_token()
+        headers = {'Authorization': 'Token ' + auth_token}
+        r = requests.post(url, data=data, headers=headers)
         print(r.status_code)
         print(r.text)
 
@@ -214,7 +222,10 @@ def populate_bills():
             'date_voted': bill['DateVoted'],
             'url': bill['URL']
         }
-        r = requests.post(url, data=data)
+        # Form a request to a db
+        auth_token = get_db_token()
+        headers = {'Authorization': 'Token ' + auth_token}
+        r = requests.post(url, data=data, headers=headers)
         print(r.status_code)
         print(r.text)
 
@@ -239,15 +250,21 @@ def populate_votes():
                 'legislator': L_BASE + l + '/',
                 'vote': res
             }
-            r = requests.post(url, data=data)
+
+            # Form a request to a db
+            auth_token = get_db_token()
+            # print(auth_token)
+            headers = {'Authorization': 'Token ' + auth_token}
+            r = requests.post(url, data=data, headers=headers)
             counter += 1
+            print(counter)
             # print(r.status_code)
             # print(r.text)
-            print(counter)
 
 if __name__ == "__main__":
     conn, cursor = open_db_conn(user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, db=DB_NAME)
-
+    # print(get_db_token())
+    # Get a list of columns we have in our table and their types
     # Drop all tables in db
     # cursor.execute('SHOW TABLES')
     # all_tables = [a[0] for a in cursor.fetchall()]
@@ -259,7 +276,7 @@ if __name__ == "__main__":
 
     # Clean one specified table
     # cursor.execute('SET FOREIGN_KEY_CHECKS = 0')
-    # cursor.execute('TRUNCATE TABLE Votes')
+    # cursor.execute('TRUNCATE TABLE Bills')
     # cursor.execute('SET FOREIGN_KEY_CHECKS = 1')
 
     # Populate the Bill and Legislators tables using the SQL
@@ -269,8 +286,9 @@ if __name__ == "__main__":
     # populate_bills_old(conn, cursor)
     # print_table('Bills')
 
+
     # Populate the Bill, Legislator, and Votes tabels using requests
-    # populate_l egislators()
+    # populate_legislators()
     # populate_bills()
     # populate_votes()
 
