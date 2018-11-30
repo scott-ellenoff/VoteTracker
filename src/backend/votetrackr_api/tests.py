@@ -222,9 +222,7 @@ class UserTests(APITestCase):
 
         vote_data = {'bill': '/api/v1/bills/{}/'.format(bills[0]['BID']), 'vote': 'Y'}
         response = self.client.post(VOTES_USER_URL, vote_data, format='json')
-        print(response.status_code)
-        response_body = json.loads(response.content)
-        print(response_body)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         response = self.client.get(USERS_URL + realUID + '/', format='json')
         response_body = json.loads(response.content)
