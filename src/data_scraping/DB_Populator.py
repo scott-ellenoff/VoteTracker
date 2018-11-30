@@ -10,7 +10,7 @@ DB_USER = 'VoteTrackrMaster'
 DB_PASS = 'VotePass'
 DB_HOST = 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com'
 DB_PORT = '3306'
-DB_NAME = 'deploy_db'
+DB_NAME = 'test_db'
 
 # Server Constants
 SERVER_BASE = 'http://52.15.86.243:8080/api/v1/'
@@ -47,6 +47,11 @@ def close_db_conn(conn, cursor):
 def print_table(table_name):
     db = pd.read_sql('select * from ' + table_name, con=conn)
     print(db.to_string())
+
+# Obtain the db token
+def get_db_token():
+    r = requests.post(SERVER_BASE + 'login/', data={'username': 'admin', 'password': 'thisis220'})
+    return json.loads(r.content)['key']
 
 
 # ----------------------------------------------------SQL_FUNCTIONS-----------------------------------------------------
@@ -100,7 +105,7 @@ def add_table_entry(conn, cursor, table_name, args):
     add_query = 'INSERT INTO ' + table_name + '(' + ', '.join(list(args.keys())) + \
                 ') VALUES(' + ','.join(['%s'] * len(args.values())) + ')'
     print('Query is: ', add_query)
-    print (list(args.values()))
+    print(list(args.values()))
     cursor.execute(add_query, list(args.values()))
 
 
@@ -127,7 +132,7 @@ def update_table_entry(conn, cursor, table_name, id, args):
 # Populate the legislators table from the clean_legislators.json
 def populate_legislators_old(conn, cursor):
     # Populate legislators table
-    new_legislators = json.loads(open('Data Scraping/Dictionaries/Clean/clean_legislators.json').read())
+    new_legislators = json.loads(open('Dictionaries/Clean/clean_legislators.json').read())
     for leg in new_legislators:
         # print(leg)
         try:
@@ -147,8 +152,8 @@ def populate_legislators_old(conn, cursor):
 # Populate the bills table from the clean_house_bills.json and clean senate_bills.json
 def populate_bills_old(conn, cursor):
     # Populate bills table
-    new_house_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_house_bills.json').read())
-    new_senate_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_senate_bills.json').read())
+    new_house_bills = json.loads(open('Dictionaries/Clean/clean_house_bills.json').read())
+    new_senate_bills = json.loads(open('Dictionaries/Clean/clean_senate_bills.json').read())
 
     new_bills = new_house_bills + new_senate_bills
     # print(len(new_bills))
@@ -172,7 +177,7 @@ def populate_bills_old(conn, cursor):
 # Populate the bills table from the clean_house_bills.json and clean senate_bills.json
 def populate_legislators():
     # Populate legislators table
-    new_legislators = json.loads(open('Data Scraping/Dictionaries/Clean/clean_legislators.json').read())
+    new_legislators = json.loads(open('Dictionaries/Clean/clean_legislators.json').read())
     url = L_BASE
     for l in new_legislators[0:1]:
         print(l)
@@ -186,7 +191,10 @@ def populate_legislators():
             'dwnominate': l['DWNominate'],
             'url': l['URL']
         }
-        r = requests.post(url, data=data)
+        # Form a request to a db
+        auth_token = get_db_token()
+        headers = {'Authorization': 'Token ' + auth_token}
+        r = requests.post(url, data=data, headers=headers)
         print(r.status_code)
         print(r.text)
 
@@ -194,8 +202,8 @@ def populate_legislators():
 # Populate the bills table from the clean_house_bills.json and clean senate_bills.json
 def populate_bills():
     # Populate bills table
-    new_house_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_house_bills.json').read())
-    new_senate_bills = json.loads(open('Data Scraping/Dictionaries/Clean/clean_senate_bills.json').read())
+    new_house_bills = json.loads(open('Dictionaries/Clean/clean_house_bills.json').read())
+    new_senate_bills = json.loads(open('Dictionaries/Clean/clean_senate_bills.json').read())
 
     new_bills = new_house_bills + new_senate_bills
     url = B_BASE
@@ -214,7 +222,10 @@ def populate_bills():
             'date_voted': bill['DateVoted'],
             'url': bill['URL']
         }
-        r = requests.post(url, data=data)
+        # Form a request to a db
+        auth_token = get_db_token()
+        headers = {'Authorization': 'Token ' + auth_token}
+        r = requests.post(url, data=data, headers=headers)
         print(r.status_code)
         print(r.text)
 
@@ -222,7 +233,8 @@ def populate_bills():
 # Populate the votes table with the votes of legislators for the bills in the db
 def populate_votes():
     # Populate legislators votes
-    votes = json.loads(open('Data Scraping/Dictionaries/Clean/collected_votes.json').read())
+    votes = json.loads(open('Dictionaries/Clean/collected_votes.json').read())
+    counter = 0
     for vote in votes:
         for l in votes[vote]:
             url = V_BASE
@@ -238,29 +250,42 @@ def populate_votes():
                 'legislator': L_BASE + l + '/',
                 'vote': res
             }
-            r = requests.post(url, data=data)
+
+            # Form a request to a db
+            auth_token = get_db_token()
+            headers = {'Authorization': 'Token ' + auth_token}
+            r = requests.post(url, data=data, headers=headers)
             print(r.status_code)
             print(r.text)
 
 if __name__ == "__main__":
     conn, cursor = open_db_conn(user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, db=DB_NAME)
 
-    # # Below 3 lines are used to erase a database if needed
+    # Drop all tables in db
+    # cursor.execute('SHOW TABLES')
+    # all_tables = [a[0] for a in cursor.fetchall()]
+    # print(all_tables)
     # cursor.execute('SET FOREIGN_KEY_CHECKS = 0')
-    # cursor.execute('TRUNCATE TABLE Bills')
+    # for table in all_tables:
+    #     cursor.execute('DROP TABLE ' + table)
     # cursor.execute('SET FOREIGN_KEY_CHECKS = 1')
 
-    # # Populate the Bill and Legislators tables using the SQL
+    # Clean one specified table
+    # cursor.execute('SET FOREIGN_KEY_CHECKS = 0')
+    # cursor.execute('TRUNCATE TABLE Votes')
+    # cursor.execute('SET FOREIGN_KEY_CHECKS = 1')
+
+    # Populate the Bill and Legislators tables using the SQL
     # populate_legislators_old(conn, cursor)
     # print_table('Legislators')
     #
     # populate_bills_old(conn, cursor)
     # print_table('Bills')
 
-    # # Populate the Bill, Legislator, and Votes tabels using requests
+    # Populate the Bill, Legislator, and Votes tabels using requests
     # populate_legislators()
     # populate_bills()
-    populate_votes()
+    # populate_votes()
 
     close_db_conn(conn, cursor)
 

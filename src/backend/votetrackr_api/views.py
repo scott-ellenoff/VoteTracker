@@ -24,9 +24,36 @@ class MatchViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    # permission_classes = (IsAdminOrSelf,)
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
+
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [IsAuthenticated]
+        # elif self.action == 'retrieve':
+            # permission_classes = [IsMatchOwner]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        if self.action == 'list':
+            queryset = self.request.user.matched
+            # queryset = Match.objects.all()
+
+            # uvotes = queryset.filter(user__id=self.request.user.id)
+            # lvotes = queryset.filter(legislator__isnull=False)
+            # queryset = list(chain(uvotes, lvotes))
+
+            # if self.request.user.is_anonymous:
+                # queryset = uvotes
+            # queryset = uvotes
+            return queryset
+        # elif self.action == 'user_vote':
+        #     queryset = Vote.objects.all()
+        #     return queryset.filter(user__id=self.request.user.id)
+        else:
+            return super(MatchViewSet, self).get_queryset()
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -35,6 +62,12 @@ class UserViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAdminOrSelf,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        user = User.objects.get(pk=kwargs['pk'])
+        # m = Match.objects.all()[0]
+        # print(m.user_set.all())
+        return super(UserViewSet, self).retrieve(request, *args, **kwargs)
 
     def update(self, request, pk):
         # print(request.data)
@@ -45,7 +78,6 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(followed)
         matched = []
 
-        request.data._mutable = True
 
         # print(user.matched.all())
         for pm in user.matched.all():
@@ -55,6 +87,8 @@ class UserViewSet(viewsets.ModelViewSet):
         # print()
         # print(prev_matched)
             # print(pm)
+
+        request.data._mutable = True
 
         for l in followed:
             l_pk = l.split('/')[-2]
@@ -81,11 +115,11 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         
         if self.action == 'list':
-            permission_classes = []#[IsAdminUser]
+            permission_classes = [IsAdminUser]
         # elif self.action == 'add_vote':
         #     permission_classes = []#[IsSelf]
         else:
-            permission_classes = []#[IsAdminOrSelf]
+            permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
@@ -146,7 +180,7 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
@@ -188,7 +222,7 @@ class BillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
     # filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -236,6 +270,9 @@ class VoteViewSet(viewsets.ModelViewSet):
     serializer_class = VoteSerializer
     pagination_class = PageNumberPagination
 
+    # def create(self, request, *args, **kwargs):
+    #     return super(VoteViewSet, self).create(request, *args, **kwargs)
+
     def get_permissions(self):
         if self.action == 'user_vote':
             permission_classes = [IsAuthenticated]
@@ -244,34 +281,61 @@ class VoteViewSet(viewsets.ModelViewSet):
         # elif self.action == 'user_vote':
             # permission_classes = []#[IsAuthenticated]
         else:
-            permission_classes = []#[IsAdminOrSelf]
+            permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         if self.action == 'list':
             queryset = Vote.objects.all()
 
-            uvotes = queryset.filter(user__id=self.request.user.id)
-            lvotes = queryset.filter(legislator__isnull=False)
-            queryset = list(chain(uvotes, lvotes))
+
+            # uvotes = queryset.filter(user__id=self.request.user.id)
+            # lvotes = queryset.filter(legislator__isnull=False)
+            # queryset = list(chain(uvotes, lvotes))
+
+            # if self.request.user.is_anonymous:
+            #     queryset = uvotes
             # queryset = uvotes
-
             return queryset
-
+        elif self.action == 'user_vote':
+            queryset = Vote.objects.all()
+            return queryset.filter(user__id=self.request.user.id)
         else:
             return super(VoteViewSet, self).get_queryset()
 
-    @action(detail=False, methods=['post'], name='Vote')
+    @action(detail=False, methods=['get', 'post'], name='vote')
     def user_vote(self, request):
-        mutable = request.data._mutable
-        request.data._mutable = True
-        request.data['user'] = reverse('user-detail', args=[request.user.id])
-        request.data._mutable = mutable
+        if request.method == 'POST':
+            # print(request.data)
+            # mutable = request.data._mutable
+            try:
+                request.data._mutable = True
+            except AttributeError:
+                pass
+            request.data['user'] = reverse('user-detail', args=[request.user.id])
+            try:
+                request.data._mutable = False
+            except AttributeError:
+                pass
 
-        user = request.user
-        # print(user)
-        user.unvoted.remove(request.data['bill'])
-        return super(VoteViewSet, self).create(request)
+            user = request.user
+            # print(user)
+            user.unvoted.remove(request.data['bill'])
+            return super(VoteViewSet, self).create(request)
+        elif request.method == 'GET':
+            return super(VoteViewSet, self).list(request)
+
+    # @action(detail=False, methods=['get'], name='see-vote')
+    # def user_vote(self, request):
+    #     mutable = request.data._mutable
+    #     request.data._mutable = True
+    #     request.data['user'] = reverse('user-detail', args=[request.user.id])
+    #     request.data._mutable = mutable
+
+    #     user = request.user
+    #     # print(user)
+    #     user.unvoted.remove(request.data['bill'])
+        # return super(VoteViewSet, self).create(request)
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
@@ -284,6 +348,24 @@ class FacebookLogin(SocialLoginView):
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+
+        print('as;dlfkjas;dlfkj')
+        print(user.unvoted)
+        user.unvoted.add(*Bill.objects.all())
+        print(user.unvoted)
+        # user.save()
+        print('as;dlkfjas;dlkfja')
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(self.get_response_data(user),
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
 
     def get_response_data(self, user):
         data = super(CustomRegisterView, self).get_response_data(user)
