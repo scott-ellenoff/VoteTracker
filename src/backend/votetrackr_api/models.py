@@ -117,7 +117,10 @@ class Match(models.Model):
                 total_count += 1
                 same_count += user_vote.vote == leg_vote.vote
         self.num_votes = total_count
-        self.match_percentage = same_count / total_count
+        try:
+            self.match_percentage = same_count / total_count
+        except ZeroDivisionError:
+            self.match_percentage = 0
         self.save()
 
 class Bill(models.Model):
