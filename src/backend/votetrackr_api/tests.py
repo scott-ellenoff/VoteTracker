@@ -79,36 +79,6 @@ class UserTests(APITestCase):
         response = self.client.get(user_endpoint)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
-        # response = self.client.post(REGISTER_URL, data, format="json")
-        # response_body = json.loads(response.content)
-        # realUID = str(response_body['id'])
-        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # #attempting to add a duplicate user
-        # data = {"username": "cc","name" : "Comps Cience", "disctict": "10128"}
-        # response = self.client.post('http://testserver/users/', data, format="json")
-        # response_body = json.loads(response.content)
-        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # self.assertEqual(response_body, {'username': ['A user with that username already exists.']})
-
-        # #testing getting user
-        # response = self.client.get('http://testserver/users/'+realUID+'/')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # #setting info
-        # data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615"}
-        # response = self.client.put('http://testserver/users/'+realUID+'/', data)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # #removing a user
-        # response.client.delete("/users/"+realUID+'/')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # #testing get user on removed users
-        # response = self.client.get('/users/'+realUID+'/')
-        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_bill(self):
         bill_data = {"Description": "this is a description", 
                      "status":"P",
@@ -139,22 +109,6 @@ class UserTests(APITestCase):
                      "url":"http://www.google.com"}
         response = self.client.put(BILLS_URL, bill_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-                    
-        # # testing adding a Bill
-        # response = self.client.post(BILLS_URL, bill_data)
-        # response_body = json.loads(response.content)
-        # realBID = response_body['BID']
-        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # #testing getting Bill
-        # response = self.client.get('http://testserver/bills/'+realBID+'/')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # #changing a Bill status
-        # data = {"Description": "this is an description", "status":"P","voted_on":"False","chambers":"S","session":"2","url":"http://www.google.com"}
-        # response = self.client.put('http://testserver/bills/'+realBID+'/', data)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_legislator(self):
         data = {"fullname" : "Comps Cience", 
