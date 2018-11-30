@@ -109,7 +109,8 @@ For the second iteration, we have successfully connected the backend to the fron
 # Who Did What? #
 
 **Emily Xue**: 
-* Please put text here
+* Wrote updated Django views that control HTTP requests to the endpoints
+* Wrote/updated tests, including authorization tests
 
 **Hasmik Grigoryan**:
 * Visualizing how the United States senators have voted on a specific bill.
