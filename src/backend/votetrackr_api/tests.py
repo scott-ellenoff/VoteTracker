@@ -4,22 +4,23 @@ from rest_framework.test import APITestCase
 from requests.auth import HTTPBasicAuth
 from votetrackr_api.models import User, Bill, Legislator, Vote
 # from push_notifications.models import APNSDevice, GCMDevice
-from votetrackr_api.db_updater import db_updater
+# from votetrackr_api.db_updater import db_updater
 # Create your tests here.
 import unittest
 import json
 
 BASE_URL = 'http://testserver/api/v1/'
-REGISTER_URL = 'http://testserver/api/v1/register/'
+REGISTER_URL = 'http://testserver/api/v1/registration/'
 LOGIN_URL = 'http://testserver/api/v1/login/'
 VOTES_LEGISLATOR_URL = 'http://testserver/api/v1/votes/'
-VOTES_USER_URL = 'http://testserver/api/v1/user_vote/'
+VOTES_USER_URL = 'http://testserver/api/v1/votes/user_vote/'
 BILLS_URL = 'http://testserver/api/v1/bills/'
 USERS_URL = 'http://testserver/api/v1/users/'
 LEGISLATOR_URL = 'http://testserver/api/v1/legislators/'
 MATCHES_URL = 'http://testserver/api/v1/matches/'
 
-
+TEST_FILE = open('votetrackr_api/test_data.json')
+TEST_DATA = json.load(TEST_FILE)
 # class HTTPMethods:
 #     def test_post(data, url):
 #         return self.client.post(url, data, format="json")
@@ -154,49 +155,125 @@ class UserTests(APITestCase):
         # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_vote(self):
-        data = {"Description": "this is a description", 
-                "status":"p",
-                "voted_on":"True",
-                "chambers":"S",
-                "session":"2",
-                "url":"http://www.google.com"}
+        bills = TEST_DATA['bills']
+        legislators = TEST_DATA['legislators']
+        votes = TEST_DATA['votes']
 
-        # test 
-        response = self.client.post('http://testserver/bills/')
+        user_data = {
+            'username': 'admin',
+            'name' : 'Admin', 
+            'district': '0', 
+            'email': 'votetrackr18@gmail.com', 
+            'password1': 'thisis220', 
+            'password2': 'thisis220'
+        }
+
+        response = self.client.post(REGISTER_URL, user_data, format='json')
         response_body = json.loads(response.content)
-        realBID = response_body['BID']
-
-        data = {"username": "cc", "name" : "Comps Cience", "disctict": "10128"}
-        response = self.client.post('http://testserver/users/', data, format="json")
-        response_body = json.loads(response.content)
-        realUID = str(response_body['id'])
-
-        data = {"fullname" : "Comps Cience", "senator":"False","affiliation":"D","url":"http://www.google.com"}
-        response = self.client.post('http://testserver/legislators/', data, format="json")
-        response_body = json.loads(response.content)
-        realLID = response_body['LID']
-
-        bill = 'http://localhost:8000/bills/' + realBID + '/'
-        user = 'http://localhost:8000/users/' + realUID + '/'
-        legislator = 'http://localhost:8000/legislators/' + realLID + '/'
-
-        #testing adding vote with legislator and user
-        data = {"bill": bill, "legislator": legislator, "user": user, "vote":"Y"}
-        response = self.client.post('http://testserver/votes/', data)
-        response_body = json.loads(response.content)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_body, {'non_field_errors': ['Exactly one of user and legislator should be set.']})
-
-        #testing adding vote
-        data = {"bill": bill, "user": user, "vote":"Y"}
-        response = self.client.post('http://testserver/votes/', data)
+        realUID = str(response_body['user']['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        #testing adding duplicate votes
-        response = self.client.post("/votes/", data)
+        # user = User.objects.create_superuser('admin', 'votetrackr18@gmail.com', 'thisis220') 
+        # user.save()
+        user = User.objects.get(id=realUID)
+        user.is_staff = True
+        user.save()
+        self.client.force_authenticate(user=user)
+
+        for bill in bills:
+            response = self.client.post(BILLS_URL, bill)
+            # response_body = json.loads(response.content)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        for legislator in legislators:
+            response = self.client.post(LEGISLATOR_URL, legislator)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        for vote in votes:
+            response = self.client.post(VOTES_LEGISLATOR_URL, vote)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        user_data = {
+            'username': 'shanlu',
+            'name' : 'Shan Lu', 
+            'district': '0', 
+            'email': 'shanlu@gmail.com', 
+            'password1': 'thisis220', 
+            'password2': 'thisis220'
+        }
+
+        response = self.client.post(REGISTER_URL, user_data, format='json')
+        print(response.status_code)
+        print(response.content)
         response_body = json.loads(response.content)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
+        realUID = str(response_body['user']['id'])
+        unvoted = response_body['user']['unvoted']
+        voted = response_body['user']['voted']
+
+        # Test user created successfully
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Test user initialized with no voted bills
+        self.assertEqual(voted, [])
+        # Test user initialized with all unvoted bills
+        self.assertEqual(unvoted, [BILLS_URL + bill['BID'] + '/' for bill in bills])
+
+        user = User.objects.get(id=realUID)
+        self.client.force_authenticate(user=user)
+
+        vote_data = {'bill': '/api/v1/bills/{}/'.format(bills[0]['BID']), 'vote': 'Y'}
+        response = self.client.post(VOTES_USER_URL, vote_data, format='json')
+        print(response.status_code)
+        response_body = json.loads(response.content)
+        print(response_body)
+
+        response = self.client.get(USERS_URL + realUID + '/', format='json')
+        response_body = json.loads(response.content)
+        print(response_body)
+        
+        # print(response.content)
+        # data = {"Description": "this is a description", 
+        #         "status":"p",
+        #         "voted_on":"True",
+        #         "chambers":"S",
+        #         "session":"2",
+        #         "url":"http://www.google.com"}
+
+        # # test 
+        # response = self.client.post('http://testserver/bills/')
+        # response_body = json.loads(response.content)
+        # realBID = response_body['BID']
+
+        # data = {"username": "cc", "name" : "Comps Cience", "disctict": "10128"}
+        # response = self.client.post('http://testserver/users/', data, format="json")
+        # response_body = json.loads(response.content)
+        # realUID = str(response_body['id'])
+
+        # data = {"fullname" : "Comps Cience", "senator":"False","affiliation":"D","url":"http://www.google.com"}
+        # response = self.client.post('http://testserver/legislators/', data, format="json")
+        # response_body = json.loads(response.content)
+        # realLID = response_body['LID']
+
+        # bill = 'http://localhost:8000/bills/' + realBID + '/'
+        # user = 'http://localhost:8000/users/' + realUID + '/'
+        # legislator = 'http://localhost:8000/legislators/' + realLID + '/'
+
+        # #testing adding vote with legislator and user
+        # data = {"bill": bill, "legislator": legislator, "user": user, "vote":"Y"}
+        # response = self.client.post('http://testserver/votes/', data)
+        # response_body = json.loads(response.content)
+        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # self.assertEqual(response_body, {'non_field_errors': ['Exactly one of user and legislator should be set.']})
+
+        # #testing adding vote
+        # data = {"bill": bill, "user": user, "vote":"Y"}
+        # response = self.client.post('http://testserver/votes/', data)
+        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # #testing adding duplicate votes
+        # response = self.client.post("/votes/", data)
+        # response_body = json.loads(response.content)
+        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # self.assertEqual(response_body, {'non_field_errors': ['Vote already exists. Cannot duplicate vote.']})
 
         # data = {"Description": "this is a description", "status":"p","voted_on":"True","chambers":"S","session":"2","url":"http://www.google.com"}
         # response = self.client.post('http://testserver/bills/')
