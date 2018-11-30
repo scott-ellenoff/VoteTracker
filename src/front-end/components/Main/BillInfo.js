@@ -3,8 +3,11 @@
 /*
     IMPORTS
 */
+import axios from 'axios'
+
 import React, {Component} from 'react';
 import {Text,
+        Image,
         View,
         StyleSheet,
         Button,
@@ -31,6 +34,7 @@ export default class BillInfo extends Component {
     render() {
         // Pulling props from navigation
         var bill = this.props.navigation.state.params.bill
+        
         return(
             <View style={styles.container}>
                 <Text>{"\n"}Bill {bill.name}{"\n"}</Text>
@@ -80,6 +84,7 @@ export default class BillInfo extends Component {
 
                 <Button title="Learn Even More"
                         onPress={ ()=> { Linking.openURL(bill.url) } }/>
+
             </View>
         );
     }

@@ -30,7 +30,8 @@ export default class Main extends Component {
 
         this.state = {
             loading: "initial",
-            bills: [],
+            unvotedBills: [],
+            votedBills: [],
         }
     }
 
@@ -64,32 +65,38 @@ export default class Main extends Component {
             }
         }
         // Load in the votes the user has already made
-        axios.get('http://52.15.86.243:8080/api/v1/votes/user_vote/', config)
-        .then(res => {
-            this.setState({userBills: res.data})
-        })
-        .catch(error => {
-            console.log(error.response)
-        });
-
-        console.log(this.state.userBills)
-
-        // Load in the votes the user has not already made
-        var caughtBills = []
-        for (var i = 0; i < user.unvoted.length; i++) {
-            axios.get(user.unvoted[i], config)
+        var votedBills = []
+        for (var i = 0; i < user.voted.length; i++) {
+            axios.get(user.voted[i], config)
             .then(billInfo => {
-                var all = this.state.bills
+                var all = this.state.votedBills
                 all.push(billInfo.data)
-                this.setState({bills: all})
+                this.setState({votedBills: all})
             })
             .catch(error => {
                 console.log(error.response)
             });
         }
 
+        // Load in the votes the user has not already made
+        var unvotedBills = []
+        for (var i = 0; i < user.unvoted.length; i++) {
+            axios.get(user.unvoted[i], config)
+            .then(billInfo => {
+                var all = this.state.unvotedBills
+                all.push(billInfo.data)
+                this.setState({unvotedBills: all})
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
+        }
+
+        console.log(user.voted)
+
         this.setState({
-            bills: caughtBills,
+            unvotedBills: unvotedBills,
+            votedBills: votedBills,
             loading: false,
             progress: 0,
             total: user.unvoted.length,
@@ -115,7 +122,7 @@ export default class Main extends Component {
 
                 <View style={styles.votingbar}>
                     <VotingBar
-                        bills={this.state.bills}
+                        bills={this.state.unvotedBills}
                         token={this.props.navigation.state.params.key}
                         progress={this.state.progress}
                         total={this.state.total}
@@ -125,7 +132,7 @@ export default class Main extends Component {
 
                 <View style={styles.historybar}>
                     <VotingHistory
-                        bills={this.state.bills}
+                        bills={this.state.votedBills}
                         mainNav={navigate}
                     />
                 </View>

@@ -28,7 +28,7 @@ export default class VotingHistory extends Component {
                 {(this.props.bills).map((bill, key) => {
                     return (
                         <View key={key} style={styles.historyitems}>
-                            <Text> {bill.name} </Text>
+                            <Text> {bill.BID} </Text>
 
                             {bill.voted_on? (
                                 <Text> Concluded </Text>
@@ -39,6 +39,9 @@ export default class VotingHistory extends Component {
                             <Button title="About"
                                     onPress={() => this.props.mainNav('BillInfo', {bill: bill})}
                             />
+
+                            <Button title="Map"
+                                    onPress={() => this.props.mainNav('MapScreen', {bill: bill})}/>
                         </View>
                     )
                 })}

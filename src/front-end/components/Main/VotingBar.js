@@ -75,7 +75,7 @@ export default class VotingBar extends Component {
                 {this.props.bills[billIndex]? (
                     <View style={styles.align}>
 
-                        <Text> {this.props.bills[billIndex].name} </Text>
+                        <Text> {this.props.bills[billIndex].BID} </Text>
                         <View style={styles.votebuttons}>
 
                             {voteOptions.map((option, key) => {

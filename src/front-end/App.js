@@ -7,6 +7,7 @@ import Main from './components/Main/Main.js';
 import BillInfo from './components/Main/BillInfo';
 import Profile from './components/Profile/Profile.js';
 import Signup from './components/signup/Signup';
+import MapScreen from './components/Main/MapScreen.js'
 
 import {
   createStackNavigator,
@@ -19,6 +20,7 @@ const App = createStackNavigator(
     Profile: {screen: Profile},
     BillInfo: {screen: BillInfo},
     Signup: {screen: Signup},
+    MapScreen: {screen: MapScreen},
   }
 );
 
