@@ -99,14 +99,23 @@ class Match(models.Model):
     num_votes = models.IntegerField(db_column='NumVotes', default=0)
 
     def calculate(self):
-        print(self)
-        # print(dir(self))
-        print(User.objects.get())
+        user = User.objects.get(matched__MID=self.MID)
+        legislator = self.legislator
 
-    def save(self, *args, **kwargs):
-        # print(User.objects.get())
-
-        super(Match, self).save(*args, **kwargs)
+        uvotes = Vote.objects.filter(user=user)
+        total_count = 0
+        same_count = 0
+        for user_vote in uvotes:
+            try:
+                leg_vote = Vote.objects.get(legislator=legislator, bill=user_vote.bill)
+            except Vote.DoesNotExist:
+                leg_vote = None
+            if leg_vote:
+                total_count += 1
+                same_count += user_vote.vote == leg_vote.vote
+        self.num_votes = total_count
+        self.match_percentage = same_count / total_count
+        self.save()
 
 class Bill(models.Model):
     class Meta:
@@ -175,7 +184,8 @@ class Vote(models.Model):
     def save(self, *args, **kwargs):
         if self.user and self.legislator or not self.user and not self.legislator:
             raise ValueError('Exactly one of [Vote.user, Vote.legislator] must be set')
-        # if self.user:
+        if self.user:
+            self.user.calculate_matches()
         #     for l in self.user.followed():
         #         print(l)
         #         Vote.objects.filter(legislator=self.legislator).filter(bill=self.bill)

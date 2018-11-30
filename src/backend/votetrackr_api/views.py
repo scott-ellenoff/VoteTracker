@@ -25,9 +25,36 @@ class MatchViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    # permission_classes = (IsAdminOrSelf,)
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
+
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [IsAuthenticated]
+        # elif self.action == 'retrieve':
+            # permission_classes = [IsMatchOwner]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        if self.action == 'list':
+            queryset = self.request.user.matched
+            # queryset = Match.objects.all()
+
+            # uvotes = queryset.filter(user__id=self.request.user.id)
+            # lvotes = queryset.filter(legislator__isnull=False)
+            # queryset = list(chain(uvotes, lvotes))
+
+            # if self.request.user.is_anonymous:
+                # queryset = uvotes
+            # queryset = uvotes
+            return queryset
+        # elif self.action == 'user_vote':
+        #     queryset = Vote.objects.all()
+        #     return queryset.filter(user__id=self.request.user.id)
+        else:
+            return super(MatchViewSet, self).get_queryset()
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -40,7 +67,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         user = User.objects.get(pk=kwargs['pk'])
-        user.calculate_matches()
         # m = Match.objects.all()[0]
         # print(m.user_set.all())
         return super(UserViewSet, self).retrieve(request, *args, **kwargs)
@@ -91,11 +117,11 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         
         if self.action == 'list':
-            permission_classes = []#[IsAdminUser]
+            permission_classes = [IsAdminUser]
         # elif self.action == 'add_vote':
         #     permission_classes = []#[IsSelf]
         else:
-            permission_classes = []#[IsAdminOrSelf]
+            permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
@@ -156,7 +182,7 @@ class LegislatorViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = Legislator.objects.all()
     serializer_class = LegislatorSerializer
 
@@ -198,7 +224,7 @@ class BillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
     # filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -255,7 +281,7 @@ class VoteViewSet(viewsets.ModelViewSet):
         # elif self.action == 'user_vote':
             # permission_classes = []#[IsAuthenticated]
         else:
-            permission_classes = []#[IsAdminOrSelf]
+            permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
@@ -263,12 +289,12 @@ class VoteViewSet(viewsets.ModelViewSet):
             queryset = Vote.objects.all()
 
 
-            uvotes = queryset.filter(user__id=self.request.user.id)
-            lvotes = queryset.filter(legislator__isnull=False)
-            queryset = list(chain(uvotes, lvotes))
+            # uvotes = queryset.filter(user__id=self.request.user.id)
+            # lvotes = queryset.filter(legislator__isnull=False)
+            # queryset = list(chain(uvotes, lvotes))
 
-            if self.request.user.is_anonymous:
-                queryset = uvotes
+            # if self.request.user.is_anonymous:
+            #     queryset = uvotes
             # queryset = uvotes
             return queryset
         elif self.action == 'user_vote':
