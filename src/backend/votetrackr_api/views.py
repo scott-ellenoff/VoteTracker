@@ -288,7 +288,7 @@ class VoteViewSet(viewsets.ModelViewSet):
                 pass
             request.data['user'] = reverse('user-detail', args=[request.user.id])
             try:
-                request.data._mutable = mutable
+                request.data._mutable = False
             except AttributeError:
                 pass
 
