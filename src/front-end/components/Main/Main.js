@@ -66,12 +66,13 @@ export default class Main extends Component {
         // Load in the votes the user has already made
         axios.get('http://52.15.86.243:8080/api/v1/votes/user_vote/', config)
         .then(res => {
-            console.log(res.data)
             this.setState({userBills: res.data})
         })
         .catch(error => {
             console.log(error.response)
         });
+
+        console.log(this.state.userBills)
 
         // Load in the votes the user has not already made
         var caughtBills = []
@@ -86,8 +87,6 @@ export default class Main extends Component {
                 console.log(error.response)
             });
         }
-
-        console.log(this.state.bills)
 
         this.setState({
             bills: caughtBills,
