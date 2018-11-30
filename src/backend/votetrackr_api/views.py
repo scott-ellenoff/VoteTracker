@@ -280,10 +280,17 @@ class VoteViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get', 'post'], name='vote')
     def user_vote(self, request):
         if request.method == 'POST':
-            mutable = request.data._mutable
-            request.data._mutable = True
+            # print(request.data)
+            # mutable = request.data._mutable
+            try:
+                request.data._mutable = True
+            except AttributeError:
+                pass
             request.data['user'] = reverse('user-detail', args=[request.user.id])
-            request.data._mutable = mutable
+            try:
+                request.data._mutable = mutable
+            except AttributeError:
+                pass
 
             user = request.user
             # print(user)
