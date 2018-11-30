@@ -56,13 +56,13 @@ class UserTests(APITestCase):
 
         # testing getting user without properly authenticating
         response = self.client.get(user_endpoint)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response_body, {'detail': ['Authentication credentials were not provided.']})
 
         user = User.objects.get(id=realUID)
         client = APIClient()
         client.force_authenticate(user=user)
-        
+
         # testing getting user after properly authenticating
         response = self.client.get(user_endpoint)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
