@@ -54,8 +54,8 @@ class User(AbstractUser):
         #         else:
         #             match.matchPercentage = match.mmatchPercentage + (0-match.matchPercentage)/(match.numberOfVotes)
         #         match.save()
-
         super(User, self).save(*args, **kwargs)
+        self.calculate_matches()
 
     # def compute_matches():
 
@@ -190,8 +190,6 @@ class Vote(models.Model):
     def save(self, *args, **kwargs):
         if self.user and self.legislator or not self.user and not self.legislator:
             raise ValueError('Exactly one of [Vote.user, Vote.legislator] must be set')
-        if self.user:
-            self.user.calculate_matches()
         #     for l in self.user.followed():
         #         print(l)
         #         Vote.objects.filter(legislator=self.legislator).filter(bill=self.bill)
@@ -202,5 +200,7 @@ class Vote(models.Model):
         #         else:
         #             match.matchPercentage = match.mmatchPercentage + (0-match.matchPercentage)/(match.numberOfVotes)
         #         match.save()
-
         super(Vote, self).save(*args, **kwargs)
+
+        if self.user:
+            self.user.calculate_matches()

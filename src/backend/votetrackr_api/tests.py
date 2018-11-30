@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from requests.auth import HTTPBasicAuth
 from rest_framework.authtoken.models import Token
 from votetrackr_api.models import User, Bill, Legislator, Vote
-# from votetrackr_api.db_updater import db_updater
+from votetrackr_api.db_updater import db_updater
 # Create your tests here.
 import unittest
 import json
@@ -169,6 +169,7 @@ class UserTests(APITestCase):
         legislators = TEST_DATA['legislators']
         votes = TEST_DATA['votes']
 
+        # Create admin user to populate database
         user_data = {
             'username': 'admin',
             'name' : 'Admin', 
@@ -188,9 +189,9 @@ class UserTests(APITestCase):
         user.save()
         self.client.force_authenticate(user=user)
 
+        # Populate database
         for bill in bills:
             response = self.client.post(BILLS_URL, bill)
-            # response_body = json.loads(response.content)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         for legislator in legislators:
@@ -210,19 +211,23 @@ class UserTests(APITestCase):
             'password2': 'thisis220'
         }
 
+        # Register User
         response = self.client.post(REGISTER_URL, user_data, format='json')
         response_body = json.loads(response.content)
         realUID = str(response_body['user']['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        # Authenticate user
         user = User.objects.get(id=realUID)
         self.client.force_authenticate(user=user)
 
+        # Unvoted should have all bills, voted should have no bills after user is first created
         unvoted = response_body['user']['unvoted']
         voted = response_body['user']['voted']
         self.assertEqual(unvoted, [BILLS_URL + '{}/'.format(bill['BID']) for bill in bills])
         self.assertEqual(voted, [])
 
+        # Check voted and unvoted bills list after each vote
         for i, bill in enumerate(bills):
             vote_data = {'bill': '/api/v1/bills/{}/'.format(bill['BID']), 'vote': 'Y'}
             response = self.client.post(VOTES_USER_URL, vote_data, format='json')
@@ -311,46 +316,104 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    # def test_match(self):
-    #     #add a legislator
-    #     data = {"fullname" : "Comps Cience", "senator":"False","affiliation":"Democrat","url":"http://www.google.com"}
-    #     response = self.client.post(base + 'legislators/', data, format="json")
-    #     response_body = json.loads(response.content)
-    #     realLID = response_body['LID']
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #      #add a user
-    #     data = {"username": "cc","name" : "Scott Ellenoff", "disctict": "10128", "followed": ['/api/v1/legislators/' + realLID + '/']}
-    #     response = self.client.post(base + 'users/', data, format="json")
-    #     response_body = json.loads(response.content)
-    #     print(response.content)
-    #     realUID = str(response_body['id'])
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #      #add bill
-    #     data = {"Description": "this is a description", "status":"p","voted_on":"True","chambers":"S","session":"2","url":"http://www.google.com"}
-    #     response = self.client.post(base + 'bills/')
-    #     response_body = json.loads(response.content)
-    #     realBID = response_body['BID']
-    #      #add votes
-    #     data = {'bill': base + 'bills/'+realBID+'/', "legislator":"null", "user": base + 'users/' + realUID+'/', "vote":"Y"}
-    #     response = self.client.post(base + 'votes/', data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = {'bill': base + 'bills/' + realBID + '/', 'legislator':"null", "user": base + 'users/' + realLID+'/', "vote":"Y"}
-    #     response = self.client.post(base + 'votes/', data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #      #test matching
-    #     response = self.client.get(base + 'users/'+realUID+'/')
-    #     response_body = json.loads(response.content)
-    #     MID = response_body['matched']
-    #     response = self.client.get(base + 'match/'+MID+'/')
-    #     response_body = json.loads(response.content)
-    #     matchPercentage = response_body['matchPercentage']
-    #     self.assertEqual(matchPercentage, 1.0)
-    #      #attempting to follow a fake legislators
-    #     data = {"username":"cc","name": "L. Ron Hubbard", "district":"60615", "followed":"Json Bourne"}
-    #     response = self.client.put(base + 'users/'+realUID+'/', data)
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_match(self):
+        bills = TEST_DATA['bills']
+        legislators = TEST_DATA['legislators']
+        votes = TEST_DATA['votes']
 
-   
+        # Create admin user to populate database
+        user_data = {
+            'username': 'admin',
+            'name' : 'Admin', 
+            'district': '0', 
+            'email': 'votetrackr18@gmail.com', 
+            'password1': 'thisis220', 
+            'password2': 'thisis220'
+        }
+
+        response = self.client.post(REGISTER_URL, user_data, format='json')
+        response_body = json.loads(response.content)
+        realUID = str(response_body['user']['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        user = User.objects.get(id=realUID)
+        user.is_staff = True
+        user.save()
+        self.client.force_authenticate(user=user)
+
+        # Populate database
+        for bill in bills:
+            response = self.client.post(BILLS_URL, bill)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        for legislator in legislators:
+            response = self.client.post(LEGISLATOR_URL, legislator)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        for vote in votes:
+            response = self.client.post(VOTES_LEGISLATOR_URL, vote)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        user_data = {
+            'username': 'shanlu',
+            'name' : 'Shan Lu', 
+            'district': '0', 
+            'email': 'shanlu@gmail.com', 
+            'password1': 'thisis220', 
+            'password2': 'thisis220'
+        }
+
+        response = self.client.post(REGISTER_URL, user_data, format='json')
+        response_body = json.loads(response.content)
+        realUID = str(response_body['user']['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Authenticating user
+        user = User.objects.get(id=realUID)
+        self.client.force_authenticate(user=user)
+
+        user_data = response_body['user']
+        user_url = USERS_URL + '{}/'.format(realUID)
+
+        # There should be no matches before following
+        response = self.client.get(MATCHES_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_body = json.loads(response.content)
+        self.assertEqual(response_body, [])
+
+        # Add all legislators to followed
+        followed = ['/api/v1/legislators/{}/'.format(legislator['LID']) for legislator in legislators]
+        user_data['followed'] = followed
+        response = self.client.put(user_url, user_data, fromat='json')
+        response_body = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['followed'], ['http://testserver' + legislator for legislator in followed])
+
+        # Match percentages before voting should all be zero
+        response = self.client.get(MATCHES_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_body = json.loads(response.content)
+        for m in response_body:
+            self.assertEqual(float(m['match_percentage']), 0.0)
+
+        # Vote yes on every bill
+        for bill in bills:
+            vote_data = {'bill': '/api/v1/bills/{}/'.format(bill['BID']), 'vote': 'Y'}
+            response = self.client.post(VOTES_USER_URL, vote_data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+            response = self.client.get(USERS_URL + realUID + '/', format='json')
+            response_body = json.loads(response.content)
+
+        # Check match percentages after voting
+        match_percentages = [0.75, 0.50, 0.75, 0.50, 0.00]
+        correct_matches = {LEGISLATOR_URL + '{}/'.format(l['LID']): p for l, p in zip(legislators, match_percentages)}
+        response = self.client.get(MATCHES_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_body = json.loads(response.content)
+        for m in response_body:
+            self.assertEqual(float(m['match_percentage']), correct_matches[m['legislator']])
+
 # class UpdaterTests(APITestCase):
 #     def test_updater(self):
 #         newUpdater = db_updater()
@@ -359,6 +422,3 @@ class UserTests(APITestCase):
 #         # Returns false if cannot connect to API: either key is old, or API changed the input format - cannot unit test
 #         # that since the inputs are specified in the config
 #         self.assertEqual(newUpdater.update_database(), True)
-
-#         # Testing pushing notifications to users notifying them that there are new bills they can vote on
-#         self.assertEqual(newUpdater.push_notifications(), True)
