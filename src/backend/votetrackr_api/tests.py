@@ -39,27 +39,20 @@ class UserTests(APITestCase):
 
         # add a user
         response = self.client.post(REGISTER_URL, user_data, format="json")
-
-        print("hERE")
-        print(response.content)
         response_body = json.loads(response.content)
-        realUID = str(response_body['id'])
+        realUID = str(response_body['user']['id'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # attempting to add duplicate user 
         response = self.client.post(REGISTER_URL, user_data, format="json")
         response_body = json.loads(response.content)
-        realUID = str(response_body['id'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_body, {'username': ['A user with that username already exists.']})
 
         user_endpoint = USERS_URL+realUID+'/'
 
         # testing getting user without properly authenticating
         response = self.client.get(user_endpoint)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response_body, {'detail': ['Authentication credentials were not provided.']})
-
         user = User.objects.get(id=realUID)
         client = self.client
         client.force_authenticate(user=user)
@@ -75,10 +68,6 @@ class UserTests(APITestCase):
         # removing a user
         response.client.delete(user_endpoint)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # testing get user on removed users
-        response = self.client.get(user_endpoint)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
     # def test_bill(self):
@@ -184,69 +173,69 @@ class UserTests(APITestCase):
     #     response = self.client.get(legislator_url)
     #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    # def test_permissions(self):
-    #     data = {"username": "user1",
-    #             "name" : "First Last", 
-    #             "password": "pa$$w0rd"}
+    def test_permissions(self):
+        data = {"username": "user1",
+                "name" : "First Last", 
+                "password": "pa$$w0rd"}
 
-    #     # Registrate the user we'll test
-    #     response = self.client.post(REGISTER_URL, data, format="json")
-    #     response_body = json.loads(response.content)
-    #     realUID1 = str(response_body['id'])
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Registrate the user we'll test
+        response = self.client.post(REGISTER_URL, data, format="json")
+        response_body = json.loads(response.content)
+        realUID1 = str(response_body['user']['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    #     other_user = {"username": "user2",
-    #                   "name" : "Firstname Lastname", 
-    #                   "password": "s0ftwar3"}
+        other_user = {"username": "user2",
+                      "name" : "Firstname Lastname", 
+                      "password": "s0ftwar3"}
 
-    #     # Registrate a second user to test against
-    #     response = self.client.post(REGISTER_URL, data, format="json")
-    #     response_body = json.loads(response.content)
-    #     realUID2 = str(response_body['id'])
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Registrate a second user to test against
+        response = self.client.post(REGISTER_URL, data, format="json")
+        response_body = json.loads(response.content)
+        realUID2 = str(response_body['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    #     user1_url = USERS_URL+realUID1+'/'
-    #     user2_url = USERS_URL+realUID2+'/'
+        user1_url = USERS_URL+realUID1+'/'
+        user2_url = USERS_URL+realUID2+'/'
 
-    #     #testing getting user without authentication
-    #     response = self.client.get(user1_url)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        #testing getting user without authentication
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    #     # # login to authenticate
-    #     # client = APIClient()
-    #     # client.login(username='user1', password='pa$$w0rd')
+        # # login to authenticate
+        # client = APIClient()
+        # client.login(username='user1', password='pa$$w0rd')
 
-    #     # Login with incorrect password
-    #     data = {"username": "user1", "password": "password"}
-    #     response = self.client.post(LOGIN_URL, data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # Login with incorrect password
+        data = {"username": "user1", "password": "password"}
+        response = self.client.post(LOGIN_URL, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    #     # login correctly
-    #     client = APIClient()
-    #     client.login(username='user1', password='pa$$w0rd')
+        # login correctly
+        client = APIClient()
+        client.login(username='user1', password='pa$$w0rd')
 
-    #     # Getting user info after authenticated
-    #     response = self.client.get(user1_url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Getting user info after authenticated
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #     # Getting the other user info after authenticated
-    #     response = self.client.get(user2_url)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Getting the other user info after authenticated
+        response = self.client.get(user2_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    #     # Getting user list view after authenticated
-    #     response = self.client.get(USERS_URL)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Getting user list view after authenticated
+        response = self.client.get(USERS_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #     # Logging out
-    #     client.logout()
+        # Logging out
+        client.logout()
 
-    #     # Testing getting user info after logout
-    #     response = self.client.get(user1_url)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Testing getting user info after logout
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    #     # Getting user list view after logout
-    #     response = self.client.get(USERS_URL)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Getting user list view after logout
+        response = self.client.get(USERS_URL)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # # Registration
         # response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
@@ -288,92 +277,92 @@ class UserTests(APITestCase):
 
 
 
-    def test_vote(self):
-        bills = TEST_DATA['bills']
-        legislators = TEST_DATA['legislators']
-        votes = TEST_DATA['votes']
+    # def test_vote(self):
+    #     bills = TEST_DATA['bills']
+    #     legislators = TEST_DATA['legislators']
+    #     votes = TEST_DATA['votes']
 
-        user_data = {
-            'username': 'admin',
-            'name' : 'Admin', 
-            'district': '0', 
-            'email': 'votetrackr18@gmail.com', 
-            'password1': 'thisis220', 
-            'password2': 'thisis220'
-        }
+    #     user_data = {
+    #         'username': 'admin',
+    #         'name' : 'Admin', 
+    #         'district': '0', 
+    #         'email': 'votetrackr18@gmail.com', 
+    #         'password1': 'thisis220', 
+    #         'password2': 'thisis220'
+    #     }
 
-        response = self.client.post(REGISTER_URL, user_data, format='json')
-        response_body = json.loads(response.content)
-        realUID = str(response_body['user']['id'])
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     response = self.client.post(REGISTER_URL, user_data, format='json')
+    #     response_body = json.loads(response.content)
+    #     realUID = str(response_body['user']['id'])
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # user = User.objects.create_superuser('admin', 'votetrackr18@gmail.com', 'thisis220') 
-        # user.save()
-        user = User.objects.get(id=realUID)
-        user.is_staff = True
-        user.save()
-        self.client.force_authenticate(user=user)
+    #     # user = User.objects.create_superuser('admin', 'votetrackr18@gmail.com', 'thisis220') 
+    #     # user.save()
+    #     user = User.objects.get(id=realUID)
+    #     user.is_staff = True
+    #     user.save()
+    #     self.client.force_authenticate(user=user)
 
-        for bill in bills:
-            response = self.client.post(BILLS_URL, bill)
-            # response_body = json.loads(response.content)
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     for bill in bills:
+    #         response = self.client.post(BILLS_URL, bill)
+    #         # response_body = json.loads(response.content)
+    #         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        for legislator in legislators:
-            response = self.client.post(LEGISLATOR_URL, legislator)
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     for legislator in legislators:
+    #         response = self.client.post(LEGISLATOR_URL, legislator)
+    #         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        for vote in votes:
-            response = self.client.post(VOTES_LEGISLATOR_URL, vote)
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     for vote in votes:
+    #         response = self.client.post(VOTES_LEGISLATOR_URL, vote)
+    #         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        user_data = {
-            'username': 'shanlu',
-            'name' : 'Shan Lu', 
-            'district': '0', 
-            'email': 'shanlu@gmail.com', 
-            'password1': 'thisis220', 
-            'password2': 'thisis220'
-        }
+    #     user_data = {
+    #         'username': 'shanlu',
+    #         'name' : 'Shan Lu', 
+    #         'district': '0', 
+    #         'email': 'shanlu@gmail.com', 
+    #         'password1': 'thisis220', 
+    #         'password2': 'thisis220'
+    #     }
 
-        response = self.client.post(REGISTER_URL, user_data, format='json')
-        print(response.status_code)
-        print(response.content)
-        response_body = json.loads(response.content)
-        realUID = str(response_body['user']['id'])
-        unvoted = response_body['user']['unvoted']
-        voted = response_body['user']['voted']
+    #     response = self.client.post(REGISTER_URL, user_data, format='json')
+    #     print(response.status_code)
+    #     print(response.content)
+    #     response_body = json.loads(response.content)
+    #     realUID = str(response_body['user']['id'])
+    #     unvoted = response_body['user']['unvoted']
+    #     voted = response_body['user']['voted']
 
-        # Test user created successfully
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # Test user initialized with no voted bills
-        self.assertEqual(voted, [])
-        # Test user initialized with all unvoted bills
-        self.assertEqual(unvoted, [BILLS_URL + bill['BID'] + '/' for bill in bills])
+    #     # Test user created successfully
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     # Test user initialized with no voted bills
+    #     self.assertEqual(voted, [])
+    #     # Test user initialized with all unvoted bills
+    #     self.assertEqual(unvoted, [BILLS_URL + bill['BID'] + '/' for bill in bills])
 
-        user = User.objects.get(id=realUID)
-        self.client.force_authenticate(user=user)
+    #     user = User.objects.get(id=realUID)
+    #     self.client.force_authenticate(user=user)
 
-        vote_data = {'bill': '/api/v1/bills/{}/'.format(bills[0]['BID']), 'vote': 'Y'}
-        response = self.client.post(VOTES_USER_URL, vote_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     vote_data = {'bill': '/api/v1/bills/{}/'.format(bills[0]['BID']), 'vote': 'Y'}
+    #     response = self.client.post(VOTES_USER_URL, vote_data, format='json')
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        response = self.client.get(USERS_URL + realUID + '/', format='json')
-        response_body = json.loads(response.content)
-        print(response_body)
+    #     response = self.client.get(USERS_URL + realUID + '/', format='json')
+    #     response_body = json.loads(response.content)
+    #     print(response_body)
         
-        print(response.content)
-        data = {"Description": "this is a description", 
-                "status":"p",
-                "voted_on":"True",
-                "chambers":"S",
-                "session":"2",
-                "url":"http://www.google.com"}
+    #     print(response.content)
+    #     data = {"Description": "this is a description", 
+    #             "status":"p",
+    #             "voted_on":"True",
+    #             "chambers":"S",
+    #             "session":"2",
+    #             "url":"http://www.google.com"}
 
-        # test 
-        response = self.client.post('http://testserver/bills/')
-        response_body = json.loads(response.content)
-        realBID = response_body['BID']
+    #     # test 
+    #     response = self.client.post('http://testserver/bills/')
+    #     response_body = json.loads(response.content)
+    #     realBID = response_body['BID']
 
         # data = {"username": "cc", "name" : "Comps Cience", "disctict": "10128"}
         # response = self.client.post('http://testserver/users/', data, format="json")
