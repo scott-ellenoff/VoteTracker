@@ -21,9 +21,6 @@ MATCHES_URL = 'http://testserver/api/v1/matches/'
 
 TEST_FILE = open('votetrackr_api/test_data.json')
 TEST_DATA = json.load(TEST_FILE)
-# class HTTPMethods:
-#     def test_post(data, url):
-#         return self.client.post(url, data, format="json")
 
 
 class UserTests(APITestCase):
@@ -367,18 +364,18 @@ class UserTests(APITestCase):
         response_body = json.loads(response.content)
         print(response_body)
         
-        # print(response.content)
-        # data = {"Description": "this is a description", 
-        #         "status":"p",
-        #         "voted_on":"True",
-        #         "chambers":"S",
-        #         "session":"2",
-        #         "url":"http://www.google.com"}
+        print(response.content)
+        data = {"Description": "this is a description", 
+                "status":"p",
+                "voted_on":"True",
+                "chambers":"S",
+                "session":"2",
+                "url":"http://www.google.com"}
 
-        # # test 
-        # response = self.client.post('http://testserver/bills/')
-        # response_body = json.loads(response.content)
-        # realBID = response_body['BID']
+        # test 
+        response = self.client.post('http://testserver/bills/')
+        response_body = json.loads(response.content)
+        realBID = response_body['BID']
 
         # data = {"username": "cc", "name" : "Comps Cience", "disctict": "10128"}
         # response = self.client.post('http://testserver/users/', data, format="json")
