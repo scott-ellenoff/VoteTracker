@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
 from requests.auth import HTTPBasicAuth
+from rest_framework.authtoken.models import Token
 from votetrackr_api.models import User, Bill, Legislator, Vote
 # from push_notifications.models import APNSDevice, GCMDevice
 # from votetrackr_api.db_updater import db_updater
@@ -212,16 +213,23 @@ class UserTests(APITestCase):
         # client.login(username='user1', password='pa$$w0rd')
 
         # Login with incorrect password
-        client = self.client
-        client.login(username='user1', password='passwordy')
+        # client = self.client
+        # token = Token.objects.get(user__username='lauren')
+        # client = APIClient()
+        # client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
         #testing getting user on failed login
         response = self.client.get(user1_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # login correctly
-        client = self.client
-        client.login(username='user1', password='pa$$w0rdy')
+        # Login with incorrect password
+        wrong_data = {"username": "user1",
+                "name" : "First Last", 
+                "district" : "10001", 
+                "email" : "qxy@gmail.com", 
+                "password1": "pa$$w0rdy"}
+        response = self.client.post(LOGIN_URL, wrong_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Getting user info after authenticated
         response = self.client.get(user1_url)
