@@ -107,7 +107,6 @@ export default class Signup extends Component {
         console.log(json);
         if (json.key) {
           Alert.alert('Registration was successful, key is (not saved), its value is', json.key)
-
         } else {
           Alert.alert('Registration was NOT successful')
         }

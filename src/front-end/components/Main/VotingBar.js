@@ -24,12 +24,23 @@ export default class VotingBar extends Component {
         this.state = {
             billIndex: 0
         }
+        this.postVote = this.postVote.bind(this)
+    }
+
+    postVote(option, currIndex) {
+        // Once I vote
+        // axios.post(header: {Authorization: "Token value"} body:{bill: "/api/v1/bills/bid", "vote": "YNA"})
+        // endpoint: /api/v1/votes/user_vote
+
+        axios.post()
+
+        var nextIndex = currIndex + 1
+        this.setState({billIndex: nextIndex}
     }
 
     render() {
         // To Increment Through Bills
         var billIndex = this.state.billIndex
-        var nextIndex = this.state.billIndex + 1
 
         // To Create Yay, Nay, IDC Buttons
         var voteOptions = ['yay', 'idc', 'nay']
@@ -38,7 +49,10 @@ export default class VotingBar extends Component {
 
                 {this.props.bills[billIndex]? (
                     <View style={styles.align}>
-                        <Text> {this.props.bills[billIndex].BID} </Text>
+
+
+
+                        <Text> {this.props.bills[billIndex].name} </Text>
                         <View style={styles.votebuttons}>
 
                             {voteOptions.map((option, key) => {

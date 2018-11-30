@@ -11,7 +11,8 @@ import {Text,
         StyleSheet,
         Button,
         ScrollView,
-        Linking} from 'react-native';
+        Linking,
+        AsyncStorage} from 'react-native';
 
 import VotingBar from "./VotingBar.js";
 import VotingHistory from "./VotingHistory.js"
@@ -54,23 +55,27 @@ export default class Main extends Component {
         this.setState({loading: "true"});
 
         var main = this;
-        axios.get('http://52.15.86.243:8080/api/v1/bills/')
-            .then(function (response) {
-                const data = response.data.slice(0, 10);
-                main.setState({bills: data,
-                               loading: false,
-                               progress: 0,
-                               total: data.length
-                           })
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
+        AsyncStorage.getItem("key").then((value) => {
+            this.setState({"token": value});
+        })
+        .then(res => {
+            axios.get('http://52.15.86.243:8080/api/v1/bills/')
+                .then(function (response) {
+                    const data = response.data;
+                    main.setState({bills: data,
+                                   loading: false,
+                                   progress: 0,
+                                   total: data.length
+                               })
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        });
     }
 
     render() {
         const {navigate} = this.props.navigation;
-
         // Initialize
         if (this.state.loading === 'initial') {
             return <Boot text="Initializing..."/>
