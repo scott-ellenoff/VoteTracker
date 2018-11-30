@@ -10,7 +10,7 @@ DB_USER = 'VoteTrackrMaster'
 DB_PASS = 'VotePass'
 DB_HOST = 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com'
 DB_PORT = '3306'
-DB_NAME = 'test_db'
+DB_NAME = 'deploy_db'
 
 # Server Constants
 SERVER_BASE = 'http://52.15.86.243:8080/api/v1/'
@@ -253,14 +253,18 @@ def populate_votes():
 
             # Form a request to a db
             auth_token = get_db_token()
+            # print(auth_token)
             headers = {'Authorization': 'Token ' + auth_token}
             r = requests.post(url, data=data, headers=headers)
-            print(r.status_code)
-            print(r.text)
+            counter += 1
+            print(counter)
+            # print(r.status_code)
+            # print(r.text)
 
 if __name__ == "__main__":
     conn, cursor = open_db_conn(user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, db=DB_NAME)
-
+    # print(get_db_token())
+    # Get a list of columns we have in our table and their types
     # Drop all tables in db
     # cursor.execute('SHOW TABLES')
     # all_tables = [a[0] for a in cursor.fetchall()]
@@ -282,10 +286,12 @@ if __name__ == "__main__":
     # populate_bills_old(conn, cursor)
     # print_table('Bills')
 
+
     # Populate the Bill, Legislator, and Votes tabels using requests
+    # DO NOT USE EXCEPT populate_votes
     # populate_legislators()
     # populate_bills()
-    # populate_votes()
+    populate_votes()
 
     close_db_conn(conn, cursor)
 

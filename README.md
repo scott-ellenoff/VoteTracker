@@ -128,7 +128,7 @@ For the second iteration, we have successfully connected the backend to the fron
 **Stepan Severov**:
 * Worked on populating the database with previous legislator votes;
 * Wrote the scripts that automatically push new bills and votes to the database as soon as they come out, deploying the script on the server to run as a cronjob; 
-* Modified the unit tests in accordance with the feedback to milestone 4a and the inner refactoring.
+* Worked on the readme
 
 **Yasoob Rasheed**:
 * Connected front and back-end, generalizing data in component state, to pass it from View Controller to View Controller in the front-end application;

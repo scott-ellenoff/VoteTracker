@@ -12,7 +12,7 @@ DB_USER = 'VoteTrackrMaster'
 DB_PASS = 'VotePass'
 DB_HOST = 'votetrackr-db.cv1xcgegsskz.us-east-2.rds.amazonaws.com'
 DB_PORT = '3306'
-DB_NAME = 'test_db'
+DB_NAME = 'deploy_db'
 
 # Server Constants
 SERVER_BASE = 'http://52.15.86.243:8080/api/v1/'
@@ -270,6 +270,7 @@ class db_updater():
 
 
 if __name__ == "__main__":
+    # print(get_db_token())
     new_updater = db_updater()
     new_updater.update_bills()
     new_updater.update_votes()
