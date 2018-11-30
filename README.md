@@ -150,3 +150,5 @@ We had to change our vision for the map due to the difficulties related to ... C
 # Anything You'd Like the TA to Know #
 
 This was a challenging milestone. Getting everything to work together was hard, and although we had to lower our expectations for some of the aspects of the app, such as design, we truly believe that the core of the application is present and functions as intended. Working in a big team comes with its own difficulties, and while minor inconsistencies between the expectations and result are bad, they are understandable given it was a first such experience for the most of us. We have learned a lot and now know how challenging the software engineering process can be and which common pitfalls we should avoid.
+
+Should there be any questions regarding the front-end, or accpetance tests please feel free to contact **Yasoob Rasheed**. If anything arises regarding the back-end, please do not hesitate to reach **Larry Chen**
