@@ -71,10 +71,6 @@ export default class VotingBar extends Component {
         var voteOptions = ['yay', 'idc', 'nay'];
         return(
             <View>
-                <Button
-                    title="Test Post"
-                    onPress={() => this.postVote("yay", billIndex)}
-                />
 
                 {this.props.bills[billIndex]? (
                     <View style={styles.align}>

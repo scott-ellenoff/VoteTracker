@@ -82,7 +82,7 @@ export default class Home extends Component {
           // save the token value in AsyncStorage, a global storage
           AsyncStorage.setItem('user', JSON.stringify([json.user]));
 
-          this.props.navigation.navigate('Main', {"user": json.user});
+          this.props.navigation.navigate('Main', {"user": json.user, "key": json.key});
         } else {
           Alert.alert("Login Error", 'Login failed');
           return false;

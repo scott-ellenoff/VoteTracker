@@ -20,33 +20,9 @@ export default class VotingHistory extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            bills: ""
-        }
-    }
-
-    getBills() {
-        console.log(this.props.token)
-
-        var config = {
-            headers: {
-                'Authorization': "Token " + String(this.props.token)
-            }
-        }
-
-        axios.get('http://52.15.86.243:8080/api/v1/votes/user_vote/', config)
-        .then(res => {
-            console.log(res);
-            console.log(res.data);
-            this.setState({bills: res.data})
-        })
-        .catch(error => {
-            console.log(error.response)
-        });
     }
 
     render() {
-
         return(
             <ScrollView>
                 {(this.props.bills).map((bill, key) => {

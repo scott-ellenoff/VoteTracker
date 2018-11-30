@@ -29,7 +29,8 @@ export default class Main extends Component {
         super(props);
 
         this.state = {
-            loading: "initial"
+            loading: "initial",
+            bills: [],
         }
     }
 
@@ -55,37 +56,46 @@ export default class Main extends Component {
         this.setState({loading: "true"});
 
         var user = this.props.navigation.state.params.user
-        var main = this;
+        var key = this.props.navigation.state.params.key
 
-        console.log(user)
-
-        // Once we receive the auth token
-        AsyncStorage.getItem("key").then((value) => {
-            this.setState({"token": value});
-        })
-        .then(res => {
-            // Load in the votes the user has already made
-            var config = {
-                headers: {
-                    'Authorization': "Token " + String(this.state.token)
-                }
+        var config = {
+            headers: {
+                'Authorization': "Token " + String(key)
             }
-            axios.get('http://52.15.86.243:8080/api/v1/votes/user_vote/', config)
-            .then(res => {
-                this.setState({userBills: res.data})
+        }
+        // Load in the votes the user has already made
+        axios.get('http://52.15.86.243:8080/api/v1/votes/user_vote/', config)
+        .then(res => {
+            console.log(res.data)
+            this.setState({userBills: res.data})
+        })
+        .catch(error => {
+            console.log(error.response)
+        });
+
+        // Load in the votes the user has not already made
+        var caughtBills = []
+        for (var i = 0; i < user.unvoted.length; i++) {
+            axios.get(user.unvoted[i], config)
+            .then(billInfo => {
+                var all = this.state.bills
+                all.push(billInfo.data)
+                this.setState({bills: all})
             })
             .catch(error => {
                 console.log(error.response)
             });
+        }
 
-            // Load in the votes the user has not already made
-            main.setState({
-                bills: user.unvoted,
-                loading: false,
-                progress: 0,
-                total: user.unvoted.length,
-            })
-        });
+        console.log(this.state.bills)
+
+        this.setState({
+            bills: caughtBills,
+            loading: false,
+            progress: 0,
+            total: user.unvoted.length,
+        })
+
     }
 
     render() {
@@ -107,7 +117,7 @@ export default class Main extends Component {
                 <View style={styles.votingbar}>
                     <VotingBar
                         bills={this.state.bills}
-                        token={this.state.token}
+                        token={this.props.navigation.state.params.key}
                         progress={this.state.progress}
                         total={this.state.total}
                         mainNav={navigate}
@@ -116,7 +126,7 @@ export default class Main extends Component {
 
                 <View style={styles.historybar}>
                     <VotingHistory
-                        bills={this.state.userBills}
+                        bills={this.state.bills}
                         mainNav={navigate}
                     />
                 </View>
