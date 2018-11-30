@@ -3,6 +3,8 @@ from rest_framework import generics, viewsets, filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.reverse import reverse, reverse_lazy
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
+from rest_framework import status
 from itertools import chain
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -36,6 +38,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        user = User.objects.get(pk=kwargs['pk'])
+        user.calculate_matches()
+        m = user.matched.all()[0]
+        print(m.user_set.all())
+        return super(UserViewSet, self).retrieve(request, *args, **kwargs)
+
     def update(self, request, pk):
         # print(request.data)
         # print(request.data['followed'])
@@ -45,7 +54,6 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(followed)
         matched = []
 
-        request.data._mutable = True
 
         # print(user.matched.all())
         for pm in user.matched.all():
@@ -55,6 +63,8 @@ class UserViewSet(viewsets.ModelViewSet):
         # print()
         # print(prev_matched)
             # print(pm)
+
+        request.data._mutable = True
 
         for l in followed:
             l_pk = l.split('/')[-2]
@@ -234,6 +244,9 @@ class VoteViewSet(viewsets.ModelViewSet):
     serializer_class = VoteSerializer
     pagination_class = PageNumberPagination
 
+    # def create(self, request, *args, **kwargs):
+    #     return super(VoteViewSet, self).create(request, *args, **kwargs)
+
     def get_permissions(self):
         if self.action == 'user_vote':
             permission_classes = [IsAuthenticated]
@@ -249,9 +262,13 @@ class VoteViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             queryset = Vote.objects.all()
 
+
             uvotes = queryset.filter(user__id=self.request.user.id)
             lvotes = queryset.filter(legislator__isnull=False)
             queryset = list(chain(uvotes, lvotes))
+
+            if self.request.user.is_anonymous:
+                queryset = uvotes
             # queryset = uvotes
 
             return queryset
@@ -282,6 +299,24 @@ class FacebookLogin(SocialLoginView):
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+
+        print('as;dlfkjas;dlfkj')
+        print(user.unvoted)
+        user.unvoted.add(*Bill.objects.all())
+        print(user.unvoted)
+        # user.save()
+        print('as;dlkfjas;dlkfja')
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(self.get_response_data(user),
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
 
     def get_response_data(self, user):
         data = super(CustomRegisterView, self).get_response_data(user)

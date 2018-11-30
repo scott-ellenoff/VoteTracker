@@ -3,7 +3,7 @@ import random
 import string
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -15,19 +15,17 @@ from allauth.socialaccount.signals import pre_social_login
 def create_random_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
-class Match(models.Model):
-    class Meta:
-        db_table = 'Matches'
 
-    MID = models.UUIDField(db_column='MID', default=uuid.uuid4, editable=False, primary_key=True)
-    legislator = models.ForeignKey('Legislator', on_delete=models.CASCADE, blank=True, null=True)
-    match_percentage = models.DecimalField(db_column='Percentage', decimal_places=4, max_digits=6, default=0)
-    num_votes = models.IntegerField(db_column='NumVotes', default=0)
+# class CustomUserManager(UserManager):
+    # def create_user(username, email=None, password=None, **extra_fields):
+    #     print('asdf;laksdfjas')
+        # return super(CustomUserManager, self).create_user(username, email, password, **extra_fields)
 
 class User(AbstractUser):
     class Meta:
         db_table = 'Users'
 
+    # objects = CustomUserManager()
     UID = models.UUIDField(db_column='UID', max_length=12, default=uuid.uuid4, editable=False)
     name = models.TextField(db_column='Name', blank=True, null=True)
     district = models.IntegerField(db_column='District', blank=True, null=True)
@@ -35,6 +33,10 @@ class User(AbstractUser):
     matched = models.ManyToManyField('Match', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
     unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
+
+    def calculate_matches(self):
+        for m in self.matched.all():
+            m.calculate()
 
     def save(self, *args, **kwargs):
         # print(locals())
@@ -86,6 +88,25 @@ def on_user_signed_up(request, user, sociallogin=None, **kwargs):
             # elif sociallogin.account.extra_data['gender'] == 'female':
             #     gender = 'F'
             # user.create_profile(fullname=name, gender=gender)
+
+class Match(models.Model):
+    class Meta:
+        db_table = 'Matches'
+
+    MID = models.UUIDField(db_column='MID', default=uuid.uuid4, editable=False, primary_key=True)
+    legislator = models.ForeignKey('Legislator', on_delete=models.CASCADE, blank=True, null=True)
+    match_percentage = models.DecimalField(db_column='Percentage', decimal_places=4, max_digits=6, default=0)
+    num_votes = models.IntegerField(db_column='NumVotes', default=0)
+
+    def calculate(self):
+        print(self)
+        print(dir(self))
+        # print(self.users_set.all())
+
+    def save(self, *args, **kwargs):
+        # print(User.objects.get())
+
+        super(Match, self).save(*args, **kwargs)
 
 class Bill(models.Model):
     class Meta:
