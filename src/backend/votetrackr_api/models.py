@@ -124,12 +124,12 @@ class Bill(models.Model):
     class Meta:
         db_table = 'Bills'
 
-    BILL_STATUS = (
-        ('Passed', 'Passed'),
-        ('Rejected', 'Rejected'),
-        ('On the Floor', 'On the Floor'),
-        ('In Commitee', 'In committee')
-    )
+    # BILL_STATUS = (
+    #     ('Passed', 'Passed'),
+    #     ('Rejected', 'Rejected'),
+    #     ('On the Floor', 'On the Floor'),
+    #     ('In Commitee', 'In committee')
+    # )
 
     CHAMBERS = (
         ('Senate', 'Senate'),
@@ -137,11 +137,11 @@ class Bill(models.Model):
     )
 
 
-    BID = models.CharField(db_column='BID', max_length=12, default=create_random_id, primary_key=True, editable=False)
+    BID = models.CharField(db_column='BID', max_length=12, default=create_random_id, primary_key=True, editable=True)
     name = models.TextField(db_column='Name', blank=True)
     description = models.TextField(db_column='Description', blank=True)
     date_introduced = models.DateField(db_column='DateIntroduced', default=datetime.date.today)
-    status = models.TextField(db_column='Status', choices=BILL_STATUS, blank=True)
+    status = models.TextField(db_column='Status', blank=True)
     voted_on = models.BooleanField(db_column='VotedOn', blank=True, null=True)
     congress_num = models.IntegerField(db_column='CongressN', blank=True, null=True)
     chamber = models.CharField(db_column='Chamber', max_length=10, choices=CHAMBERS, blank=True)
@@ -158,7 +158,7 @@ class Legislator(models.Model):
             ('Independent', 'Independent'),
             ('Other', 'Other')
     )
-    LID = models.CharField(db_column='LID', max_length=12, default=create_random_id, primary_key=True, editable=False)
+    LID = models.CharField(db_column='LID', max_length=12, default=create_random_id, primary_key=True, editable=True)
     fullname = models.CharField(db_column='FullName', max_length=255, blank=True)
     senator = models.BooleanField(db_column='isSenator', blank=True, null=True)
     affiliation = models.TextField(db_column='Affiliation', choices=AFFILIATION, blank=True, null=True)

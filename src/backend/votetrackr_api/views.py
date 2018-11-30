@@ -288,7 +288,19 @@ class VoteViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             queryset = Vote.objects.all()
 
+            legislator = self.request.query_params.get('legislator', None)
+            bill = self.request.query_params.get('bill', None)
 
+            print(legislator)
+            if legislator:
+                print(queryset)
+                queryset = queryset.filter(legislator=legislator)
+                print(queryset)
+
+            if bill:
+                queryset = queryset.filter(bill=bill)
+
+            return queryset
             # uvotes = queryset.filter(user__id=self.request.user.id)
             # lvotes = queryset.filter(legislator__isnull=False)
             # queryset = list(chain(uvotes, lvotes))
@@ -365,12 +377,7 @@ class CustomRegisterView(RegisterView):
         serializer.is_valid(raise_exception=True)
         user = self.perform_create(serializer)
 
-        print('as;dlfkjas;dlfkj')
-        print(user.unvoted)
         user.unvoted.add(*Bill.objects.all())
-        print(user.unvoted)
-        # user.save()
-        print('as;dlkfjas;dlkfja')
 
         headers = self.get_success_headers(serializer.data)
 
