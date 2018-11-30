@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from rest_framework import generics, viewsets, filters
+from rest_framework import generics, viewsets, filters, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.reverse import reverse, reverse_lazy
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 from itertools import chain
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -31,7 +32,6 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-
     # permission_classes = (IsAdminOrSelf,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -195,6 +195,8 @@ class BillViewSet(viewsets.ModelViewSet):
     # filter_fields = ('chamber', 'status')
     filter_backends = (SearchFilter,)
     search_fields = ('description')
+
+
 
     # def get_queryset(self):
     #     """
