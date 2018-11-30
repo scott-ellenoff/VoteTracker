@@ -54,23 +54,37 @@ export default class Main extends Component {
     componentWillMount() {
         this.setState({loading: "true"});
 
+        var user = this.props.navigation.state.params.user
         var main = this;
+
+        console.log(user)
+
+        // Once we receive the auth token
         AsyncStorage.getItem("key").then((value) => {
             this.setState({"token": value});
         })
         .then(res => {
-            axios.get('http://52.15.86.243:8080/api/v1/bills/')
-                .then(function (response) {
-                    const data = response.data;
-                    main.setState({bills: data,
-                                   loading: false,
-                                   progress: 0,
-                                   total: data.length
-                               })
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+            // Load in the votes the user has already made
+            var config = {
+                headers: {
+                    'Authorization': "Token " + String(this.state.token)
+                }
+            }
+            axios.get('http://52.15.86.243:8080/api/v1/votes/user_vote/', config)
+            .then(res => {
+                this.setState({userBills: res.data})
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
+
+            // Load in the votes the user has not already made
+            main.setState({
+                bills: user.unvoted,
+                loading: false,
+                progress: 0,
+                total: user.unvoted.length,
+            })
         });
     }
 
@@ -102,7 +116,7 @@ export default class Main extends Component {
 
                 <View style={styles.historybar}>
                     <VotingHistory
-                        bills={this.state.bills}
+                        bills={this.state.userBills}
                         mainNav={navigate}
                     />
                 </View>
