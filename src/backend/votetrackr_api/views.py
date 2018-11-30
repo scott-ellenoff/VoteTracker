@@ -33,6 +33,8 @@ class MatchViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
         # elif self.action == 'retrieve':
             # permission_classes = [IsMatchOwner]
+        elif self.action == 'retrieve':
+            permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
@@ -319,8 +321,15 @@ class VoteViewSet(viewsets.ModelViewSet):
                 pass
 
             user = request.user
+            # print(type(user))
             # print(user)
-            user.unvoted.remove(request.data['bill'])
+            BID = request.data.get('bill').split('/')[-2]
+            b = Bill.objects.get(BID=BID)
+            # print(b)
+            # print(user.unvoted.all())
+            user.unvoted.remove(b)
+            # user.unvoted.all().idrequest.data['bill']
+            # print(user.unvoted.all())
             return super(VoteViewSet, self).create(request)
         elif request.method == 'GET':
             return super(VoteViewSet, self).list(request)
