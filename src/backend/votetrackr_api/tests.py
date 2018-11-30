@@ -218,7 +218,6 @@ class UserTests(APITestCase):
         user = User.objects.get(id=realUID)
         self.client.force_authenticate(user=user)
 
-
         unvoted = response_body['user']['unvoted']
         voted = response_body['user']['voted']
         self.assertEqual(unvoted, [BILLS_URL + '{}/'.format(bill['BID']) for bill in bills])
@@ -239,107 +238,78 @@ class UserTests(APITestCase):
             # Test bill removed from unvoted bills
             self.assertEqual(unvoted, [BILLS_URL + bill['BID'] + '/' for bill in bills[i + 1:]])
 
-    # def test_permissions(self):
-    #     data = {"username": "user1",
-    #             "name" : "First Last", 
-    #             "password": "pa$$w0rd"}
+    def test_permissions(self):
+        data = {"username": "user1",
+                "name" : "First Last", 
+                "district" : "10001", 
+                "email" : "qxy@gmail.com", 
+                "password1": "pa$$w0rdy",
+                "password2": "pa$$w0rdy"}
 
-    #     # Registrate the user we'll test
-    #     response = self.client.post(REGISTER_URL, data, format="json")
-    #     response_body = json.loads(response.content)
-    #     realUID1 = str(response_body['user']['id'])
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Registrate the user we'll test
+        response = self.client.post(REGISTER_URL, data, format="json")
+        response_body = json.loads(response.content)
+        realUID1 = str(response_body['user']['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    #     other_user = {"username": "user2",
-    #                   "name" : "Firstname Lastname", 
-    #                   "password": "s0ftwar3"}
+        other_user = {"username": "user09",
+                      "name" : "Firstname Lastname", 
+                      "district" : "10001", 
+                      "email" : "lmn@gmail.com", 
+                      "password1": "s0ftwar3",
+                      "password2": "s0ftwar3"}
 
-    #     # Registrate a second user to test against
-    #     response = self.client.post(REGISTER_URL, data, format="json")
-    #     response_body = json.loads(response.content)
-    #     realUID2 = str(response_body['id'])
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Registrate a second user to test against
+        response = self.client.post(REGISTER_URL, other_user, format="json")
+        response_body = json.loads(response.content)
+        realUID2 = str(response_body['user']['id'])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    #     user1_url = USERS_URL+realUID1+'/'
-    #     user2_url = USERS_URL+realUID2+'/'
+        user1_url = USERS_URL+realUID1+'/'
+        user2_url = USERS_URL+realUID2+'/'
 
-    #     #testing getting user without authentication
-    #     response = self.client.get(user1_url)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        #testing getting user without authentication
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    #     # # login to authenticate
-    #     # client = APIClient()
-    #     # client.login(username='user1', password='pa$$w0rd')
+        # # login to authenticate
+        # client = APIClient()
+        # client.login(username='user1', password='pa$$w0rd')
 
-    #     # Login with incorrect password
-    #     data = {"username": "user1", "password": "password"}
-    #     response = self.client.post(LOGIN_URL, data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # Login with incorrect password
+        client = self.client
+        client.login(username='user1', password='passwordy')
 
-    #     # login correctly
-    #     client = APIClient()
-    #     client.login(username='user1', password='pa$$w0rd')
+        #testing getting user on failed login
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    #     # Getting user info after authenticated
-    #     response = self.client.get(user1_url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # login correctly
+        client = self.client
+        client.login(username='user1', password='pa$$w0rdy')
 
-    #     # Getting the other user info after authenticated
-    #     response = self.client.get(user2_url)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Getting user info after authenticated
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #     # Getting user list view after authenticated
-    #     response = self.client.get(USERS_URL)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Getting the other user info after authenticated
+        response = self.client.get(user2_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    #     # Logging out
-    #     client.logout()
+        # Getting user list view after authenticated
+        response = self.client.get(USERS_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #     # Testing getting user info after logout
-    #     response = self.client.get(user1_url)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Logging out
+        client.logout()
 
-    #     # Getting user list view after logout
-    #     response = self.client.get(USERS_URL)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Testing getting user info after logout
+        response = self.client.get(user1_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    #     # # Registration
-    #     # response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
-    #     # response_body = json.loads(response.content)
-    #     # realUID = str(response_body['id'])
-    #     # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    #     # #testing getting user without authentication
-    #     # response = self.client.get('http://testserver/users/'+realUID+'/')
-    #     # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    #     # # Login with incorrect password
-    #     # data = {"username": "user1", "password": "password"}
-    #     # response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
-    #     # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    #     # # Login with correct password
-    #     # data["password"] = "pa$$w0rd"
-    #     # response = self.client.post('http://testserver/rest-auth/registration', data, format="json")
-    #     # response_body = json.loads(response.content)
-    #     # token = response_body['key']
-    #     # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    #     # # Getting user info after authenticated
-    #     # self.client.auth = HTTPBasicAuth('user1', 'pa$$w0rd')
-    #     # self.client.headers.update({'x-test': 'true'})
-    #     # response = self.client.get('http://testserver/users/'+realUID+'/')
-    #     # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    #     # # Logging out
-    #     # response = self.client.post('http://testserver/rest-auth/logout', {}, format="json")
-    #     # response_body = json.loads(response.content)
-    #     # self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     # self.assertEqual(response_body['detail'], 'Successfully logged out.')
-
-    #     # # Testing getting user info after logout
-    #     # response = self.client.get('http://testserver/users/'+realUID+'/')
-    #     # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Getting user list view after logout
+        response = self.client.get(USERS_URL)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     # def test_match(self):
