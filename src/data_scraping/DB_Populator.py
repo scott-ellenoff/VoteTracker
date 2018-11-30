@@ -276,7 +276,7 @@ if __name__ == "__main__":
 
     # Clean one specified table
     # cursor.execute('SET FOREIGN_KEY_CHECKS = 0')
-    # cursor.execute('TRUNCATE TABLE Bills')
+    # cursor.execute('TRUNCATE TABLE Votes')
     # cursor.execute('SET FOREIGN_KEY_CHECKS = 1')
 
     # Populate the Bill and Legislators tables using the SQL
@@ -288,9 +288,10 @@ if __name__ == "__main__":
 
 
     # Populate the Bill, Legislator, and Votes tabels using requests
+    # DO NOT USE EXCEPT populate_votes
     # populate_legislators()
     # populate_bills()
-    # populate_votes()
+    populate_votes()
 
     close_db_conn(conn, cursor)
 
