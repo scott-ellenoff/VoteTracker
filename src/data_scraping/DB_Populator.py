@@ -48,6 +48,11 @@ def print_table(table_name):
     db = pd.read_sql('select * from ' + table_name, con=conn)
     print(db.to_string())
 
+# Obtain the db token
+def get_db_token():
+    r = requests.post(SERVER_BASE + 'login/', data={'username': 'admin', 'password': 'thisis220'})
+    return json.loads(r.content)['key']
+
 
 # ----------------------------------------------------SQL_FUNCTIONS-----------------------------------------------------
 # Check if table exists in our db
@@ -186,7 +191,10 @@ def populate_legislators():
             'dwnominate': l['DWNominate'],
             'url': l['URL']
         }
-        r = requests.post(url, data=data)
+        # Form a request to a db
+        auth_token = get_db_token()
+        headers = {'Authorization': 'Token ' + auth_token}
+        r = requests.post(url, data=data, headers=headers)
         print(r.status_code)
         print(r.text)
 
@@ -214,7 +222,10 @@ def populate_bills():
             'date_voted': bill['DateVoted'],
             'url': bill['URL']
         }
-        r = requests.post(url, data=data)
+        # Form a request to a db
+        auth_token = get_db_token()
+        headers = {'Authorization': 'Token ' + auth_token}
+        r = requests.post(url, data=data, headers=headers)
         print(r.status_code)
         print(r.text)
 
@@ -239,11 +250,13 @@ def populate_votes():
                 'legislator': L_BASE + l + '/',
                 'vote': res
             }
-            r = requests.post(url, data=data)
-            counter += 1
-            # print(r.status_code)
-            # print(r.text)
-            print(counter)
+
+            # Form a request to a db
+            auth_token = get_db_token()
+            headers = {'Authorization': 'Token ' + auth_token}
+            r = requests.post(url, data=data, headers=headers)
+            print(r.status_code)
+            print(r.text)
 
 if __name__ == "__main__":
     conn, cursor = open_db_conn(user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, db=DB_NAME)
@@ -270,7 +283,7 @@ if __name__ == "__main__":
     # print_table('Bills')
 
     # Populate the Bill, Legislator, and Votes tabels using requests
-    # populate_l egislators()
+    # populate_legislators()
     # populate_bills()
     # populate_votes()
 
