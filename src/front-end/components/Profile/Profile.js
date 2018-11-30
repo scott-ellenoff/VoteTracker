@@ -130,6 +130,7 @@ export default class Profile extends Component {
 
   updateMatchData = () => {
     const {token} = this.state;
+    this.setState({matchData: []});
     const d = this.state.matches.reduce((acc, cur, idx) => {
         console.log(cur);
         const l = axios.get(cur, {
@@ -178,6 +179,7 @@ export default class Profile extends Component {
   }
 
   renderItem(item) {
+    console.log(this.state.matchData);
     const name = this.state.byLid[item.split('/')[6]][0].fullname;
       const val = this.state.matchData.findIndex((el) => el.legislator === item);
       const matchPctPromise = ` %`;
@@ -242,7 +244,6 @@ export default class Profile extends Component {
     if (!addMode) {
       return (
         <View>
-
           <Image source={require('../../assets/topbanner_page4.png')}/>
           <View style={styles.titleText}>
             <Text style={styles.titleText}> Select politicians to Follow</Text>
