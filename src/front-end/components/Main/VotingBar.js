@@ -22,7 +22,6 @@ export default class VotingBar extends Component {
     */
     constructor(props) {
         super(props)
-
         this.state = {
             billIndex: 0
         }
@@ -51,6 +50,7 @@ export default class VotingBar extends Component {
             vote: voteResponse,
         }
 
+<<<<<<< HEAD
         axios.post('http://52.15.86.243:8080/api/v1/votes/user_vote/', details, config)
         .then(res => {
             console.log(res);
@@ -61,15 +61,20 @@ export default class VotingBar extends Component {
         });
 
         var nextIndex = currIndex + 1
+=======
+        axios.post();
+
+        let nextIndex = currIndex + 1;
+>>>>>>> 6cd9bc8db97ab12e7665b260b2fc9e12855c2995
         this.setState({billIndex: nextIndex})
     }
 
     render() {
         // To Increment Through Bills
-        var billIndex = this.state.billIndex
+        var billIndex = this.state.billIndex;
 
         // To Create Yay, Nay, IDC Buttons
-        var voteOptions = ['yay', 'idc', 'nay']
+        var voteOptions = ['yay', 'idc', 'nay'];
         return(
             <View>
                 <Button
@@ -84,7 +89,7 @@ export default class VotingBar extends Component {
                         <View style={styles.votebuttons}>
 
                             {voteOptions.map((option, key) => {
-                                var req = require('../../assets/yay.png')
+                                var req = require('../../assets/yay.png');
                                 if (option == 'nay') {
                                     req = require('../../assets/nay.png')
                                 } else if (option == 'idc') {

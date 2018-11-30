@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import axios from 'axios';
-import {FlatList, StyleSheet, View, Image, Text, TouchableHighlight} from 'react-native';
+import {FlatList, StyleSheet, View, Image, Text, TouchableHighlight, ScrollView} from 'react-native';
 import ListItem from './Row';
 import listData from './data';
 import SelectLegislators from './selectLegislators';
@@ -44,7 +44,7 @@ export default class Profile extends Component {
   }
 
   componentDidMount() {
-    console.log('here');
+    console.log('comoonent did mount');
     const AUTH_TOKEN = AsyncStorage.getItem('key')
       .then((v) => {
         this.setState({token: v});
@@ -107,7 +107,7 @@ export default class Profile extends Component {
         'Content-Type': 'multipart/form-data',
         "Authorization": `Token ${token}`
       }
-    }).then(d => console.log(d, 'followed new legislators'))
+    }).then(d => this.setState({followedLegislators: d.data.followed}))
       .catch((err) => console.log(err));
   };
 
@@ -120,8 +120,8 @@ export default class Profile extends Component {
   }
 
   success(key) {
+    console.log(key, 'in success');
     const data = this.state.followedLegislators.filter(item => this.state.byLid[item.split('/')[6]][0].fullname !== key);
-
     this.setState({
       followedLegislators: data,
     }, this.updateFollowLegislators);
@@ -134,8 +134,6 @@ export default class Profile extends Component {
   }
 
   renderItem(item) {
-    console.log(item);
-    console.log(this.state.byLid[item.split('/')[6]][0].fullname, 'in');
     return (
       <ListItem
         text={this.state.byLid[item.split('/')[6]][0].fullname} // TODO add match percent
@@ -148,10 +146,12 @@ export default class Profile extends Component {
   updateLegislators = (val) => {
     this.setState((prevState) => {
       const updated =prevState.userInfo;
-      updated.followed.push(prevState.byLid[val][0].detail);
+      updated.followed = [...prevState.followedLegislators,prevState.byLid[val][0].detail];
+
       AsyncStorage.setItem('user', JSON.stringify([updated]));
+      console.log(prevState.followedLegislators, 'in updatelegislators');
       return {
-        followedLegislators: [...updated.followed],
+        followedLegislators: [...prevState.followedLegislators,prevState.byLid[val][0].detail ],
         pickerSelected: prevState.legislators[prevState.followedLegislators.length].detail.split('/')[6],
         addMode: false
       }
@@ -164,14 +164,11 @@ export default class Profile extends Component {
 
   setMode = () => {
     const {legislators, followedLegislators} = this.state;
-    console.log(typeof(followedLegislators), this.state.byLid, 'here', followedLegislators);
 
     const filtered = legislators.filter(function(item) {
-      console.log(item.detail, followedLegislators);
 
       return followedLegislators.indexOf(item.detail) !== -1;
     });
-    console.log(legislators, legislators.length, filtered);
 
     if (filtered.length || followedLegislators.length === 0) {
       this.setState({addMode: true})
@@ -190,9 +187,9 @@ export default class Profile extends Component {
     }
     if (!addMode) {
       return (
-        <View>
+        <View  style={{flex:1}}>
           <Image source={require('../../assets/topbanner_page4.png')}/>
-          <View>
+          <View  >
             <FlatList
               style={this.props.style}
               data={this.state.followedLegislators}
@@ -200,7 +197,7 @@ export default class Profile extends Component {
               renderItem={({item}) => this.renderItem(item)}
               scrollEnabled={this.state.enable}
             />
-          </View>
+          </View >
           <View style={styles.titleText}>
             <Text style={styles.titleText}> Select politicians to Follow</Text>
             <TouchableHighlight onPress={this.setMode}>
@@ -212,9 +209,10 @@ export default class Profile extends Component {
       )
     } else {
       return (
-        <View>
+
+        <ScrollView >
           <Image source={require('../../assets/topbanner_page4.png')}/>
-          <View>
+          <View >
             <FlatList
               style={this.props.style}
               data={this.state.followedLegislators}
@@ -223,20 +221,28 @@ export default class Profile extends Component {
               scrollEnabled={this.state.enable}
             />
           </View>
-          <View>
+          <View >
             <SelectLegislators pickerSelected={pickerSelected} updateSelected={this.updateSelected}
                                legislators={legislators}
                                updateLegislators={this.updateLegislators}/>
           </View>
-        </View>
+        </ScrollView>
 
       )
     }
-    ;
   }
 }
 
 const styles = StyleSheet.create({
+  parent:{
+    flex:1
+  },
+  child:{
+    flex: 2
+  },
+  listHalfView:{
+    height: '50%'
+  },
   separatorViewStyle: {
     flex: 1,
     backgroundColor: '#FFF',
