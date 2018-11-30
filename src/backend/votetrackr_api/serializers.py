@@ -10,7 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='user-detail')
     class Meta:
         model = User
-        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'unvoted', 'matched', 'followed', 'detail')
+        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'unvoted', 'voted', 'matched', 'followed', 'detail')
 
 class BillSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='bill-detail')

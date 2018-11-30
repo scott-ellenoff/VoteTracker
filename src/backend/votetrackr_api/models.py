@@ -33,6 +33,9 @@ class User(AbstractUser):
     matched = models.ManyToManyField('Match', related_name='matched', blank=True)
     followed = models.ManyToManyField('Legislator', related_name='followed', blank=True)
     unvoted = models.ManyToManyField('Bill', related_name='unvoted', blank=True)
+    voted = models.ManyToManyField('Bill', related_name='voted', blank=True)
+
+
 
     def calculate_matches(self):
         for m in self.matched.all():

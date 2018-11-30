@@ -231,33 +231,33 @@ class BillViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
     # filter_backends = (DjangoFilterBackend, SearchFilter)
     # filter_fields = ('chamber', 'status')
-    filter_backends = (SearchFilter,)
-    search_fields = ('description')
+    # filter_backends = (SearchFilter,)
+    # search_fields = ('description')
 
-    # def get_queryset(self):
-    #     """
-    #     Optionally restricts the returned purchases to a given user,
-    #     by filtering against a `username` query parameter in the URL.
-    #     """
-    #     if self.action == 'list':
-    #         queryset = Bill.objects.all()
-    #         chamber = self.request.query_params.get('chamber', None)
-    #         # senator = self.request.query_params.get('senator', None)
-    #         # fullname = self.request.query_params.get('fullname', None)
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        # if self.action == 'list':
+            # queryset = Bill.objects.all()
+            # chamber = self.request.query_params.get('user', None)
+            # senator = self.request.query_params.get('senator', None)
+            # fullname = self.request.query_params.get('fullname', None)
 
-    #         if chamber is not None:
-    #             queryset = queryset.filter(chamber=chamber)
+            # if chamber is not None:
+                # queryset = queryset.filter(chamber=chamber)
 
-    #         # if senator is not None:
-    #         #     queryset = queryset.filter(senator=senator)
+            # if senator is not None:
+            #     queryset = queryset.filter(senator=senator)
 
-    #         # if fullname is not None:
-    #         #     queryset = queryset.filter(fullname=fullname)
+            # if fullname is not None:
+            #     queryset = queryset.filter(fullname=fullname)
 
-    #         return queryset
+            # return queryset
 
-    #     else:
-    #         return super(LegislatorViewSet, self).get_queryset()
+        # else:
+        return super(BillViewSet, self).get_queryset()
 
 
     # filter_backends = (filters.SearchFilter)
@@ -328,6 +328,10 @@ class VoteViewSet(viewsets.ModelViewSet):
             # print(b)
             # print(user.unvoted.all())
             user.unvoted.remove(b)
+            print(user.voted.all())
+            user.voted.add(b)
+            print(user.voted.all())
+
             # user.unvoted.all().idrequest.data['bill']
             # print(user.unvoted.all())
             return super(VoteViewSet, self).create(request)
