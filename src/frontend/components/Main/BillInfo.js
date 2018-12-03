@@ -11,7 +11,8 @@ import {Text,
         View,
         StyleSheet,
         Button,
-        Linking} from 'react-native';
+        Linking,
+        TouchableOpacity} from 'react-native';
 
 /*
     Bill Information Component
@@ -34,8 +35,9 @@ export default class BillInfo extends Component {
     render() {
         // Pulling props from navigation
         var bill = this.props.navigation.state.params.bill
-        
+
         return(
+            <View>
             <View style={styles.container}>
                 <Text>{"\n"}Bill {bill.name}{"\n"}</Text>
 
@@ -82,9 +84,10 @@ export default class BillInfo extends Component {
 
                 <Text>{"\n"}</Text>
 
-                <Button title="Learn Even More"
+                <Button title="Learn More at GovTrack.us"
                         onPress={ ()=> { Linking.openURL(bill.url) } }/>
 
+            </View>
             </View>
         );
     }
@@ -96,7 +99,9 @@ export default class BillInfo extends Component {
 */
 const styles = StyleSheet.create({
     container: {
-        padding: 10
+        padding: 10,
+        backgroundColor: 'white',
+        height: 1000
     },
 
     votebuttons: {

@@ -118,7 +118,9 @@ export default class Main extends Component {
 
         // Render
         return(
+            <View>
             <View style={styles.container}>
+                <Text style={styles.title1}> Vote For New Bills </Text>
 
                 <View style={styles.votingbar}>
                     <VotingBar
@@ -130,6 +132,10 @@ export default class Main extends Component {
                     />
                 </View>
 
+                <Text style={styles.title2}> Check Out Your Voting History </Text>
+
+
+
                 <View style={styles.historybar}>
                     <VotingHistory
                         bills={this.state.votedBills}
@@ -137,6 +143,7 @@ export default class Main extends Component {
                     />
                 </View>
 
+            </View>
             </View>
         );
     }
@@ -148,16 +155,36 @@ export default class Main extends Component {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        padding: 10,
+        padding: 25,
+        backgroundColor: 'white',
+    },
+    title1: {
+        fontSize: 18,
+        color: '#0C314A',
+        textDecorationLine: "underline",
+        textDecorationStyle: "solid",
+        textDecorationColor: "#0C314A",
+        paddingBottom: 10,
+    },
+    title2: {
+        top: 17.5,
+        fontSize: 18,
+        color: '#0C314A',
+        textDecorationLine: "underline",
+        textDecorationStyle: "solid",
+        textDecorationColor: "#0C314A"
     },
     votingbar: {
         alignItems: "center",
-        width: 400,
+        width: 300,
         height: 175,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        borderRadius: 10,
+        borderWidth: 1.5,
+        borderColor: '#0C314A',
     },
     historybar: {
-        marginTop: 10,
+        marginTop: 30,
         alignItems: "center",
         width: 400,
         height: 400,
