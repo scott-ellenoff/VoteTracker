@@ -27,6 +27,7 @@ class LegislatorSerializer(serializers.HyperlinkedModelSerializer):
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='vote-detail')
+    bill = BillSerializer(read_only=True)
     class Meta:
         model = Vote
         fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
