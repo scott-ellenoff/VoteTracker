@@ -15,8 +15,10 @@ import {
   Linking,
   AsyncStorage
 } from 'react-native';
+import Voting from './voting';
 
 import Boot from "../Main/Boot.js"
+import BillInfo from "../Main/BillInfo";
 
 /*
     Main Screen Component
@@ -30,7 +32,8 @@ export default class LegislatorProfile extends Component {
 
     this.state = {
       loading: true,
-      legislator: null
+      legislator: null,
+      bills: null
     }
   }
 
@@ -74,16 +77,22 @@ export default class LegislatorProfile extends Component {
 
     axios.get(link, config)
       .then(data => {
-          console.log(data.data, 'in profile');
           this.setState({legislator: data.data});
-          return data.LID;
+          return data.data.LID;
         }
       )
-      .then(LID => {
+      .then((LID)  => {
         console.log(LID);
+
         axios.get(`http://52.15.86.243:8080/api/v1/votes/?legislator=${LID}`, config)
           .then(data => {
-              this.setState({votes: data.data, loading:false});
+            console.log(data.data);
+            const bills = data.data.results.reduce((acc, cur) => {
+              acc.push(cur.bill);
+              return acc;
+              }
+              , []);
+              this.setState({votes: data.data, loading:false, bills: bills});
             }
           )
       })
@@ -103,6 +112,13 @@ export default class LegislatorProfile extends Component {
     return (
       <View style={styles.container}>
         <Text>{this.state.legislator.fullname}</Text>
+        <View>
+          <Voting
+
+            bills={this.state.votes}
+            mainNav={navigate}
+          />
+        </View>
 
       </View>
     );
