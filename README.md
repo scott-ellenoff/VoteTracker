@@ -1,6 +1,6 @@
 # Milestone 4b #
 
-# Installation Guide#
+# Installation Guide #
 
 Requirements:
 
