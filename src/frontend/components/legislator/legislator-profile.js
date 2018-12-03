@@ -71,10 +71,21 @@ export default class LegislatorProfile extends Component {
     // url: "https://www.alexander.senate.gov/public"
 
     const link = this.props.navigation.state.params.legislator;
+
     axios.get(link, config)
       .then(data => {
-        console.log(data.data, 'in profile');
-        this.setState({legislator: data.data, loading:false})
+          console.log(data.data, 'in profile');
+          this.setState({legislator: data.data});
+          return data.LID;
+        }
+      )
+      .then(LID => {
+        console.log(LID);
+        axios.get(`http://52.15.86.243:8080/api/v1/votes/?legislator=${LID}`, config)
+          .then(data => {
+              this.setState({votes: data.data, loading:false});
+            }
+          )
       })
       .catch(error => {
         console.log(error.response)
@@ -91,12 +102,22 @@ export default class LegislatorProfile extends Component {
     // Render
     return (
       <View style={styles.container}>
-        <Text>{this.state.legislator.LID}</Text>
+        <Text>{this.state.legislator.fullname}</Text>
 
       </View>
     );
   }
 }
+
+// LID: "B001270"
+// affiliation: "Democrat"
+// detail: "http://52.15.86.243:8080/api/v1/legislators/B001270/"
+// district: 37
+// dwnominate: 0
+// fullname: "Karen Bass"
+// senator: false
+// state: "CA"
+// url: "https://bass.house.gov"
 
 /*
     Styling for JSX
