@@ -43,9 +43,8 @@ $ cd node_modules/react-native/third-party/glog-0.3.5/ && ../../scripts/ios-conf
 react-native upgrade
 react-native link
 ```
-9. Open the proect in xCode by opening the VoteTracker.xcodeproj file in the ios folder of frontend. Navigate to the build settings tab in xCode. Change the Framework search path in xCode BuildSettings tab to the path for the ios folder on your computer. I.e my framework search path is  /Users/zachkamran/WebstormProjects/VoteTracker/src/frontend/ios.
 
-10. Run for iOS now. The simulator should load, and the VoteTracker app should start up automatically, with "Build Success" showing in Terminal. Otherwise we will see "Build Failed".  
+9. Run for iOS now. The simulator should load, and the VoteTracker app should start up automatically, with "Build Success" showing in Terminal. Otherwise we will see "Build Failed".  
 ```python
 react-native run-ios
 ```
