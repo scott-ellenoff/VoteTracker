@@ -8,7 +8,8 @@ import {Text,
         View,
         StyleSheet,
         Button,
-        ScrollView} from 'react-native';
+        ScrollView,
+        TouchableOpacity} from 'react-native';
 
 /*
     Voting History Component
@@ -28,20 +29,30 @@ export default class VotingHistory extends Component {
                 {(this.props.bills).map((bill, key) => {
                     return (
                         <View key={key} style={styles.historyitems}>
-                            <Text> {bill.BID} </Text>
+
+                            <Text style={styles.name}> {bill.BID} </Text>
 
                             {bill.voted_on? (
-                                <Text> Concluded </Text>
+                                <Text style={styles.status}> Concluded </Text>
                             ) : (
-                                <Text> Pending... </Text>
+                                <Text style={styles.status}> Pending.. </Text>
                             )}
 
-                            <Button title="About"
-                                    onPress={() => this.props.mainNav('BillInfo', {bill: bill})}
-                            />
+                            <TouchableOpacity title="About"
+                                    style={styles.about}
+                                    onPress={() => this.props.mainNav('BillInfo', {bill: bill})}>
 
-                            <Button title="Map"
-                                    onPress={() => this.props.mainNav('MapScreen', {bill: bill})}/>
+                                    <Text style={{color: '#F33E35'}}> About </Text>
+
+                            </TouchableOpacity>
+
+                            <TouchableOpacity title="Map"
+                                    style={styles.map}
+                                    onPress={() => this.props.mainNav('MapScreen', {bill: bill})}>
+
+                                    <Text style={{color: '#F33E35'}}> Map </Text>
+
+                            </TouchableOpacity>
                         </View>
                     )
                 })}
@@ -55,6 +66,33 @@ export default class VotingHistory extends Component {
 */
 const styles = StyleSheet.create({
     historyitems: {
-        flexDirection: "row"
-    }
+        flexDirection: "row",
+        alignItems: 'center',
+        paddingBottom: 10,
+        marginTop: 10,
+        borderBottomColor: 'lightgray',
+        borderBottomWidth: 0.5,
+    },
+    name: {
+        textAlign: 'left',
+        width: 150,
+        color: '#0C314A'
+    },
+    status: {
+        color: '#0C314A'
+    },
+    about: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#F33E35',
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    map: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#F33E35',
+        marginLeft: 5,
+        marginRight: 5,
+    },
 });
