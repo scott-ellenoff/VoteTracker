@@ -131,30 +131,14 @@ export default class Profile extends Component {
   updateMatchData = () => {
     console.log('here');
     const {token} = this.state;
-    // this.setState({matchData: []});
-    const d = this.state.matches.reduce((acc, cur, idx) => {
-        console.log(cur);
-        const l = axios.get(cur, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            "Authorization": `Token ${token}`
-          }
-        })
-          .then(d => {
-            this.setState((prevState) => {
-
-              return {
-                matchData: [...prevState.matchData, {
-                  pct: d.data.match_percentage,
-                  legislator: d.data.legislator,
-                  num_votes: d.data.num_votes,
-                  d: d.data
-                }]
-              }
-            })
-          }).catch(err => console.log(err));
-      }, []
-    );
+    axios.get('http://52.15.86.243:8080/api/v1/matches/', {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        "Authorization": `Token ${token}`
+      }
+    }).then((data) => {
+      this.setState({matchData: data.data})
+    })
   };
 
   renderSeparator() {
@@ -257,7 +241,7 @@ export default class Profile extends Component {
   viewLegislator = (legislator) => {
     console.log(legislator, "in view legislator");
 
-    this.props.navigation.navigate('LegislatorProfile', {"legislator":legislator, key: this.state.token});
+    this.props.navigation.navigate('LegislatorProfile', {"legislator": legislator, key: this.state.token});
   };
 
   renderRow(item) {
@@ -277,14 +261,14 @@ export default class Profile extends Component {
         }
       }
     ];
+
     const name = this.state.byLid[item.split('/')[6]][0].fullname;
-    const val = this.state.matchData.findIndex((el) => el.legislator === item);
-    const matchPctPromise = ` %`;
+    const val = this.state.matchData.findIndex((m) => m.legislator === item);
     let pct;
     if (val === -1) {
       pct = ''
     } else {
-      pct = this.state.matchData[0].pct;
+      pct = this.state.matchData[0].match_percentage;
     }
     return (
       <Swipeout right={swipeBtns}
@@ -295,7 +279,7 @@ export default class Profile extends Component {
           onPress={(event) => this.viewLegislator(item)}>
           <View>
             <View>
-              <Text> {`Legislator: ${name} Match Pct: ${pct}`} </Text>
+              <Text> {`Legislator: ${name} Match Pct: ${pct}%`} </Text>
             </View>
           </View>
         </TouchableHighlight>
