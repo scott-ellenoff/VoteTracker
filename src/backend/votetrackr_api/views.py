@@ -274,7 +274,7 @@ class VoteViewSet(viewsets.ModelViewSet):
     #     return super(VoteViewSet, self).create(request, *args, **kwargs)
 
     def get_permissions(self):
-        if self.action == 'user_vote':
+        if self.action == 'user_vote' or self.action == 'list':
             permission_classes = [IsAuthenticated]
         elif self.action == 'detail':
             permission_classes = [IsOwner]
