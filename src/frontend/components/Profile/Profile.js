@@ -129,7 +129,7 @@ export default class Profile extends Component {
   };
 
   updateMatchData = () => {
-    console.log('here')
+    console.log('here');
     const {token} = this.state;
     // this.setState({matchData: []});
     const d = this.state.matches.reduce((acc, cur, idx) => {
@@ -181,21 +181,21 @@ export default class Profile extends Component {
 
   renderItem(item) {
     const name = this.state.byLid[item.split('/')[6]][0].fullname;
-      const val = this.state.matchData.findIndex((el) => el.legislator === item);
-      const matchPctPromise = ` %`;
-      let pct;
-      if (val === -1){
-        pct = ''
-      }else {
-        pct = this.state.matchData[0].pct;
-      }
-      return (
-        <ListItem
-          text={`Legislator: ${name} Match Pct: ${pct}`} // TODO add match percent
-          success={this.success}
-          setScrollEnabled={enable => this.setScrollEnabled(enable)}
-        />
-      );
+    const val = this.state.matchData.findIndex((el) => el.legislator === item);
+    const matchPctPromise = ` %`;
+    let pct;
+    if (val === -1) {
+      pct = ''
+    } else {
+      pct = this.state.matchData[0].pct;
+    }
+    return (
+      <ListItem
+        text={`Legislator: ${name} Match Pct: ${pct}`} // TODO add match percent
+        success={this.success}
+        setScrollEnabled={enable => this.setScrollEnabled(enable)}
+      />
+    );
     // }
   }
 
@@ -252,37 +252,49 @@ export default class Profile extends Component {
         addMode: false
       }
     }, this.updateFollowLegislators)
-  } ;
+  };
 
   viewLegislator = (legislator) => {
+    console.log(legislator, "in view legislator");
 
+    this.props.navigation.navigate('LegislatorProfile', {"legislator":legislator, key: this.state.token});
   };
 
   renderRow(item) {
-    console.log('here');
-    let swipeBtns = [{
-      text: 'Unfollow',
-      backgroundColor: 'red',
-      onPress: () => { this.deleteLegislator(item) }
-    }];
+    const swipeBtns = [
+      {
+        text: 'Unfollow',
+        backgroundColor: 'red',
+        onPress: () => {
+          this.deleteLegislator(item)
+        }
+      },
+      {
+        text: 'View Profile',
+        backgroundColor: 'green',
+        onPress: () => {
+          this.viewLegislator(item)
+        }
+      }
+    ];
     const name = this.state.byLid[item.split('/')[6]][0].fullname;
     const val = this.state.matchData.findIndex((el) => el.legislator === item);
     const matchPctPromise = ` %`;
     let pct;
-    if (val === -1){
+    if (val === -1) {
       pct = ''
-    }else {
+    } else {
       pct = this.state.matchData[0].pct;
     }
     return (
       <Swipeout right={swipeBtns}
                 autoClose={true}
-                backgroundColor= 'transparent'>
+                backgroundColor='transparent'>
         <TouchableHighlight
           // underlayColor='rgba(192,192,192,1,0.6)'
-          onPress={this.viewLegislator.bind(this, item)} >
+          onPress={(event) => this.viewLegislator(item)}>
           <View>
-            <View >
+            <View>
               <Text> {`Legislator: ${name} Match Pct: ${pct}`} </Text>
             </View>
           </View>
@@ -310,13 +322,13 @@ export default class Profile extends Component {
             </TouchableHighlight>
           </View>
           <View>
-              <FlatList
-                style={this.props.style}
-                data={this.state.followedLegislators}
-                ItemSeparatorComponent={this.renderSeparator}
-                renderItem={({item}) => this.renderRow(item)}
-                scrollEnabled={this.state.enable}
-              />
+            <FlatList
+              style={this.props.style}
+              data={this.state.followedLegislators}
+              ItemSeparatorComponent={this.renderSeparator}
+              renderItem={({item}) => this.renderRow(item)}
+              scrollEnabled={this.state.enable}
+            />
 
           </View>
 
