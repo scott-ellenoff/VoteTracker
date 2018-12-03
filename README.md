@@ -1,6 +1,56 @@
 # Milestone 4b #
 
-# Installation Guide #
+# Installation Guide#
+
+Requirements:
+
+XCode 10.1
+Homebrew v1.8.1
+Node v8.11.3
+NPM v6.4.1
+
+1. Clone the git repository for front-end at:
+https://github.com/scott-ellenoff/VoteTracker/tree/front-end
+
+2. Ruby should be installed on your MacBook already. Install homebrew by running the following.
+```python
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+3. Navigate to the folder at which you’ve downloaded the front-end project.
+
+4. Run the following commands.
+```python
+brew install node
+npm install 
+```
+
+5. Install React Native.
+```python
+npm install -g react-native-cli
+```
+
+6. Set command line tools by opening XCode application. 
+
+7. Resolve compabitility issue between XCode10 and React client. Navigate to your project root, and run these. 
+```python
+$ cd node_modules/react-native/scripts && ./ios-install-third-party.sh && cd ../../../
+$ cd node_modules/react-native/third-party/glog-0.3.5/ && ../../scripts/ios-configure-glog.sh && cd ../../../../
+```
+
+8. Upgrade react-native to catch older versions, and link. 
+```python
+react-native upgrade
+react-native link
+```
+9. Open the proect in xCode by opening the VoteTracker.xcodeproj file in the ios folder of frontend. Navigate to the build settings tab in xCode. Change the Framework search path in xCode BuildSettings tab to the path for the ios folder on your computer. I.e my framework search path is  /Users/zachkamran/WebstormProjects/VoteTracker/src/frontend/ios.
+
+10. Run for iOS now. The simulator should load, and the VoteTracker app should start up automatically, with "Build Success" showing in Terminal. Otherwise we will see "Build Failed".  
+```python
+react-native run-ios
+```
+
+This will take a bit of time, so hang on. If you still get a CFBundleIdentifier error, please contact yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
 
 # Functionality #
 
