@@ -108,7 +108,7 @@ export default class VotingBar extends Component {
                         />
                     </View>
                 ) : (
-                    <View>
+                    <View style={styles.align}>
                         <Text> You’re Totally Caught Up! </Text>
                         <Text> We update regularly, so check back soon </Text>
                         <Text> for more bills and voting information </Text>
@@ -128,6 +128,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     align: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
     },
@@ -135,8 +137,8 @@ const styles = StyleSheet.create({
         padding: 25
     },
     image: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         resizeMode: 'contain'
     }
 });
