@@ -71,10 +71,10 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(m.user_set.all())
         return super(UserViewSet, self).retrieve(request, *args, **kwargs)
 
-    def update(self, request, pk):
+    def update(self, request, *args, **kwargs):
         # print(request.data)
         # print(request.data['followed'])
-        user = User.objects.get(pk=pk)
+        user = User.objects.get(pk=kwargs['pk'])
         # print(user)
         followed = request.data.getlist('followed')
         # print(followed)
