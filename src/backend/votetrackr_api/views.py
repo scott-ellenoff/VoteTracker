@@ -90,18 +90,19 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(prev_matched)
             # print(pm)
 
+        print(request.data)
         request.data._mutable = True
 
         for l in followed:
-            # l_pk = l.split('/')[-2]
-            legislator = Legislator.objects.get(pk=l)
+            l_pk = l.split('/')[-2]
+            print(l_pk)
+            legislator = Legislator.objects.get(pk=l_pk)
             # print(legislator)
             m = Match(legislator=legislator)
             m.save()
             # print(m.MID)
             request.data.update({'matched': reverse('match-detail', args=[m.MID])})
             # user.matched.add(m)
-
         request.data._mutable = False
         # mutable = request.data._mutable
         # request.data._mutable = True
