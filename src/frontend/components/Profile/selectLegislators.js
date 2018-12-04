@@ -8,7 +8,9 @@ export default class SelectLegislators extends Component {
   handleConfirmClick = () => {
     this.props.updateLegislators(this.props.pickerSelected);
   };
-
+  closeClick = () => {
+    this.props.closeSelect()
+  };
 
   render() {
 
@@ -16,6 +18,7 @@ export default class SelectLegislators extends Component {
     return (
       <View>
         <Button onPress={this.handleConfirmClick} title={"Add"}/>
+        <Button onPress={this.closeClick} title={"Close"}/>
         <Picker selectedValue={this.props.pickerSelected}
                 onValueChange={(itemValue, itemIndex) => this.props.updateSelected(itemValue, itemIndex)}>
           {legislators.map((val, i) => <Picker.Item label={val.fullname} value={val.LID} key={i}/>)}
