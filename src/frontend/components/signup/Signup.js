@@ -136,16 +136,17 @@ export default class Signup extends Component {
             }
             if (counter == 0) {
               Alert.alert('Registration Failed',
-              'All fields are entered correctly, but your Passwords do not match.',
+              'Your input choices are allowed, but your two passwords do not match.',
               [
                 {text: 'Go Back to Fix Errors', onPress: () => navigate('Signup'), style:'cancel'}
               ])
-            }
+            } else {
             Alert.alert('Registration Failed',
               'Please correct ' + counter.toString() + ' problems:\n\n' + string_accumulator,
               [
                 {text: 'Go Back to Fix Errors', onPress: () => navigate('Signup'), style:'cancel'}
               ])
+          }
           }
         })
       .done()
