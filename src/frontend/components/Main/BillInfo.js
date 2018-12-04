@@ -39,53 +39,32 @@ export default class BillInfo extends Component {
         return(
             <View>
             <View style={styles.container}>
-                <Text>{"\n"}Bill {bill.name}{"\n"}</Text>
+                <Text style={styles.heading}>{"\n"}Bill{"\n"}</Text>
+                <Text style={styles.body}>{bill.name}</Text>
 
-                <View
-                  style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: 5,
-                  }}
-                 />
-
-                <Text>{"\n"}Information{"\n"}</Text>
-                <Text>Deliberated on by the {bill.chamber}</Text>
-                <Text>Introduced on {bill.date_introduced}</Text>
+                <Text style={styles.heading}>{"\n"}Information{"\n"}</Text>
+                <Text style={styles.body}>Deliberated on by the {bill.chamber}</Text>
+                <Text style={styles.body}>Introduced on {bill.date_introduced}</Text>
                 {bill.voted_on ? (
-                    <Text>Voted on {bill.date_voted}{"\n"}</Text>
+                    <Text style={styles.body}>Voted on {bill.date_voted}</Text>
                 ) : (
-                    <Text>This bill has not been voted on{"\n"}</Text>
+                    <Text style={styles.body}>This bill has not been voted on</Text>
                 )}
 
-                <View
-                  style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: 5,
-                  }}
-                 />
+                <Text style={styles.heading}>{"\n"}Short Summary{"\n"}</Text>
+                <Text style={styles.body}>{bill.description}</Text>
 
-                <Text>{"\n"}Short Summary{"\n\n"}{bill.description} {"\n"}</Text>
-
-                <View
-                  style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: 5,
-                  }}
-                 />
-
-                <Text>{"\n"}Status{"\n\n"}{bill.status}{"\n"}</Text>
-
-                <View
-                  style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: 5,
-                  }}
-                  />
+                <Text style={styles.heading}>{"\n"}Status{"\n"}</Text>
+                <Text style={styles.body}>{bill.status}{"\n"}</Text>
 
                 <Text>{"\n"}</Text>
 
-                <Button title="Learn More at GovTrack.us"
-                        onPress={ ()=> { Linking.openURL(bill.url) } }/>
+                <TouchableOpacity title="URL"
+                        style={styles.urlstyle}
+                        onPress={ ()=> { Linking.openURL(bill.url) } }>
+
+                        <Text style={styles.urltext}> Learn More at GovTrack.us  </Text>
+                </TouchableOpacity>
 
             </View>
             </View>
@@ -98,6 +77,26 @@ export default class BillInfo extends Component {
     Styling for JSX
 */
 const styles = StyleSheet.create({
+    urlstyle: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#F33E35',
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    urltext : {
+        color: '#F33E35',
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    heading: {
+        fontSize: 16,
+        color: '#F33E35',
+
+    },
+    body: {
+        color: "#0C314A"
+    },
     container: {
         padding: 10,
         backgroundColor: 'white',
