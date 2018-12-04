@@ -89,7 +89,7 @@ class UserViewSet(viewsets.ModelViewSet):
         # print()
         # print(prev_matched)
             # print(pm)
-
+        print(kwargs)
         print(request.data)
         request.data._mutable = True
 
@@ -110,7 +110,7 @@ class UserViewSet(viewsets.ModelViewSet):
         # request.data._mutable = mutable
         # print(request.data.getlist('followed'))
 
-        return super(UserViewSet, self).update(request)
+        return super(UserViewSet, self).update(request, args, kwargs)
 
     def get_permissions(self):
         """
@@ -125,11 +125,13 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
-    def get_serializer_class(self):
-        if self.action == 'add_vote':
-            return VoteSerializer
-        else:
-            return UserSerializer
+    # def get_serializer(self, *args, *kwargs):
+    #     return super(UserViewSet, self).get_serializer(args, kwargs)
+    # def get_serializer_class(self, *args,):
+    #     if self.action == 'add_vote':
+    #         return VoteSerializer
+    #     else:
+    #         return UserSerializer
 
     # @action(detail=True, methods=['post'], name='Vote')
     # def add_vote(self, request, pk):
