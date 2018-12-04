@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import axios from 'axios';
-import {FlatList, StyleSheet, View, Image, Text, TouchableHighlight, ScrollView, ListView} from 'react-native';
+import {FlatList, StyleSheet, View, Image, Text, TouchableHighlight, ScrollView} from 'react-native';
 import ListItem from './Row';
 import listData from './data';
 import SelectLegislators from './selectLegislators';
@@ -84,7 +84,6 @@ export default class Profile extends Component {
 
   getLegislators() {
     const token = this.state.token;
-    console.log(token);
     axios.get('http://52.15.86.243:8080/api/v1/legislators/', {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -131,30 +130,14 @@ export default class Profile extends Component {
   updateMatchData = () => {
     console.log('here');
     const {token} = this.state;
-    // this.setState({matchData: []});
-    const d = this.state.matches.reduce((acc, cur, idx) => {
-        console.log(cur);
-        const l = axios.get(cur, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            "Authorization": `Token ${token}`
-          }
-        })
-          .then(d => {
-            this.setState((prevState) => {
-
-              return {
-                matchData: [...prevState.matchData, {
-                  pct: d.data.match_percentage,
-                  legislator: d.data.legislator,
-                  num_votes: d.data.num_votes,
-                  d: d.data
-                }]
-              }
-            })
-          }).catch(err => console.log(err));
-      }, []
-    );
+    axios.get('http://52.15.86.243:8080/api/v1/matches/', {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        "Authorization": `Token ${token}`
+      }
+    }).then((data) => {
+      this.setState({matchData: data.data})
+    })
   };
 
   renderSeparator() {
@@ -190,10 +173,10 @@ export default class Profile extends Component {
       pct = this.state.matchData[0].pct;
     }
     return (
-      <ListItem
-        text={`Legislator: ${name} Match Pct: ${pct}`} // TODO add match percent
-        success={this.success}
-        setScrollEnabled={enable => this.setScrollEnabled(enable)}
+      <ListItem key={item}
+                text={`Legislator: ${name} Match Pct: ${pct}`} // TODO add match percent
+                success={this.success}
+                setScrollEnabled={enable => this.setScrollEnabled(enable)}
       />
     );
     // }
@@ -257,7 +240,7 @@ export default class Profile extends Component {
   viewLegislator = (legislator) => {
     console.log(legislator, "in view legislator");
 
-    this.props.navigation.navigate('LegislatorProfile', {"legislator":legislator, key: this.state.token});
+    this.props.navigation.navigate('LegislatorProfile', {"legislator": legislator, key: this.state.token});
   };
 
   renderRow(item) {
@@ -277,14 +260,14 @@ export default class Profile extends Component {
         }
       }
     ];
+
     const name = this.state.byLid[item.split('/')[6]][0].fullname;
-    const val = this.state.matchData.findIndex((el) => el.legislator === item);
-    const matchPctPromise = ` %`;
+    const val = this.state.matchData.findIndex((m) => m.legislator === item);
     let pct;
     if (val === -1) {
       pct = ''
     } else {
-      pct = this.state.matchData[0].pct;
+      pct = this.state.matchData[0].match_percentage;
     }
     return (
       <Swipeout right={swipeBtns}
@@ -292,16 +275,22 @@ export default class Profile extends Component {
                 backgroundColor='transparent'>
         <TouchableHighlight
           // underlayColor='rgba(192,192,192,1,0.6)'
-          onPress={(event) => this.viewLegislator(item)}>
+          onPress={(event) => this.viewLegislator(item)}
+          style={styles.separatorViewStyle}>
           <View>
             <View>
-              <Text> {`Legislator: ${name} Match Pct: ${pct}`} </Text>
+              <Text style={styles.title1}> {`Legislator: ${name} Match Pct: ${pct}%`} </Text>
             </View>
           </View>
         </TouchableHighlight>
       </Swipeout>
     )
   }
+
+  closeSelect = () => {
+    this.setState({addMode: false})
+  };
+
 
   render() {
     const {navigate} = this.props.navigation;
@@ -312,37 +301,39 @@ export default class Profile extends Component {
     }
     if (!addMode) {
       return (
-        <View>
-          <Image source={require('../../assets/topbanner_page4.png')}/>
-          <View style={styles.titleText}>
-            <Text style={styles.titleText}> Select politicians to Follow</Text>
-            <TouchableHighlight onPress={this.setMode}>
-              <Image source={require('../../assets/page4_empty_politician.png')}/>
+        <ScrollView>
+          <View style={styles.container}>
 
-            </TouchableHighlight>
+            <View style={styles.titleText}>
+              <Text style={styles.title2}> Select politicians to Follow</Text>
+              <TouchableHighlight onPress={this.setMode}>
+                <Image source={require('../../assets/page4_empty_politician.png')}/>
+
+              </TouchableHighlight>
+            </View>
+            <View>
+              <FlatList
+                style={this.props.style}
+                data={this.state.followedLegislators}
+                ItemSeparatorComponent={this.renderSeparator}
+                renderItem={({item}) => this.renderRow(item)}
+                scrollEnabled={this.state.enable}
+              />
+
+            </View>
+
           </View>
-          <View>
-            <FlatList
-              style={this.props.style}
-              data={this.state.followedLegislators}
-              ItemSeparatorComponent={this.renderSeparator}
-              renderItem={({item}) => this.renderRow(item)}
-              scrollEnabled={this.state.enable}
-            />
-
-          </View>
-
-        </View>
+        </ScrollView>
       )
     } else {
       return (
 
         <View style={{flex: 1}}>
-          <Image source={require('../../assets/topbanner_page4.png')}/>
           <View>
             <SelectLegislators pickerSelected={pickerSelected} updateSelected={this.updateSelected}
                                legislators={legislators}
-                               updateLegislators={this.updateLegislators}/>
+                               updateLegislators={this.updateLegislators}
+                               closeSelect={this.closeSelect}/>
           </View>
           <View>
             <FlatList
@@ -362,6 +353,9 @@ export default class Profile extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+  },
   parent: {
     flex: 1
   },
@@ -373,7 +367,9 @@ const styles = StyleSheet.create({
   },
   separatorViewStyle: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#F33E35',
+    height: 15,
+    opacity: 0.9
   },
   separatorStyle: {
     height: 1,
@@ -384,6 +380,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    textDecorationLine: 'underline'
+    textDecorationLine: 'underline',
+    backgroundColor: '#0C314A'
+  },
+  title1: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    textDecorationStyle: "solid",
+    textDecorationColor: "#0C314A"
+  },
+  title2: {
+    fontSize: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+    color: '#FFFFFF'
   }
 });
