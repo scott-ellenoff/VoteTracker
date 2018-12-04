@@ -93,8 +93,8 @@ class UserViewSet(viewsets.ModelViewSet):
         request.data._mutable = True
 
         for l in followed:
-            l_pk = l.split('/')[-2]
-            legislator = Legislator.objects.get(pk=l_pk)
+            # l_pk = l.split('/')[-2]
+            legislator = Legislator.objects.get(pk=l)
             # print(legislator)
             m = Match(legislator=legislator)
             m.save()
