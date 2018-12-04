@@ -75,7 +75,8 @@ export default class VotingBar extends Component {
                 {this.props.bills[billIndex]? (
                     <View style={styles.align}>
 
-                        <Text> {this.props.bills[billIndex].BID} </Text>
+                        <Text style={styles.name}> {this.props.bills[billIndex].name}
+                        </Text>
                         <View style={styles.votebuttons}>
 
                             {voteOptions.map((option, key) => {
@@ -124,6 +125,12 @@ export default class VotingBar extends Component {
     Styling for JSX
 */
 const styles = StyleSheet.create({
+    name: {
+        top: 10,
+        width: 250,
+        height: 30,
+        fontSize: 15
+    },
     votebuttons: {
         flexDirection: 'row'
     },
