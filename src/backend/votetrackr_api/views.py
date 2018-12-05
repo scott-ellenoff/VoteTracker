@@ -87,7 +87,7 @@ class UserViewSet(viewsets.ModelViewSet):
         # else:
         #     print('YES', followed)
 
-        if followed:
+        if not followed:
             for pm in user.matched.all():
                 pm.delete()
             prev_matched = user.matched.all()
@@ -303,7 +303,9 @@ class VoteViewSet(viewsets.ModelViewSet):
         if self.action == 'list' or self.action == 'detail':
             return ListVoteSerializer
         else:
-            return super(VoteViewSet, self).get_serializer_class()
+            x = super(VoteViewSet, self).get_serializer_class()
+            print(x)
+            return x
 
     def get_queryset(self):
         if self.action == 'list':
