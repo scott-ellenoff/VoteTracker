@@ -57,4 +57,9 @@ In particular we provide an interface in the home page for users to vote on new 
 In addition they can see all of their past votes in the home page.  
 # Usage Guide #
 To use the app follow the installation instructions above. Once the App is running create a login by clicking "Sign Up". You can then use this to login and "Start Tracking the Votes". 
-
+The home page is where the user votes on Bills. To vote on a bill the user clicks on the thumbs-up, thumbs-down, or thumb-sideways. These represent yes, no, and abstain respectively. 
+Once the user has voted they will see their past votes below this on the home page. They can follow these links to see the bill  details on past bills and a map of how Legislators Voted.
+To follow legislators the User must navigate to the Profile page. To add a legislator they click the "Add Legislator" button and selec add on the legislator they want to follow.
+This legislator is now in their followed list which will be reflected below. In addition to this the user can unfollow legislator by swiping on the followed legislator and clicking "unfollow".
+The user can also view followed legislator's profiles by clicking on the legislator in the list. This will bring the user to the legislator profile view which shows the legislators past  votes on bills and the bill info.
+The User also sees "match percentage" on the profile page between them and followed legislators. This match percentage is the percent of time they vote the same way as the legislator did on a bill.
