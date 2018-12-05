@@ -82,13 +82,19 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(followed)
         matched = []
 
-        for pm in user.matched.all():
-            pm.delete()
-        prev_matched = user.matched.all()
-        user.matched.clear()
-        # print()
-        # print(prev_matched)
-            # print(pm)
+        # if not followed:
+        #     print('NOT', followed)
+        # else:
+        #     print('YES', followed)
+
+        if followed:
+            for pm in user.matched.all():
+                pm.delete()
+            prev_matched = user.matched.all()
+            user.matched.clear()
+            # print()
+            # print(prev_matched)
+                # print(pm)
         request.data._mutable = True
 
         for l in followed:
@@ -104,7 +110,7 @@ class UserViewSet(viewsets.ModelViewSet):
             request.data.update({'matched': reverse('match-detail', args=[m.MID])})
             # user.matched.add(m)
 
-        print(user.followed.all())
+        # print(user.followed.all())
         request.data._mutable = False
         # mutable = request.data._mutable
         # request.data._mutable = True
@@ -241,11 +247,11 @@ class BillViewSet(viewsets.ModelViewSet):
     # filter_backends = (SearchFilter,)
     # search_fields = ('description')
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
+    # def get_queryset(self):
+        # """
+        # Optionally restricts the returned purchases to a given user,
+        # by filtering against a `username` query parameter in the URL.
+        # """
         # if self.action == 'list':
             # queryset = Bill.objects.all()
             # chamber = self.request.query_params.get('user', None)
@@ -264,7 +270,7 @@ class BillViewSet(viewsets.ModelViewSet):
             # return queryset
 
         # else:
-        return super(BillViewSet, self).get_queryset()
+        # return super(BillViewSet, self).get_queryset()
 
 
     # filter_backends = (filters.SearchFilter)
@@ -297,7 +303,7 @@ class VoteViewSet(viewsets.ModelViewSet):
         if self.action == 'list' or self.action == 'detail':
             return ListVoteSerializer
         else:
-            super(VoteViewSet, self).get_serializer_class()
+            return super(VoteViewSet, self).get_serializer_class()
 
     def get_queryset(self):
         if self.action == 'list':
