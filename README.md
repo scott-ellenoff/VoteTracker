@@ -52,7 +52,9 @@ react-native run-ios
 This will take a bit of time, so hang on. If you still get a CFBundleIdentifier error, please contact yasoobr@uchicago.edu, as this is a compatibility problem with XCode and React Native. 
 
 # Functionality #
-
+The main idea of this app is that users can vote on the same bills that our House and Senate representatives vote on and see how much they align with a particular legislators.
+In particular we provide an interface in the home page for users to vote on new bills currently ont he house and senate floor. Once the real vote happens the user can view a map of how legislators voted and in their profile page users can see how their votes matched with legislators they follow.
+In addition they can see all of their past votes in the home page.  
 # Usage Guide #
 
 # Design Review #
