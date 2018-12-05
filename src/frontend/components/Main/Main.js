@@ -58,6 +58,7 @@ export default class Main extends Component {
 
         var user = this.props.navigation.state.params.user
         var key = this.props.navigation.state.params.key
+        console.log(key)
 
         var config = {
             headers: {
@@ -128,6 +129,7 @@ export default class Main extends Component {
                         token={this.props.navigation.state.params.key}
                         progress={this.state.progress}
                         total={this.state.total}
+                        master={this}
                         mainNav={navigate}
                     />
                 </View>

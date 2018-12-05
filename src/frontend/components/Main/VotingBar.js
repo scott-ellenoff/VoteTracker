@@ -61,6 +61,7 @@ export default class VotingBar extends Component {
 
         var nextIndex = currIndex + 1
         this.setState({billIndex: nextIndex})
+        this.props.master.forceUpdate()
     }
 
     render() {
