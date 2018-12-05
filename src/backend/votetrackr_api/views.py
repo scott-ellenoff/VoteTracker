@@ -71,10 +71,10 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(m.user_set.all())
         return super(UserViewSet, self).retrieve(request, *args, **kwargs)
 
-    def update(self, request, pk):
+    def update(self, request, *args, **kwargs):
         # print(request.data)
         # print(request.data['followed'])
-        user = User.objects.get(pk=pk)
+        user = User.objects.get(pk=kwargs['pk'])
         # print(user)
         followed = request.data.getlist('followed')
         # print(followed)
@@ -89,11 +89,13 @@ class UserViewSet(viewsets.ModelViewSet):
         # print()
         # print(prev_matched)
             # print(pm)
-
+        print(kwargs)
+        print(request.data)
         request.data._mutable = True
 
         for l in followed:
             l_pk = l.split('/')[-2]
+            print(l_pk)
             legislator = Legislator.objects.get(pk=l_pk)
             # print(legislator)
             m = Match(legislator=legislator)
@@ -101,7 +103,6 @@ class UserViewSet(viewsets.ModelViewSet):
             # print(m.MID)
             request.data.update({'matched': reverse('match-detail', args=[m.MID])})
             # user.matched.add(m)
-
         request.data._mutable = False
         # mutable = request.data._mutable
         # request.data._mutable = True
@@ -109,7 +110,7 @@ class UserViewSet(viewsets.ModelViewSet):
         # request.data._mutable = mutable
         # print(request.data.getlist('followed'))
 
-        return super(UserViewSet, self).update(request)
+        return super(UserViewSet, self).update(request, args, kwargs)
 
     def get_permissions(self):
         """
@@ -124,11 +125,13 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
-    def get_serializer_class(self):
-        if self.action == 'add_vote':
-            return VoteSerializer
-        else:
-            return UserSerializer
+    # def get_serializer(self, *args, *kwargs):
+    #     return super(UserViewSet, self).get_serializer(args, kwargs)
+    # def get_serializer_class(self, *args,):
+    #     if self.action == 'add_vote':
+    #         return VoteSerializer
+    #     else:
+    #         return UserSerializer
 
     # @action(detail=True, methods=['post'], name='Vote')
     # def add_vote(self, request, pk):
