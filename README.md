@@ -59,6 +59,7 @@ In addition they can see all of their past votes in the home page.
 To use the app follow the installation instructions above. Once the App is running create a login by clicking "Sign Up". You can then use this to login and "Start Tracking the Votes". 
 
 # Design Review #
+See other document. DesignReview.pdf. 
 We have implemented the core functionalities that we proposed. This includes being able to vote on bills, view bill descriptions, compare one's voting history with those of other senators via a match percentage, login and authentication, and data visualization of senator votes. In terms of functionality that was proposed but not implemented, we did not provide the APIs needed for those who want to get data about votes and legislators. 
 
 # Contributions #
@@ -91,9 +92,14 @@ We have implemented the core functionalities that we proposed. This includes bei
 * Worked on sending bill information to the Main page so that Users can vote and see their history.
 
 **Zach Kamran**:
+* Built major components of the front-end and worked closely with the back-end team to connect REST endpoints to frontend. 
+* In particular built the Profile page and Legislator Profile page including add legislator functionality
 * Worked on Login and Signup page on front-end;
-* Changed the legislators that users follow in profile page;
-* Built Profile page allowing users to follow legislators and see match percentage.
+* Worked on React Framework (Profile, Segues);
+* Built major components of the front end and connected the front-end and backend. 
+* Worked closely with back-end team to address and fix bugs found in acceptance testing
+
+
 
 
 # Anything You'd Like the TA to Know #
