@@ -15,3 +15,13 @@ class IsSelf(permissions.BasePermission):
 
     def has_object_permission(self, request, view, user_obj):
         return user_obj == request.user
+
+class IsOwner(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user or obj.user == None
+
+# class IsMatchOwner(permissions.BasePermission):
+#     def has_object_permission(self, request, view, obj):
+#         try:
+#             request.user.matched.

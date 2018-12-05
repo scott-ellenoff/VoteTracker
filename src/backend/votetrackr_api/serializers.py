@@ -4,13 +4,13 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from rest_auth.registration.serializers import RegisterSerializer
 
-from .models import User, Bill, Legislator, Vote
+from .models import User, Bill, Legislator, Vote, Match
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='user-detail')
     class Meta:
         model = User
-        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'unvoted', 'matched', 'followed', 'detail')
+        fields = ('username', 'email', 'id', 'UID', 'name', 'district', 'unvoted', 'voted', 'matched', 'followed', 'detail')
 
 class BillSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='bill-detail')
@@ -27,6 +27,7 @@ class LegislatorSerializer(serializers.HyperlinkedModelSerializer):
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='vote-detail')
+    
     class Meta:
         model = Vote
         fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
@@ -41,11 +42,12 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
 
         try:
             if user:
-                obj = Vote.objects.get(bill=bill)
-                if obj.user == user:
-                    raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
+                obj = Vote.objects.get(bill=bill, user=user)
+                # if obj.user == user:
+                raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
             else:
                 obj = Vote.objects.get(bill=bill, legislator=legislator)
+                raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
             # if obj:
             #     print(obj)
             #     raise serializers.ValidationError('Vote already exists. Cannot duplicate vote.')
@@ -53,6 +55,19 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
             pass
             
         return data
+
+class ListVoteSerializer(VoteSerializer):
+    bill = BillSerializer(read_only=True)
+    
+    class Meta:
+        model = Vote
+        fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
+
+class MatchSerializer(serializers.HyperlinkedModelSerializer):
+    detail = HyperlinkedIdentityField(view_name='match-detail')
+    class Meta:
+        model = Match
+        fields = ('MID', 'legislator', 'match_percentage', 'num_votes', 'detail')
 
 class CustomRegisterSerializer(RegisterSerializer):
     UID = serializers.UUIDField(read_only=True)

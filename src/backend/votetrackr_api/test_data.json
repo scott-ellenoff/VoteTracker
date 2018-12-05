@@ -1,0 +1,202 @@
+{
+    "legislators": [
+        {
+            "LID": "A000055",
+            "fullname": "Robert B. Aderholt",
+            "district": 4,
+            "state": "AL",
+            "senator": false,
+            "affiliation": "Republican",
+            "dwnominate": 0,
+            "url": "https://aderholt.house.gov"
+        },
+        {
+            "LID": "A000360",
+            "fullname": "Lamar Alexander",
+            "district": 0,
+            "state": "TN",
+            "senator": true,
+            "affiliation": "Republican",
+            "dwnominate": 0,
+            "url": "https://www.alexander.senate.gov/public"
+        },
+        {
+            "LID": "A000367",
+            "fullname": "Justin Amash",
+            "district": 3,
+            "state": "MI",
+            "senator": false,
+            "affiliation": "Republican",
+            "dwnominate": 0,
+            "url": "https://amash.house.gov"
+        },
+        {
+            "LID": "A000368",
+            "fullname": "Kelly Ayotte",
+            "district": 0,
+            "state": "NH",
+            "senator": true,
+            "affiliation": "Republican",
+            "dwnominate": 0,
+            "url": "http://www.ayotte.senate.gov"
+        },
+        {
+            "LID": "A000369",
+            "fullname": "Mark E. Amodei",
+            "district": 2,
+            "state": "NV",
+            "senator": false,
+            "affiliation": "Republican",
+            "dwnominate": 0,
+            "url": "https://amodei.house.gov"
+        }
+    ],
+    "bills": [
+        {
+            "BID": "hr1698-115",
+            "name": "Iran Ballistic Missiles and International Sanctions Enforcement Act",
+            "description": "To expand sanctions against Iran with respect to the ballistic missile program of Iran, and for other purposes.",
+            "date_introduced": "2017-03-23",
+            "status": "Received in the Senate and Read twice and referred to the Committee on Foreign Relations.",
+            "voted_on": true,
+            "chamber": "House",
+            "date_voted": "2017-10-26",
+            "url": "https://www.govtrack.us/congress/bills/115/hr1698"
+        },
+        {
+            "BID": "hr1699-115",
+            "name": "Preserving Access to Manufactured Housing Act of 2017",
+            "description": "To amend the Truth in Lending Act to modify the definitions of a mortgage originator and a high-cost mortgage, to amend the Secure and Fair Enforcement for Mortgage Licensing Act of 2008 to modify the definition of a loan originator, and for other purposes.",
+            "date_introduced": "2017-03-23",
+            "status": "Received in the Senate and Read twice and referred to the Committee on Banking, Housing, and Urban Affairs.",
+            "voted_on": true,
+            "chamber": "House",
+            "date_voted": "2017-12-01",
+            "url": "https://www.govtrack.us/congress/bills/115/hr1699"
+        },
+        {
+            "BID": "hr1730-115",
+            "name": "Protecting Religiously Affiliated Institutions Act of 2017",
+            "description": "To amend title 18, United States Code, to provide for the protection of community centers with religious affiliation, and for other purposes.",
+            "date_introduced": "2017-03-27",
+            "status": "Received in the Senate and Read twice and referred to the Committee on the Judiciary.",
+            "voted_on": true,
+            "chamber": "House",
+            "date_voted": "2017-12-11",
+            "url": "https://www.govtrack.us/congress/bills/115/hr1730"
+        },
+        {
+            "BID": "hr184-115",
+            "name": "Protect Medical Innovation Act of 2018",
+            "description": "To amend the Internal Revenue Code of 1986 to repeal the excise tax on medical devices.",
+            "date_introduced": "2017-01-03",
+            "status": "Read the second time. Placed on Senate Legislative Calendar under General Orders. Calendar No. 528.",
+            "voted_on": true,
+            "chamber": "House",
+            "date_voted": "2018-07-24",
+            "url": "https://www.govtrack.us/congress/bills/115/hr184"
+        }
+    ],
+    "votes": [
+        {
+            "bill": "/api/v1/bills/hr1698-115/",
+            "legislator": "/api/v1/legislators/A000055/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1698-115/",
+            "legislator": "/api/v1/legislators/A000360/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1698-115/",
+            "legislator": "/api/v1/legislators/A000367/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1698-115/",
+            "legislator": "/api/v1/legislators/A000368/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1698-115/",
+            "legislator": "/api/v1/legislators/A000369/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr1699-115/",
+            "legislator": "/api/v1/legislators/A000055/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1699-115/",
+            "legislator": "/api/v1/legislators/A000360/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr1699-115/",
+            "legislator": "/api/v1/legislators/A000367/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1699-115/",
+            "legislator": "/api/v1/legislators/A000368/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr1699-115/",
+            "legislator": "/api/v1/legislators/A000369/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr1730-115/",
+            "legislator": "/api/v1/legislators/A000055/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1730-115/",
+            "legislator": "/api/v1/legislators/A000360/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr1730-115/",
+            "legislator": "/api/v1/legislators/A000367/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1730-115/",
+            "legislator": "/api/v1/legislators/A000368/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr1730-115/",
+            "legislator": "/api/v1/legislators/A000369/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr184-115/",
+            "legislator": "/api/v1/legislators/A000055/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr184-115/",
+            "legislator": "/api/v1/legislators/A000360/",
+            "vote": "Y"
+        },
+        {
+            "bill": "/api/v1/bills/hr184-115/",
+            "legislator": "/api/v1/legislators/A000367/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr184-115/",
+            "legislator": "/api/v1/legislators/A000368/",
+            "vote": "N"
+        },
+        {
+            "bill": "/api/v1/bills/hr184-115/",
+            "legislator": "/api/v1/legislators/A000369/",
+            "vote": "N"
+        }
+    ]
+}

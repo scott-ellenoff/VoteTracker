@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url, include
 # from .views import ListUserView, ListBillView, ListLegislatorView, ListVoteView
-from .views import UserViewSet, BillViewSet, LegislatorViewSet, VoteViewSet, FacebookLogin, CustomRegisterView, CustomLoginView
+from .views import UserViewSet, BillViewSet, LegislatorViewSet, VoteViewSet, MatchViewSet, FacebookLogin, CustomRegisterView, CustomLoginView
 from rest_framework import routers
 
 
@@ -10,6 +10,7 @@ router.register(r'users', UserViewSet)
 router.register(r'bills', BillViewSet)
 router.register(r'legislators', LegislatorViewSet)
 router.register(r'votes', VoteViewSet)
+router.register(r'matches', MatchViewSet)
 # router.register(r'rest-auth/register', CustomRegisterView)
 # router.register(r'rest-auth/login/', CustomLoginView)
 # router.register(r'rest-auth/facebook/', FacebookLogin)
