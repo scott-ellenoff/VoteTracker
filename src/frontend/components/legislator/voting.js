@@ -24,6 +24,15 @@ export default class Voting extends Component {
   }
 
   render() {
+    const {bills} = this.props;
+
+    if (bills.count === 0){
+      return(
+        <View  style={styles.historyitems}>
+          <Text>This Legislator currently has no voting history. Check back soon!</Text>
+        </View>
+      )
+    }
     return(
       <ScrollView>
         {(this.props.bills.results).map((bill, key) => {

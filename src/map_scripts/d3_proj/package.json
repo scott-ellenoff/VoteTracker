@@ -1,0 +1,19 @@
+{
+  "name": "VoteTrackr",
+  "version": "1.0.0",
+  "description": "<a href=\"https://d3js.org\"><img src=\"https://d3js.org/logo.svg\" align=\"left\" hspace=\"10\" vspace=\"6\"></a>",
+  "main": "d3.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connect": "^3.6.6",
+    "express": "^4.16.4",
+    "serve-static": "^1.13.2"
+  },
+  "devDependencies": {}
+}

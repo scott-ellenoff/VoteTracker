@@ -75,7 +75,8 @@ export default class VotingBar extends Component {
                 {this.props.bills[billIndex]? (
                     <View style={styles.align}>
 
-                        <Text> {this.props.bills[billIndex].BID} </Text>
+                        <Text style={styles.name}> {this.props.bills[billIndex].name}
+                        </Text>
                         <View style={styles.votebuttons}>
 
                             {voteOptions.map((option, key) => {
@@ -101,11 +102,14 @@ export default class VotingBar extends Component {
                             })}
 
                         </View>
-                        <Text> Progress: {this.state.billIndex}/{this.props.total} </Text>
-                        <Button
-                            title="Learn More"
-                            onPress={() => this.props.mainNav('BillInfo', {bill: this.props.bills[billIndex]})}
-                        />
+                        <Text style={{color: '#0C314A', paddingBottom: 5}}> Progress: {this.state.billIndex}/{this.props.total} </Text>
+                        <TouchableOpacity title="Learn More"
+                                style={styles.learnmore}
+                                onPress={() => this.props.mainNav('BillInfo', {bill: this.props.bills[billIndex]})}>
+
+                                <Text style={{color: '#F33E35'}}> Learn More </Text>
+
+                        </TouchableOpacity>
                     </View>
                 ) : (
                     <View style={styles.align}>
@@ -124,6 +128,13 @@ export default class VotingBar extends Component {
     Styling for JSX
 */
 const styles = StyleSheet.create({
+    name: {
+        top: 10,
+        width: 250,
+        height: 30,
+        fontSize: 15,
+        color: '#0C314A',
+    },
     votebuttons: {
         flexDirection: 'row'
     },
@@ -135,6 +146,13 @@ const styles = StyleSheet.create({
     },
     button: {
         padding: 25
+    },
+    learnmore: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#F33E35',
+        marginLeft: 5,
+        marginRight: 5,
     },
     image: {
         width: 40,

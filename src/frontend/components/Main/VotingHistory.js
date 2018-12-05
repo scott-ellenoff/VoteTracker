@@ -33,7 +33,7 @@ export default class VotingHistory extends Component {
                             <Text style={styles.name}> {bill.BID} </Text>
 
                             {bill.voted_on? (
-                                <Text style={styles.status}> Concluded </Text>
+                                <Text style={styles.status}> Resolved  </Text>
                             ) : (
                                 <Text style={styles.status}> Pending.. </Text>
                             )}
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     },
     name: {
         textAlign: 'left',
-        width: 150,
+        width: 160,
         color: '#0C314A'
     },
     status: {

@@ -14,12 +14,12 @@ export default class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: 'Choose username',
-      email: 'Your email',
-      password1: 'Choose smart password',
+      username: 'Username',
+      email: 'Email',
+      password1: 'Password',
       password2: 'Retype password',
-      name: 'Your name',
-      district: 'District (Integer)'
+      name: 'Name',
+      district: 'District'
     };
   }
 
@@ -105,12 +105,50 @@ export default class Signup extends Component {
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
+        const {navigate} = this.props.navigation;
         if (json.key) {
-          Alert.alert('Registration was successful, key is (not saved), its value is', json.key)
+          Alert.alert('Registration Success', 
+            'Congratulations! Your registration was accepted by the server.',
+            [
+              {text: 'Login Now', onPress: () => navigate('Home')},
+              {text: 'Close Window', style: 'cancel'}
+
+            ])
         } else {
-          Alert.alert('Registration was NOT successful')
-        }
-      })
+          console.log(json);
+          var counter = 0;
+          var string_accumulator = ""; 
+            if (json.password1) {
+              counter = counter + 1;
+              string_accumulator = string_accumulator + ' ' + 'Password too simple.' + '\n';
+            }
+            if (json.username) {
+              counter = counter + 1;
+              string_accumulator = string_accumulator + ' ' + 'Username already exists.' + '\n';
+            }
+            if (json.email) {
+              counter = counter + 1;
+              string_accumulator = string_accumulator + ' ' + 'Email is invalid.' + '\n';
+            }
+            if (json.district) {
+              counter = counter + 1;
+              string_accumulator = string_accumulator + ' ' + 'District must be integer.' + '\n';
+            }
+            if (counter == 0) {
+              Alert.alert('Registration Failed',
+              'Your input choices are allowed, but your two passwords do not match.',
+              [
+                {text: 'Go Back to Fix Errors', onPress: () => navigate('Signup'), style:'cancel'}
+              ])
+            } else {
+            Alert.alert('Registration Failed',
+              'Please correct ' + counter.toString() + ' problems:\n\n' + string_accumulator,
+              [
+                {text: 'Go Back to Fix Errors', onPress: () => navigate('Signup'), style:'cancel'}
+              ])
+          }
+          }
+        })
       .done()
   }
 }
@@ -127,6 +165,9 @@ const styles = StyleSheet.create({
     width: 150,
     backgroundColor: 'white',
     borderColor: 'black',
-    borderWidth: 1
+    borderWidth: 1,
+    marginTop: 5,
+    borderRadius: 5,
+    textAlign: 'center'
   }
 });
