@@ -27,7 +27,7 @@ class LegislatorSerializer(serializers.HyperlinkedModelSerializer):
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='vote-detail')
-    bill = BillSerializer(read_only=True)
+    
     class Meta:
         model = Vote
         fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
@@ -55,6 +55,13 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
             pass
             
         return data
+
+class ListVoteSerializer(VoteSerializer):
+    bill = BillSerializer(read_only=True)
+    
+    class Meta:
+        model = Vote
+        fields = ('VID', 'bill', 'legislator', 'user', 'vote', 'detail')
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
     detail = HyperlinkedIdentityField(view_name='match-detail')
