@@ -20,7 +20,7 @@ export default class MapScreen extends Component {
 
     render() {
         var bill = this.props.navigation.state.params.bill
-        var url = 'https://s3.us-east-2.amazonaws.com/votetrackermaps/' + String(bill.BID) + '-1.png'
+        var url = 'https://s3.us-east-2.amazonaws.com/votetrackermaps/' + String(bill.BID) + '.png'
         return(
             <ScrollView maximumZoomScale={3}>
                 <Image source={{uri: url}} style={styles.map}/>
