@@ -10,7 +10,7 @@ Node v8.11.3
 NPM v6.4.1
 
 1. Clone the git repository for front-end at:
-https://github.com/scott-ellenoff/VoteTracker/tree/front-end
+https://github.com/scott-ellenoff/VoteTracker/tree/milestone-5
 
 2. Ruby should be installed on your MacBook already. Install homebrew by running the following.
 ```python
