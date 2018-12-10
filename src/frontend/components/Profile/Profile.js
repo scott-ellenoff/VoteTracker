@@ -116,7 +116,7 @@ export default class Profile extends Component {
     form.append('username', username);
     followedLegislators.forEach((leg) => form.append('followed', leg));
     console.log("all legislators", form, followedLegislators);
-    axios.put(`http://52.15.86.243:8080/api/v1/users/${userID}/`, form, {
+    axios.patch(`http://52.15.86.243:8080/api/v1/users/${userID}/`, form, {
       headers: {
         'Content-Type': 'multipart/form-data',
         "Authorization": `Token ${token}`
