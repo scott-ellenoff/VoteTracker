@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from .models import User, Bill, Legislator, Vote, Match
-from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, MatchSerializer, CustomRegisterSerializer
+from .serializers import UserSerializer, BillSerializer, LegislatorSerializer, VoteSerializer, ListVoteSerializer, MatchSerializer, CustomRegisterSerializer
 from .permissions import IsAdminOrSelf, IsOwner
 
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
@@ -71,38 +71,46 @@ class UserViewSet(viewsets.ModelViewSet):
         # print(m.user_set.all())
         return super(UserViewSet, self).retrieve(request, *args, **kwargs)
 
-    def update(self, request, *args, **kwargs):
-        # print(request.data)
+
+    def update(self, request, *args, **kwargs):      # print(request.data)
+        
         # print(request.data['followed'])
+        print(kwargs)
         user = User.objects.get(pk=kwargs['pk'])
-        # print(user)
+        # print(request.data)
         followed = request.data.getlist('followed')
         # print(followed)
         matched = []
 
+        # if not followed:
+        #     print('NOT', followed)
+        # else:
+        #     print('YES', followed)
 
-        # print(user.matched.all())
-        for pm in user.matched.all():
-            pm.delete()
-        prev_matched = user.matched.all()
-        user.matched.clear()
-        # print()
-        # print(prev_matched)
-            # print(pm)
-        print(kwargs)
-        print(request.data)
+        if not followed:
+            for pm in user.matched.all():
+                pm.delete()
+            prev_matched = user.matched.all()
+            user.matched.clear()
+            # print()
+            # print(prev_matched)
+                # print(pm)
         request.data._mutable = True
 
         for l in followed:
             l_pk = l.split('/')[-2]
-            print(l_pk)
             legislator = Legislator.objects.get(pk=l_pk)
+            print(user.followed.all()) 
+            user.followed.add(legislator)
+            print(user.followed.all())
             # print(legislator)
             m = Match(legislator=legislator)
             m.save()
             # print(m.MID)
             request.data.update({'matched': reverse('match-detail', args=[m.MID])})
             # user.matched.add(m)
+
+        # print(user.followed.all())
         request.data._mutable = False
         # mutable = request.data._mutable
         # request.data._mutable = True
@@ -110,7 +118,11 @@ class UserViewSet(viewsets.ModelViewSet):
         # request.data._mutable = mutable
         # print(request.data.getlist('followed'))
 
-        return super(UserViewSet, self).update(request, args, kwargs)
+        return super(UserViewSet, self).update(request, *args, **kwargs)
+
+    # def partial_update(self, request, *args, **kwargs):
+    #     # print('PartialFlag: ', kwargs['partial'])
+    #     return super(UserViewSet, self).partial_update(request, *args, **kwargs)
 
     def get_permissions(self):
         """
@@ -235,11 +247,11 @@ class BillViewSet(viewsets.ModelViewSet):
     # filter_backends = (SearchFilter,)
     # search_fields = ('description')
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
+    # def get_queryset(self):
+        # """
+        # Optionally restricts the returned purchases to a given user,
+        # by filtering against a `username` query parameter in the URL.
+        # """
         # if self.action == 'list':
             # queryset = Bill.objects.all()
             # chamber = self.request.query_params.get('user', None)
@@ -258,7 +270,7 @@ class BillViewSet(viewsets.ModelViewSet):
             # return queryset
 
         # else:
-        return super(BillViewSet, self).get_queryset()
+        # return super(BillViewSet, self).get_queryset()
 
 
     # filter_backends = (filters.SearchFilter)
@@ -286,6 +298,14 @@ class VoteViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
+
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'detail':
+            return ListVoteSerializer
+        else:
+            x = super(VoteViewSet, self).get_serializer_class()
+            print(x)
+            return x
 
     def get_queryset(self):
         if self.action == 'list':

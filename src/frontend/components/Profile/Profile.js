@@ -56,12 +56,10 @@ export default class Profile extends Component {
     const user = AsyncStorage.getItem('user')
       .then((value) => JSON.parse(value)[0])
       .then((userInfo) => {
-        console.log(userInfo);
         const instance = axios.create({
           baseURL: 'http://52.15.86.243:8080/api/v1/'
         });
         instance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-        console.log(userInfo);
         this.setState({
           followedLegislators: userInfo.followed,
           UID: userInfo.UID,
@@ -91,7 +89,6 @@ export default class Profile extends Component {
       }
     })
       .then((data) => {
-        console.log(data);
         return data
       })
       .then(d => {
@@ -128,7 +125,6 @@ export default class Profile extends Component {
   };
 
   updateMatchData = () => {
-    console.log('here');
     const {token} = this.state;
     axios.get('http://52.15.86.243:8080/api/v1/matches/', {
       headers: {
@@ -149,7 +145,6 @@ export default class Profile extends Component {
   }
 
   success(key) {
-    console.log(key, 'in success');
     const data = this.state.followedLegislators.filter(item => this.state.byLid[item.split('/')[6]][0].fullname !== key);
     this.setState({
       followedLegislators: data,
@@ -188,7 +183,6 @@ export default class Profile extends Component {
       updated.followed = [...prevState.followedLegislators, prevState.byLid[val][0].detail];
 
       AsyncStorage.setItem('user', JSON.stringify([updated]));
-      console.log(prevState.followedLegislators, 'in updatelegislators');
       return {
         followedLegislators: [...prevState.followedLegislators, prevState.byLid[val][0].detail],
         pickerSelected: prevState.legislators[prevState.followedLegislators.length].detail.split('/')[6],
@@ -212,7 +206,6 @@ export default class Profile extends Component {
     if (filtered.length || followedLegislators.length === 0) {
       this.setState({addMode: true})
     } else {
-      console.log(this.state.followedLegislators);
       alert("All Legislators Already Selected")
     }
   };
@@ -220,15 +213,12 @@ export default class Profile extends Component {
   deleteLegislator = (rowData) => {
     this.setState((prevState) => {
       const updated = prevState.userInfo;
-      console.log(rowData);
       const filtered = prevState.followedLegislators.filter(function (item) {
         return rowData !== item
       });
 
       updated.followed = [...filtered];
-      console.log(filtered);
       AsyncStorage.setItem('user', JSON.stringify([updated]));
-      console.log(prevState.followedLegislators, 'in updatelegislators');
       return {
         followedLegislators: [...filtered],
         pickerSelected: filtered[0].split('/')[6],
@@ -238,8 +228,6 @@ export default class Profile extends Component {
   };
 
   viewLegislator = (legislator) => {
-    console.log(legislator, "in view legislator");
-
     this.props.navigation.navigate('LegislatorProfile', {"legislator": legislator, key: this.state.token});
   };
 
