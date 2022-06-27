@@ -6,7 +6,7 @@ django-allauth==0.38.0
 django-rest-auth==0.9.3
 djangorestframework==3.9.0
 idna==2.7
-mysql-connector-python==8.0.13
+mysql-connector-python==8.0.14
 oauthlib==2.1.0
 protobuf==3.6.1
 python3-openid==3.1.0
